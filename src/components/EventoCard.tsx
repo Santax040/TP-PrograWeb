@@ -1,31 +1,38 @@
 import Link from "next/link";
 import type { Evento } from "@/lib/types";
-import { formatearFechaCorta, formatearPrecio } from "@/lib/formato";
+import { formatearPrecio } from "@/lib/formato";
 
-export default function EventoCard({ evento }: { evento: Evento }) {
+const giros = ["-rotate-[0.6deg]", "rotate-[0.4deg]", "rotate-[0.8deg]", "-rotate-[0.3deg]"];
+
+/** Evento con forma de entrada: talón con la fecha, línea troquelada y cuerpo. */
+export default function EventoCard({ evento, indice = 0 }: { evento: Evento; indice?: number }) {
+  const fecha = new Date(`${evento.fecha}T00:00:00Z`);
+  const dia = fecha.getUTCDate().toString().padStart(2, "0");
+  const mes = fecha.toLocaleDateString("es-AR", { month: "short", timeZone: "UTC" }).replace(".", "");
+
   return (
     <Link
       href={`/agenda/${evento.slug}`}
-      className="group flex items-center gap-4 rounded-xl border border-borde bg-surface p-4 transition-colors hover:border-accent"
+      className={`group flex shadow-[5px_5px_0_rgba(0,0,0,0.6)] transition-transform duration-200 hover:rotate-0 hover:scale-[1.01] ${giros[indice % giros.length]}`}
     >
-      <div
-        className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-center text-xs font-bold uppercase leading-tight ${evento.portada}`}
-      >
-        {formatearFechaCorta(evento.fecha)}
+      <div className="flex w-20 shrink-0 flex-col items-center justify-center border-r-2 border-dashed border-tinta bg-acido py-3 text-tinta">
+        <span className="font-titular text-4xl leading-none">{dia}</span>
+        <span className="font-titular text-sm uppercase tracking-widest">{mes}</span>
       </div>
 
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate font-bold group-hover:text-accent">
-          {evento.nombre}
-        </h3>
-        <p className="truncate text-sm text-muted">
-          {evento.lugar} · {evento.ciudad}
-        </p>
-      </div>
+      <div className="papel flex min-w-0 flex-1 items-center gap-4 px-4 py-3">
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-titular text-xl uppercase leading-tight group-hover:text-sangre">
+            {evento.nombre}
+          </h3>
+          <p className="truncate text-sm text-tinta/75">
+            {evento.lugar} / {evento.ciudad}
+          </p>
+        </div>
 
-      <div className="shrink-0 text-right text-sm">
-        <p className="text-muted">Desde</p>
-        <p className="font-medium">{formatearPrecio(evento.precioDesde)}</p>
+        <span className="sello hidden shrink-0 text-sm sm:inline-block">
+          {formatearPrecio(evento.precioDesde)}
+        </span>
       </div>
     </Link>
   );

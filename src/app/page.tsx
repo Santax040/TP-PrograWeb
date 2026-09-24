@@ -1,6 +1,7 @@
-import Link from "next/link";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
+import Recorte from "@/components/Recorte";
+import TituloSeccion from "@/components/TituloSeccion";
 import { getArticulos, getArticulosDestacados, getEventos } from "@/lib/data";
 import { site } from "@/lib/site";
 
@@ -24,51 +25,50 @@ export default async function Home() {
   const proximos = eventos.slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <section className="mb-12 border-b border-borde pb-10">
-        <h1 className="text-4xl font-black tracking-tight sm:text-6xl">
-          {site.tagline}
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <section className="relative mb-20">
+        <h1 className="text-5xl sm:text-7xl lg:text-8xl">
+          <Recorte texto={site.tagline} />
         </h1>
-        <p className="mt-4 max-w-2xl text-lg text-muted">{site.descripcion}</p>
+
+        <div className="cinta mt-10 max-w-xl -rotate-1">
+          <p className="papel roto p-5 pb-7 text-lg leading-snug shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
+            {site.descripcion}
+          </p>
+        </div>
+
+        <p className="absolute -bottom-6 right-2 hidden rotate-6 font-marcador text-2xl text-acido sm:block">
+          sin filtro ↓
+        </p>
       </section>
 
-      <section className="mb-16 grid gap-6 lg:grid-cols-3">
+      <section className="mb-24 grid gap-10 lg:grid-cols-3">
         {principal && (
           <div className="lg:col-span-2">
-            <ArticuloCard articulo={principal} destacado />
+            <ArticuloCard articulo={principal} destacado indice={0} />
           </div>
         )}
-        <div className="flex flex-col gap-6">
-          {secundarios.map((a) => (
-            <ArticuloCard key={a.slug} articulo={a} />
+        <div className="flex flex-col gap-10">
+          {secundarios.map((a, i) => (
+            <ArticuloCard key={a.slug} articulo={a} indice={i + 1} />
           ))}
         </div>
       </section>
 
-      <section className="mb-16">
-        <div className="mb-5 flex items-baseline justify-between">
-          <h2 className="text-2xl font-bold">Lo que se viene</h2>
-          <Link href="/agenda" className="text-sm text-accent hover:opacity-80">
-            Ver la agenda completa →
-          </Link>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {proximos.map((e) => (
-            <EventoCard key={e.slug} evento={e} />
+      <section className="mb-24">
+        <TituloSeccion titulo="Lo que se viene" href="/agenda" enlace="la agenda entera" />
+        <div className="grid gap-5 md:grid-cols-2">
+          {proximos.map((e, i) => (
+            <EventoCard key={e.slug} evento={e} indice={i} />
           ))}
         </div>
       </section>
 
       <section>
-        <div className="mb-5 flex items-baseline justify-between">
-          <h2 className="text-2xl font-bold">Últimas notas</h2>
-          <Link href="/notas" className="text-sm text-accent hover:opacity-80">
-            Ver todas →
-          </Link>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {restantes.map((a) => (
-            <ArticuloCard key={a.slug} articulo={a} />
+        <TituloSeccion titulo="Últimas notas" href="/notas" enlace="todas las notas" />
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {restantes.map((a, i) => (
+            <ArticuloCard key={a.slug} articulo={a} indice={i + 2} />
           ))}
         </div>
       </section>

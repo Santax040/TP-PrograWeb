@@ -6,6 +6,9 @@ import { formatearFecha, formatearPrecio } from "@/lib/formato";
 
 type Props = { params: Promise<{ slug: string }> };
 
+/** Tamaños del line-up, de mayor a menor, como en los afiches de festival. */
+const tamanosLineup = ["text-5xl sm:text-7xl", "text-4xl sm:text-5xl", "text-3xl sm:text-4xl"];
+
 export async function generateStaticParams() {
   const eventos = await getEventos();
   return eventos.map((e) => ({ slug: e.slug }));
@@ -27,72 +30,70 @@ export default async function EventoPage({ params }: Props) {
   if (!evento) notFound();
 
   const lineup = await getArtistas(evento.lineup);
+  // getArtistas no respeta el orden del line-up; lo restauramos para que
+  // el cabeza de cartel quede primero y más grande.
+  const ordenado = evento.lineup
+    .map((s) => lineup.find((a) => a.slug === s))
+    .filter((a) => a !== undefined);
 
   return (
-    <article>
-      <div className={`h-52 bg-gradient-to-br sm:h-72 ${evento.portada}`} />
-
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <p className="text-sm uppercase tracking-wider text-accent">
-          {evento.genero}
-        </p>
-
-        <h1 className="mt-2 text-3xl font-black leading-tight tracking-tight sm:text-5xl">
-          {evento.nombre}
-        </h1>
-
-        <dl className="mt-8 grid gap-4 rounded-xl border border-borde bg-surface p-6 sm:grid-cols-3">
-          <div>
-            <dt className="text-xs uppercase tracking-wider text-muted">
-              Fecha
-            </dt>
-            <dd className="mt-1 font-medium">{formatearFecha(evento.fecha)}</dd>
+    <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="cinta rotate-[0.8deg]">
+        <div className="papel roto shadow-[8px_8px_0_rgba(0,0,0,0.7)]">
+          <div className={`fotocopia relative h-48 bg-gradient-to-br sm:h-64 ${evento.portada}`}>
+            <span className="absolute left-4 top-4 z-[1] bg-tinta px-2 py-0.5 font-titular text-xs uppercase tracking-widest text-acido">
+              {evento.genero}
+            </span>
           </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wider text-muted">
-              Dónde
-            </dt>
-            <dd className="mt-1 font-medium">
-              {evento.lugar}, {evento.ciudad}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wider text-muted">
-              Entradas desde
-            </dt>
-            <dd className="mt-1 font-medium">
-              {formatearPrecio(evento.precioDesde)}
-            </dd>
-          </div>
-        </dl>
 
-        <p className="mt-8 text-lg leading-relaxed">{evento.descripcion}</p>
+          <div className="px-6 pb-12 pt-8 text-center sm:px-12">
+            <h1 className="font-titular text-4xl uppercase leading-[0.92] tracking-tight sm:text-6xl">
+              {evento.nombre}
+            </h1>
 
-        <section className="mt-12 border-t border-borde pt-8">
-          <h2 className="mb-4 text-sm uppercase tracking-wider text-muted">
-            Line-up
-          </h2>
-          <div className="flex flex-col gap-3">
-            {lineup.map((a) => (
-              <Link
-                key={a.slug}
-                href={`/artistas/${a.slug}`}
-                className="rounded-lg border border-borde bg-surface p-4 transition-colors hover:border-accent"
-              >
-                <p className="font-bold">{a.nombre}</p>
-                <p className="text-sm text-muted">{a.genero}</p>
-              </Link>
-            ))}
+            <ul className="mt-10 flex flex-col items-center gap-1">
+              {ordenado.map((a, i) => (
+                <li key={a.slug}>
+                  <Link
+                    href={`/artistas/${a.slug}`}
+                    className={`font-titular uppercase leading-none hover:text-sangre ${
+                      tamanosLineup[Math.min(i, tamanosLineup.length - 1)]
+                    }`}
+                  >
+                    {a.nombre}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mx-auto mt-10 max-w-lg text-lg leading-snug">{evento.descripcion}</p>
+
+            <dl className="mt-10 grid border-2 border-tinta text-left sm:grid-cols-3">
+              <div className="border-b-2 border-dashed border-tinta p-4 sm:border-b-0 sm:border-r-2">
+                <dt className="text-xs uppercase tracking-widest text-gris">Fecha</dt>
+                <dd className="mt-1 font-titular text-lg uppercase">{formatearFecha(evento.fecha)}</dd>
+              </div>
+              <div className="border-b-2 border-dashed border-tinta p-4 sm:border-b-0 sm:border-r-2">
+                <dt className="text-xs uppercase tracking-widest text-gris">Dónde</dt>
+                <dd className="mt-1 font-titular text-lg uppercase">
+                  {evento.lugar}, {evento.ciudad}
+                </dd>
+              </div>
+              <div className="bg-acido p-4">
+                <dt className="text-xs uppercase tracking-widest text-tinta/70">Entradas desde</dt>
+                <dd className="mt-1 font-titular text-2xl">{formatearPrecio(evento.precioDesde)}</dd>
+              </div>
+            </dl>
           </div>
-        </section>
-
-        <Link
-          href="/agenda"
-          className="mt-12 inline-block text-sm text-accent hover:opacity-80"
-        >
-          ← Volver a la agenda
-        </Link>
+        </div>
       </div>
-    </article>
+
+      <Link
+        href="/agenda"
+        className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
+      >
+        ← volver a la agenda
+      </Link>
+    </div>
   );
 }

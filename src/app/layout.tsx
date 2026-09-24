@@ -1,19 +1,34 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anton, Courier_Prime, Permanent_Marker, Rubik_Dirt } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Marquesina from "@/components/Marquesina";
 import { site } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/*
+ * Cuatro tipografías, cada una con un rol fijo:
+ * - Anton: titulares, estilo afiche.
+ * - Courier Prime: texto corrido, estilo máquina de escribir.
+ * - Permanent Marker: anotaciones hechas "a mano".
+ * - Rubik Dirt: solo el logo, letra gastada.
+ */
+const anton = Anton({ variable: "--font-anton", weight: "400", subsets: ["latin"] });
+
+const courier = Courier_Prime({
+  variable: "--font-courier",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const marker = Permanent_Marker({
+  variable: "--font-marker",
+  weight: "400",
   subsets: ["latin"],
 });
+
+const dirt = Rubik_Dirt({ variable: "--font-dirt", weight: "400", subsets: ["latin"] });
 
 /**
  * Metadatos base. El `template` hace que cada página agregue su propio
@@ -31,11 +46,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${anton.variable} ${courier.variable} ${marker.variable} ${dirt.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">
+      <body className="flex min-h-full flex-col">
         <Header />
-        <main className="flex-1">{children}</main>
+        <Marquesina />
+        {/* overflow-x-clip: las hojas giradas no generan scroll horizontal en celular. */}
+        <main className="flex-1 overflow-x-clip">{children}</main>
         <Footer />
       </body>
     </html>

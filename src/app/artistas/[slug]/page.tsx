@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
+import TituloSeccion from "@/components/TituloSeccion";
 import {
   getArticulosDeArtista,
   getArtista,
@@ -38,38 +39,37 @@ export default async function ArtistaPage({ params }: Props) {
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <p className="text-sm uppercase tracking-wider text-accent">
+    <div className="mx-auto max-w-4xl px-4 py-12">
+      <p className="mb-4 inline-block -rotate-2 bg-acido px-2 font-titular text-sm uppercase tracking-widest text-tinta">
         {artista.genero}
       </p>
-      <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
+      <h1 className="corrido font-titular text-6xl uppercase leading-[0.9] tracking-tight text-papel sm:text-8xl">
         {artista.nombre}
       </h1>
-      <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
-        {artista.bio}
-      </p>
+
+      <div className="cinta mt-10 max-w-2xl rotate-1">
+        <p className="papel roto p-6 pb-9 text-lg leading-snug shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
+          {artista.bio}
+        </p>
+      </div>
 
       {fechas.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-4 text-sm uppercase tracking-wider text-muted">
-            Próximas fechas
-          </h2>
-          <div className="flex flex-col gap-3">
-            {fechas.map((e) => (
-              <EventoCard key={e.slug} evento={e} />
+        <section className="mt-20">
+          <TituloSeccion titulo="Próximas fechas" />
+          <div className="flex flex-col gap-5">
+            {fechas.map((e, i) => (
+              <EventoCard key={e.slug} evento={e} indice={i} />
             ))}
           </div>
         </section>
       )}
 
       {notas.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-4 text-sm uppercase tracking-wider text-muted">
-            En la revista
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {notas.map((a) => (
-              <ArticuloCard key={a.slug} articulo={a} />
+        <section className="mt-20">
+          <TituloSeccion titulo="En la revista" />
+          <div className="grid gap-10 sm:grid-cols-2">
+            {notas.map((a, i) => (
+              <ArticuloCard key={a.slug} articulo={a} indice={i} />
             ))}
           </div>
         </section>
@@ -77,9 +77,9 @@ export default async function ArtistaPage({ params }: Props) {
 
       <Link
         href="/agenda"
-        className="mt-12 inline-block text-sm text-accent hover:opacity-80"
+        className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
       >
-        ← Volver a la agenda
+        ← volver a la agenda
       </Link>
     </div>
   );

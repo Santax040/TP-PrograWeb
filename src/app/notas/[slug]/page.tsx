@@ -37,50 +37,65 @@ export default async function NotaPage({ params }: Props) {
   const artistas = await getArtistas(articulo.artistas);
 
   return (
-    <article>
-      <div className={`h-52 bg-gradient-to-br sm:h-72 ${articulo.portada}`} />
+    <article className="pb-8">
+      <div className={`fotocopia roto h-56 bg-gradient-to-br sm:h-80 ${articulo.portada}`} />
 
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <Link
-          href={`/notas/categoria/${articulo.categoria}`}
-          className="text-xs uppercase tracking-wider text-accent hover:opacity-80"
-        >
-          {categoria?.nombre}
-        </Link>
+      <div className="mx-auto -mt-24 max-w-3xl px-4 sm:-mt-32">
+        <div className="cinta -rotate-[0.6deg]">
+          <div className="papel roto px-6 pb-12 pt-8 shadow-[8px_8px_0_rgba(0,0,0,0.7)] sm:px-12">
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href={`/notas/categoria/${articulo.categoria}`}
+                className="bg-tinta px-2 py-0.5 font-titular text-xs uppercase tracking-widest text-papel hover:bg-sangre"
+              >
+                {categoria?.nombre}
+              </Link>
+              {articulo.premium && <span className="sello text-xs">Solo suscriptores</span>}
+            </div>
 
-        <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight sm:text-5xl">
-          {articulo.titulo}
-        </h1>
+            <h1 className="mt-5 font-titular text-4xl uppercase leading-[0.92] tracking-tight sm:text-6xl">
+              {articulo.titulo}
+            </h1>
 
-        <p className="mt-4 text-xl leading-relaxed text-muted">
-          {articulo.bajada}
-        </p>
+            <p className="mt-6 text-xl italic leading-snug">
+              <span className="marcado">{articulo.bajada}</span>
+            </p>
 
-        <p className="mt-6 border-b border-borde pb-6 text-sm text-muted">
-          Por {articulo.autor} · {formatearFecha(articulo.fecha)} ·{" "}
-          {articulo.minutosLectura} min de lectura
-        </p>
+            <p className="mt-6 border-y-2 border-dashed border-tinta/40 py-2 text-xs uppercase tracking-wider text-gris">
+              Por {articulo.autor} / {formatearFecha(articulo.fecha)} /{" "}
+              {articulo.minutosLectura} min de lectura
+            </p>
 
-        <div className="mt-8 flex flex-col gap-6 text-lg leading-relaxed">
-          {articulo.cuerpo.map((parrafo, i) => (
-            <p key={i}>{parrafo}</p>
-          ))}
+            <div className="mt-8 flex flex-col gap-5 text-lg leading-relaxed">
+              {articulo.cuerpo.map((parrafo, i) => (
+                <p key={i} className={i === 0 ? "capitular" : undefined}>
+                  {parrafo}
+                </p>
+              ))}
+            </div>
+
+            <p className="mt-10 text-right font-marcador text-2xl text-sangre">
+              — fin —
+            </p>
+          </div>
         </div>
 
         {artistas.length > 0 && (
-          <section className="mt-12 border-t border-borde pt-8">
-            <h2 className="mb-4 text-sm uppercase tracking-wider text-muted">
-              Aparecen en esta nota
+          <section className="mt-16">
+            <h2 className="mb-6 -rotate-1 font-marcador text-2xl text-acido">
+              aparecen en esta nota:
             </h2>
-            <div className="flex flex-col gap-3">
-              {artistas.map((a) => (
+            <div className="flex flex-wrap gap-4">
+              {artistas.map((a, i) => (
                 <Link
                   key={a.slug}
                   href={`/artistas/${a.slug}`}
-                  className="rounded-lg border border-borde bg-surface p-4 transition-colors hover:border-accent"
+                  className={`papel block px-4 py-3 shadow-[4px_4px_0_var(--sangre)] transition-transform hover:rotate-0 ${
+                    i % 2 === 0 ? "-rotate-2" : "rotate-2"
+                  }`}
                 >
-                  <p className="font-bold">{a.nombre}</p>
-                  <p className="text-sm text-muted">{a.genero}</p>
+                  <p className="font-titular text-xl uppercase">{a.nombre}</p>
+                  <p className="text-xs uppercase tracking-wider text-gris">{a.genero}</p>
                 </Link>
               ))}
             </div>
@@ -89,9 +104,9 @@ export default async function NotaPage({ params }: Props) {
 
         <Link
           href="/notas"
-          className="mt-12 inline-block text-sm text-accent hover:opacity-80"
+          className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
         >
-          ← Volver a las notas
+          ← volver a las notas
         </Link>
       </div>
     </article>

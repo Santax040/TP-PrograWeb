@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticuloCard from "@/components/ArticuloCard";
+import Recorte from "@/components/Recorte";
 import { getArticulosPorCategoria } from "@/lib/data";
 import { categorias } from "@/lib/site";
 
@@ -25,25 +26,27 @@ export default async function CategoriaPage({ params }: Props) {
   const articulos = await getArticulosPorCategoria(categoria);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <p className="text-sm uppercase tracking-wider text-accent">Categoría</p>
-      <h1 className="mb-2 mt-1 text-4xl font-black tracking-tight">
-        {encontrada.nombre}
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <p className="mb-3 inline-block rotate-2 bg-sangre px-2 font-titular text-sm uppercase tracking-widest text-papel">
+        Categoría
+      </p>
+      <h1 className="text-5xl sm:text-7xl">
+        <Recorte texto={encontrada.nombre} />
       </h1>
-      <p className="mb-10 text-muted">
-        {articulos.length === 1
-          ? "1 nota publicada"
-          : `${articulos.length} notas publicadas`}
+      <p className="mb-14 mt-4 -rotate-1 font-marcador text-xl text-acido">
+        {articulos.length === 1 ? "1 nota publicada" : `${articulos.length} notas publicadas`}
       </p>
 
       {articulos.length === 0 ? (
-        <p className="rounded-xl border border-borde bg-surface p-8 text-center text-muted">
-          Todavía no hay notas en esta categoría.
-        </p>
+        <div className="cinta max-w-md rotate-1">
+          <p className="papel roto p-8 pb-10 text-center text-lg">
+            Todavía no hay notas acá. Volvé pronto.
+          </p>
+        </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {articulos.map((a) => (
-            <ArticuloCard key={a.slug} articulo={a} />
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {articulos.map((a, i) => (
+            <ArticuloCard key={a.slug} articulo={a} indice={i} />
           ))}
         </div>
       )}
