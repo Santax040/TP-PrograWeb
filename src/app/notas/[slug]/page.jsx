@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticulo, getArticulos, getArtistas } from "@/lib/data";
-import { categorias } from "@/lib/site";
+import { categorias, pagosActivos } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
 /**
@@ -47,7 +47,11 @@ export default async function NotaPage({ params }) {
               >
                 {categoria?.nombre}
               </Link>
-              {articulo.premium && <span className="sello text-xs">Solo suscriptores</span>}
+              {articulo.premium && (
+                <Link href="/suscribite" className="sello text-xs hover:bg-sangre hover:text-papel">
+                  Solo suscriptores
+                </Link>
+              )}
             </div>
 
             <h1 className="mt-5 font-titular text-4xl uppercase leading-[0.92] tracking-tight sm:text-6xl">
@@ -62,6 +66,20 @@ export default async function NotaPage({ params }) {
               Por {articulo.autor} / {formatearFecha(articulo.fecha)} /{" "}
               {articulo.minutosLectura} min de lectura
             </p>
+
+            {/* Mientras no haya pagos, la nota premium se lee completa, pero se
+                avisa y se ofrece el camino para suscribirse. */}
+            {articulo.premium && !pagosActivos && (
+              <aside className="mt-6 -rotate-1 bg-acido p-4 leading-snug text-tinta shadow-[4px_4px_0_var(--tinta)]">
+                <p className="font-titular uppercase">Nota exclusiva, gratis por ahora</p>
+                <p className="mt-1 text-sm">
+                  Cuando se activen los pagos va a ser solo para suscriptores.{" "}
+                  <Link href="/suscribite" className="font-bold underline underline-offset-2 hover:text-sangre">
+                    Mirá los planes →
+                  </Link>
+                </p>
+              </aside>
+            )}
 
             <div className="mt-8 flex flex-col gap-5 text-lg leading-relaxed">
               {articulo.cuerpo.map((parrafo, i) => (

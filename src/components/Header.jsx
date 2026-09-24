@@ -32,6 +32,12 @@ export default function Header() {
           >
             Agenda
           </Link>
+          <Link
+            href="/suscribite"
+            className="inline-block -rotate-2 bg-acido px-3 py-1 text-tinta shadow-[3px_3px_0_var(--sangre)] transition-transform hover:rotate-0"
+          >
+            Suscribite
+          </Link>
         </nav>
       </div>
     </header>

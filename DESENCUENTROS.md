@@ -40,7 +40,19 @@ del flujo, y no avisar del hueco al entregar.
   salida: botones que no llevan a ningún lado, estados sin salida, promesas sin
   página.
 
-**Estado:** pendiente de decidir cómo resolverlo.
+**Cómo se resolvió**
+Se eligió una página de suscripción, sin implementar pagos:
+- Nueva página **`/suscribite`** con tres planes (Libre, Mensual, Anual) y un
+  aviso claro de que todavía no se puede pagar.
+- Enlace **"Suscribite"** en el header, visible en todo el sitio.
+- En las notas premium, el sello lleva a `/suscribite` y hay un aviso que
+  explica que por ahora se leen gratis.
+- Los planes listan **solo beneficios que el sitio tiene de verdad**, para no
+  repetir el mismo error en la página nueva.
+- Se descartó un botón "Suscribirme" preparado para cuando haya pagos: hoy no
+  haría nada, así que habría sido otro callejón sin salida.
+
+**Estado:** resuelto.
 
 ---
 

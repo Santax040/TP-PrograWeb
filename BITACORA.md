@@ -7,6 +7,38 @@ Los errores y malentendidos se registran aparte, en
 
 ---
 
+## 2026-09-24 (6) — Página de suscripción
+
+Resuelve el desencuentro #1: había contenido marcado "solo suscriptores" sin
+ninguna forma de suscribirse.
+
+### Qué se hizo
+- Nueva página **`/suscribite`** con tres planes, cada uno como hoja pegada con
+  cinta. El anual lleva un sello de "Conviene".
+- Enlace **"Suscribite"** en el header.
+- En las notas premium, el sello "Solo suscriptores" ahora es un enlace a la
+  página de planes, y se agregó un aviso: la nota es exclusiva pero se lee
+  gratis mientras no haya pagos.
+- Los planes y el interruptor de pagos se definen en `src/lib/site.js`.
+
+### Decisiones
+- **Interruptor `pagosActivos` (hoy en `false`).** Centraliza en un solo lugar
+  si los pagos funcionan. Mientras esté apagado, la página avisa que todavía no
+  se puede pagar y las notas premium se leen completas.
+- **Los planes solo prometen lo que existe.** Notas abiertas, agenda, fichas de
+  artistas y notas exclusivas. Nada de beneficios inventados como preventas o
+  descuentos.
+- **Sin botón de pago "para después".** Un botón que no hace nada es un
+  callejón sin salida. Se agrega cuando haya pagos reales detrás.
+- **Precios ficticios**, aclarados en la página.
+
+### Verificación
+- ESLint sin errores. Build OK, 28 páginas.
+- Revisado en escritorio y celular: el header acomoda el botón nuevo sin
+  desbordar y no hay scroll horizontal.
+
+---
+
 ## 2026-09-24 (5) — Registro de desencuentros
 
 ### Qué se hizo
