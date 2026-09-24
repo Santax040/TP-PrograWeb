@@ -2,6 +2,28 @@
 
 Registro de cambios y decisiones del proyecto. Entrada más reciente arriba.
 
+Los errores y malentendidos se registran aparte, en
+[DESENCUENTROS.md](DESENCUENTROS.md).
+
+---
+
+## 2026-09-24 (5) — Registro de desencuentros
+
+### Qué se hizo
+- Se creó **`DESENCUENTROS.md`**: registro de los momentos en que el pedido y
+  lo que se hizo no coincidieron, con la causa y lo que se cambia para que no
+  se repita.
+- Primera entrada: se mostraron sellos de **"Solo suscriptores" sin ninguna
+  página para suscribirse**.
+- Se agregaron tres desencuentros anteriores del mismo día, marcados como
+  retroactivos: TypeScript en lugar de JavaScript, las instrucciones de
+  `vercel login` y el rediseño que no aparecía en Vercel.
+
+### Decisiones
+- **Archivo separado de la bitácora.** La bitácora cuenta qué se construyó y
+  por qué; los desencuentros cuentan dónde hubo diferencias entre lo pedido y lo
+  hecho. Mezclarlos haría más difícil leer cualquiera de los dos.
+
 ---
 
 ## 2026-09-24 (4) — Migración a JavaScript y primer deploy en producción
