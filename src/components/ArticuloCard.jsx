@@ -1,20 +1,17 @@
 import Link from "next/link";
-import type { Articulo } from "@/lib/types";
 import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
 /** Giros leves para que las hojas parezcan pegadas a mano, no alineadas. */
 const giros = ["-rotate-1", "rotate-1", "rotate-[0.5deg]", "-rotate-[1.5deg]", "rotate-[1.5deg]"];
 
-type Props = {
-  articulo: Articulo;
-  /** La variante destacada se usa en la portada, con más aire y tipografía grande. */
-  destacado?: boolean;
-  /** Posición en la grilla. Solo define el giro de la hoja. */
-  indice?: number;
-};
-
-export default function ArticuloCard({ articulo, destacado = false, indice = 0 }: Props) {
+/**
+ * @param {Object} props
+ * @param {import("@/lib/data").Articulo} props.articulo
+ * @param {boolean} [props.destacado] - Variante de portada: más aire y tipografía grande.
+ * @param {number} [props.indice] - Posición en la grilla. Solo define el giro de la hoja.
+ */
+export default function ArticuloCard({ articulo, destacado = false, indice = 0 }) {
   const categoria = categorias.find((c) => c.slug === articulo.categoria);
 
   return (

@@ -21,7 +21,7 @@ export default async function Marquesina() {
   ];
 
   // Dos copias seguidas para que la animación haga un bucle sin corte.
-  const renglon = (copia: number) =>
+  const renglon = (copia) =>
     items.map((item, i) => (
       <Link
         key={`${copia}-${i}`}

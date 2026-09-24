@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { getArtistas, getEvento, getEventos } from "@/lib/data";
 import { formatearFecha, formatearPrecio } from "@/lib/formato";
-
-type Props = { params: Promise<{ slug: string }> };
 
 /** Tamaños del line-up, de mayor a menor, como en los afiches de festival. */
 const tamanosLineup = ["text-5xl sm:text-7xl", "text-4xl sm:text-5xl", "text-3xl sm:text-4xl"];
@@ -14,7 +11,7 @@ export async function generateStaticParams() {
   return eventos.map((e) => ({ slug: e.slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const evento = await getEvento(slug);
 
@@ -23,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: evento.nombre, description: evento.descripcion };
 }
 
-export default async function EventoPage({ params }: Props) {
+export default async function EventoPage({ params }) {
   const { slug } = await params;
   const evento = await getEvento(slug);
 

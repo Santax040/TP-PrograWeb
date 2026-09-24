@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import EventoCard from "@/components/EventoCard";
 import Recorte from "@/components/Recorte";
 import { getEventos } from "@/lib/data";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Agenda",
   description: "Fiestas y recitales confirmados.",
 };
@@ -12,7 +11,7 @@ export default async function AgendaPage() {
   const eventos = await getEventos();
 
   // Agrupa por mes para que la lista se lea como una agenda de verdad.
-  const porMes = new Map<string, typeof eventos>();
+  const porMes = new Map();
   for (const evento of eventos) {
     const mes = new Date(`${evento.fecha}T00:00:00Z`).toLocaleDateString("es-AR", {
       month: "long",

@@ -1,5 +1,3 @@
-import type { Articulo, Artista, Evento } from "./types";
-
 /**
  * Capa de acceso a datos.
  *
@@ -10,7 +8,46 @@ import type { Articulo, Artista, Evento } from "./types";
  * Los nombres de artistas, lugares y fiestas son inventados.
  */
 
-const artistas: Artista[] = [
+/**
+ * Forma de cada tipo de dato. Son comentarios JSDoc: no cambian cómo corre
+ * el código, pero el editor los usa para autocompletar y documentan qué
+ * campos tiene cada cosa.
+ *
+ * @typedef {Object} Articulo
+ * @property {string} slug
+ * @property {string} titulo
+ * @property {string} bajada
+ * @property {string[]} cuerpo - Un string por párrafo.
+ * @property {"fiestas" | "musica" | "quilombo" | "entrevistas"} categoria
+ * @property {string} autor
+ * @property {string} fecha - Formato AAAA-MM-DD.
+ * @property {number} minutosLectura
+ * @property {boolean} destacado
+ * @property {boolean} premium - Reservado para cuando se implemente la suscripción.
+ * @property {string} portada - Clases de Tailwind del gradiente que hace de portada.
+ * @property {string[]} artistas - Slugs de los artistas mencionados.
+ *
+ * @typedef {Object} Artista
+ * @property {string} slug
+ * @property {string} nombre
+ * @property {string} genero
+ * @property {string} bio
+ *
+ * @typedef {Object} Evento
+ * @property {string} slug
+ * @property {string} nombre
+ * @property {string} fecha - Formato AAAA-MM-DD.
+ * @property {string} lugar
+ * @property {string} ciudad
+ * @property {string} genero
+ * @property {number} precioDesde - En pesos.
+ * @property {string[]} lineup - Slugs de artistas, el cabeza de cartel primero.
+ * @property {string} descripcion
+ * @property {string} portada
+ */
+
+/** @type {Artista[]} */
+const artistas = [
   {
     slug: "la-maquina-de-humo",
     nombre: "La Máquina de Humo",
@@ -43,7 +80,8 @@ const artistas: Artista[] = [
   },
 ];
 
-const articulos: Articulo[] = [
+/** @type {Articulo[]} */
+const articulos = [
   {
     slug: "cronica-de-una-fiesta-que-no-termino",
     titulo: "Crónica de una fiesta que no terminó",
@@ -160,7 +198,8 @@ const articulos: Articulo[] = [
   },
 ];
 
-const eventos: Evento[] = [
+/** @type {Evento[]} */
+const eventos = [
   {
     slug: "subsuelo-presenta-octubre",
     nombre: "Subsuelo Presenta: Octubre",
@@ -243,54 +282,52 @@ const eventos: Evento[] = [
 
 // --- Consultas ------------------------------------------------------------
 
-export async function getArticulos(): Promise<Articulo[]> {
+export async function getArticulos() {
   return [...articulos].sort((a, b) => b.fecha.localeCompare(a.fecha));
 }
 
-export async function getArticulosDestacados(): Promise<Articulo[]> {
+export async function getArticulosDestacados() {
   const todos = await getArticulos();
   return todos.filter((a) => a.destacado);
 }
 
-export async function getArticulosPorCategoria(
-  categoria: string,
-): Promise<Articulo[]> {
+export async function getArticulosPorCategoria(categoria) {
   const todos = await getArticulos();
   return todos.filter((a) => a.categoria === categoria);
 }
 
-export async function getArticulo(slug: string): Promise<Articulo | undefined> {
+export async function getArticulo(slug) {
   return articulos.find((a) => a.slug === slug);
 }
 
-export async function getEventos(): Promise<Evento[]> {
+export async function getEventos() {
   return [...eventos].sort((a, b) => a.fecha.localeCompare(b.fecha));
 }
 
-export async function getEvento(slug: string): Promise<Evento | undefined> {
+export async function getEvento(slug) {
   return eventos.find((e) => e.slug === slug);
 }
 
-export async function getArtista(slug: string): Promise<Artista | undefined> {
+export async function getArtista(slug) {
   return artistas.find((a) => a.slug === slug);
 }
 
-export async function getArtistas(slugs: string[]): Promise<Artista[]> {
+export async function getArtistas(slugs) {
   return artistas.filter((a) => slugs.includes(a.slug));
 }
 
-export async function getTodosLosArtistas(): Promise<Artista[]> {
+export async function getTodosLosArtistas() {
   return [...artistas];
 }
 
 /** Notas donde se menciona al artista. */
-export async function getArticulosDeArtista(slug: string): Promise<Articulo[]> {
+export async function getArticulosDeArtista(slug) {
   const todos = await getArticulos();
   return todos.filter((a) => a.artistas.includes(slug));
 }
 
 /** Fechas donde el artista está en el line-up. */
-export async function getEventosDeArtista(slug: string): Promise<Evento[]> {
+export async function getEventosDeArtista(slug) {
   const todos = await getEventos();
   return todos.filter((e) => e.lineup.includes(slug));
 }

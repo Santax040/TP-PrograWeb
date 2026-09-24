@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
@@ -11,14 +10,12 @@ import {
   getTodosLosArtistas,
 } from "@/lib/data";
 
-type Props = { params: Promise<{ slug: string }> };
-
 export async function generateStaticParams() {
   const artistas = await getTodosLosArtistas();
   return artistas.map((a) => ({ slug: a.slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const artista = await getArtista(slug);
 
@@ -27,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: artista.nombre, description: artista.bio };
 }
 
-export default async function ArtistaPage({ params }: Props) {
+export default async function ArtistaPage({ params }) {
   const { slug } = await params;
   const artista = await getArtista(slug);
 

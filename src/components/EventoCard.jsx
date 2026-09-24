@@ -1,11 +1,15 @@
 import Link from "next/link";
-import type { Evento } from "@/lib/types";
 import { formatearPrecio } from "@/lib/formato";
 
 const giros = ["-rotate-[0.6deg]", "rotate-[0.4deg]", "rotate-[0.8deg]", "-rotate-[0.3deg]"];
 
 /** Evento con forma de entrada: talón con la fecha, línea troquelada y cuerpo. */
-export default function EventoCard({ evento, indice = 0 }: { evento: Evento; indice?: number }) {
+/**
+ * @param {Object} props
+ * @param {import("@/lib/data").Evento} props.evento
+ * @param {number} [props.indice] - Posición en la lista. Solo define el giro.
+ */
+export default function EventoCard({ evento, indice = 0 }) {
   const fecha = new Date(`${evento.fecha}T00:00:00Z`);
   const dia = fecha.getUTCDate().toString().padStart(2, "0");
   const mes = fecha.toLocaleDateString("es-AR", { month: "short", timeZone: "UTC" }).replace(".", "");

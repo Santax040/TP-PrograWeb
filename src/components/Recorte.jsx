@@ -24,12 +24,7 @@ const giros = ["-rotate-3", "rotate-2", "-rotate-1", "rotate-3", "rotate-1", "-r
 
 const tamanos = ["text-[1em]", "text-[0.86em]", "text-[1.05em]", "text-[0.94em]"];
 
-type Props = {
-  texto: string;
-  className?: string;
-};
-
-export default function Recorte({ texto, className = "" }: Props) {
+export default function Recorte({ texto, className = "" }) {
   const palabras = texto.split(" ");
   let indice = 0;
 

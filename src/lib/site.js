@@ -9,13 +9,11 @@ export const site = {
   tagline: "Noche, música y quilombo",
   descripcion:
     "Revista digital sobre la noche: crónicas de fiestas, música nueva y la agenda de lo que se viene.",
-} as const;
+};
 
 export const categorias = [
   { slug: "fiestas", nombre: "Fiestas" },
   { slug: "musica", nombre: "Música" },
   { slug: "quilombo", nombre: "Quilombo" },
   { slug: "entrevistas", nombre: "Entrevistas" },
-] as const;
-
-export type CategoriaSlug = (typeof categorias)[number]["slug"];
+];

@@ -6,7 +6,7 @@
  * haciendo que en Argentina se muestre el día anterior.
  */
 
-export function formatearFecha(iso: string): string {
+export function formatearFecha(iso) {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("es-AR", {
     day: "numeric",
     month: "long",
@@ -15,7 +15,7 @@ export function formatearFecha(iso: string): string {
   });
 }
 
-export function formatearFechaCorta(iso: string): string {
+export function formatearFechaCorta(iso) {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("es-AR", {
     day: "numeric",
     month: "short",
@@ -23,7 +23,7 @@ export function formatearFechaCorta(iso: string): string {
   });
 }
 
-export function formatearPrecio(pesos: number): string {
+export function formatearPrecio(pesos) {
   return pesos.toLocaleString("es-AR", {
     style: "currency",
     currency: "ARS",

@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import ArticuloCard from "@/components/ArticuloCard";
 import Recorte from "@/components/Recorte";
 import { getArticulos } from "@/lib/data";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Notas",
   description: "Todas las notas publicadas.",
 };

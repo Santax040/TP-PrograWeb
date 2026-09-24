@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { getArticulo, getArticulos, getArtistas } from "@/lib/data";
 import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
-
-type Props = { params: Promise<{ slug: string }> };
 
 /**
  * Le dice a Next qué notas existen, para generarlas como HTML estático
@@ -17,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 /** Título y descripción propios de cada nota, para buscadores y al compartir. */
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const articulo = await getArticulo(slug);
 
@@ -26,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: articulo.titulo, description: articulo.bajada };
 }
 
-export default async function NotaPage({ params }: Props) {
+export default async function NotaPage({ params }) {
   const { slug } = await params;
   const articulo = await getArticulo(slug);
 

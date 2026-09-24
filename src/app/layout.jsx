@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Anton, Courier_Prime, Permanent_Marker, Rubik_Dirt } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -34,7 +33,7 @@ const dirt = Rubik_Dirt({ variable: "--font-dirt", weight: "400", subsets: ["lat
  * Metadatos base. El `template` hace que cada página agregue su propio
  * título antes del nombre del sitio, sin repetirlo a mano en cada archivo.
  */
-export const metadata: Metadata = {
+export const metadata = {
   title: {
     default: `${site.nombre} — ${site.tagline}`,
     template: `%s — ${site.nombre}`,
@@ -42,7 +41,7 @@ export const metadata: Metadata = {
   description: site.descripcion,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }) {
   return (
     <html
       lang="es"

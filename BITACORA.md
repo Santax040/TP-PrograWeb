@@ -4,11 +4,53 @@ Registro de cambios y decisiones del proyecto. Entrada más reciente arriba.
 
 ---
 
-## 2026-09-24 (3) — Propuesta de rediseño trash / grunge
+## 2026-09-24 (4) — Migración a JavaScript y primer deploy en producción
 
-> **Estado: propuesta, pendiente de aprobación.** Vive en la rama
-> `diseno-grunge`. Si se aprueba se une a `main`; si no, se descarta la rama
-> y el diseño anterior queda intacto.
+### Qué se hizo
+- **El proyecto pasó de TypeScript a JavaScript**, por pedido de la cátedra.
+  - `.ts` → `.js` y `.tsx` → `.jsx`. Se renombraron con `git mv`, así git
+    conserva el historial de cada archivo.
+  - `tsconfig.json` → `jsconfig.json`, que mantiene el alias `@/` para importar
+    desde `src/` sin rutas relativas largas.
+  - `next.config.ts` → `next.config.mjs`.
+  - Se quitaron `typescript` y los paquetes `@types/*` de las dependencias, y la
+    regla de TypeScript de ESLint.
+  - Se eliminó `src/lib/types.ts`.
+- **El rediseño grunge se unió a `main` y está en producción:**
+  https://revista-digital-musica.vercel.app
+
+### Decisiones
+- **Los tipos pasaron a comentarios JSDoc** en `src/lib/data.js` y en las props
+  de los componentes. No afectan la ejecución, pero el editor los usa para
+  autocompletar y siguen documentando qué campos tiene cada dato.
+- **Qué se pierde al dejar TypeScript:** los errores de tipos ya no se detectan
+  al compilar. Por ejemplo, pasar un número donde va un texto ahora solo falla
+  cuando se ejecuta. ESLint sigue marcando errores de sintaxis y malas
+  prácticas.
+
+### Vercel
+- Había **dos proyectos de Vercel** conectados al mismo repo:
+  `revista-digital-musica` y `tp-progra-web`. Cada push se construía dos veces.
+- `tp-progra-web` **fallaba con todos los commits**, incluso con los que en el
+  otro proyecto compilaban bien: el problema es su configuración en Vercel, no
+  el código.
+- Se decidió **quedarse con `revista-digital-musica`**. Borrar `tp-progra-web`
+  queda a cargo del dueño de la cuenta, desde el panel de Vercel. Borrar un
+  proyecto de Vercel no afecta al repositorio de GitHub.
+- **Producción solo publica `main`.** Las demás ramas generan un *preview* con
+  URL propia, protegido por login de Vercel.
+
+### Verificación
+- ESLint sin errores.
+- Build de producción OK, 27 páginas, igual que antes de la migración.
+- Revisado en el navegador: el sitio se ve idéntico.
+
+---
+
+## 2026-09-24 (3) — Rediseño trash / grunge
+
+> **Estado: aprobado y publicado en producción.** Se desarrolló en la rama
+> `diseno-grunge` y se unió a `main`.
 
 ### Concepto
 Fanzine punk fotocopiado: hojas de papel sucio pegadas con cinta sobre un

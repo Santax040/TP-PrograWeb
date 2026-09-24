@@ -1,23 +1,20 @@
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import ArticuloCard from "@/components/ArticuloCard";
 import Recorte from "@/components/Recorte";
 import { getArticulosPorCategoria } from "@/lib/data";
 import { categorias } from "@/lib/site";
 
-type Props = { params: Promise<{ categoria: string }> };
-
 export async function generateStaticParams() {
   return categorias.map((c) => ({ categoria: c.slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { categoria } = await params;
   const encontrada = categorias.find((c) => c.slug === categoria);
   return { title: encontrada?.nombre ?? "Categoría" };
 }
 
-export default async function CategoriaPage({ params }: Props) {
+export default async function CategoriaPage({ params }) {
   const { categoria } = await params;
   const encontrada = categorias.find((c) => c.slug === categoria);
 
