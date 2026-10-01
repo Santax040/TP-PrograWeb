@@ -7,6 +7,144 @@ Los errores y malentendidos se registran aparte, en
 
 ---
 
+## 2026-10-01 (4) — Login con Google (OAuth) en lugar de mail y contraseña
+
+### Qué se pidió
+Que el perfil se cargue con OAuth. Se acordó: **solo Google**, y que
+**reemplace** al registro con mail y contraseña.
+
+### Qué se hizo
+- **`/login`** ahora es un único botón "Entrar con Google" (`BotonGoogle.jsx`).
+  No hay registro aparte: la primera vez que alguien entra, se le crea la
+  cuenta. **`/registro`** redirige a `/login` para que los links viejos no den
+  404.
+- **`/auth/confirmar`** recibe la vuelta de Google, canjea el código por la
+  sesión y lleva a donde el usuario quería ir (`siguiente`). Si canceló en
+  Google, vuelve al login con un aviso.
+- **Perfil desde Google** (migración `20261001200000_perfil_desde_google.sql`):
+  - Columna nueva `perfiles.avatar_url`.
+  - El trigger que crea el perfil toma el nombre (`full_name`/`name`) y la
+    foto que manda Google.
+  - Trigger nuevo `al_vincular_identidad`: si alguien que ya tenía cuenta con
+    mail entra con Google con el mismo mail, Supabase une las cuentas. Este
+    trigger le completa la foto sin pisarle el nombre.
+- **Foto** en el header y en `/perfil` (`Avatar.jsx`, en blanco y negro con
+  contraste, como el resto del sitio). `next.config.mjs` habilita el dominio
+  de las fotos de Google.
+- **Menú del visitante:** "Entrar" volvió a ser un link directo. El
+  desplegable con "Iniciar sesión" y "Registrarse" ya no tenía sentido: las dos
+  opciones llevaban al mismo lugar.
+- **Se borraron** `FormularioAuth.jsx` y `src/app/auth/acciones.js`
+  (formularios y acciones de mail y contraseña).
+- **`supabase/config.toml`:** Google activado, con las credenciales como
+  `env(...)` para que no queden en el repo, y registro por mail desactivado
+  (`[auth.email] enable_signup = false`). `supabase/.env.example` muestra qué
+  variables completar.
+
+### Decisiones
+- **Las credenciales de Google van en `supabase/.env`**, ignorado por git. El
+  "client secret" es secreto de verdad: con él cualquiera podría hacerse pasar
+  por la revista ante Google.
+- **Se desactiva el registro por mail también en Supabase**, no solo en la
+  página. Si no, cualquiera podría crear cuentas con contraseña llamando a la
+  API directamente.
+- **`next/image` para las fotos.** Next las baja de Google, las achica y las
+  sirve desde nuestro dominio.
+
+### Verificación
+- ESLint sin errores. Build OK, 33 páginas.
+- Navegador: `/registro` lleva a `/login`; el botón se ve bien en celular, sin
+  scroll horizontal; el header muestra "Entrar" como link.
+- Triggers, con usuarios simulados en una transacción que se deshace: una
+  cuenta nueva de Google toma nombre y foto; una cuenta vieja que suma Google
+  conserva su nombre y gana la foto. No quedaron datos de prueba.
+- **No se probó el ingreso real con Google:** falta crear las credenciales.
+
+### Activación
+- El usuario creó el cliente OAuth en Google Cloud Console:
+  - Orígenes de JavaScript: el sitio publicado y `http://localhost:3000`.
+  - URI de redireccionamiento: la de Supabase, `.../auth/v1/callback`.
+- El ID de cliente (no es secreto) lo cargó el asistente en `supabase/.env`; el
+  secreto lo pegó el usuario.
+- `supabase config push` (a pedido del usuario): Google activado, registro por
+  mail apagado, `site_url` y URLs permitidas apuntando al sitio publicado.
+  Después, `supabase config diff` ya no muestra diferencias de auth.
+- Verificado: Supabase redirige a Google con el ID de cliente correcto, y al
+  tocar el botón en localhost Google muestra su pantalla de inicio de sesión
+  sin error `redirect_uri_mismatch`.
+- Se subió a `main` junto con la tanda (3), que estaba sin commitear.
+
+### Pendiente
+- Que el usuario entre con su Google para probar el recorrido completo.
+- Primer admin.
+
+---
+
+## 2026-10-01 (3) — Barra más grande y menús desplegables en el header
+
+### Qué se pidió
+- Agrandar la barra de categorías (Fiestas, Música, Quilombo, Entrevistas).
+- Que "Entrar" deje elegir entre iniciar sesión y registrarse.
+- Que, ya logueado, el nombre despliegue perfil, configuración y cerrar sesión,
+  en lugar del botón "Salir" al lado.
+
+### Qué se hizo
+
+**Barra de categorías** (`Header.jsx`): el tamaño pasó de `text-sm` a
+`text-lg` (`text-xl` desde `sm`), con más aire entre pastillas y más relleno
+adentro. En celular sigue entrando en tres renglones, sin scroll horizontal.
+
+**Menús desplegables** (`MenuUsuario.jsx`): se agregó un componente interno
+`Desplegable` que usan los dos estados.
+
+| Estado | Botón | Opciones |
+|---|---|---|
+| Visitante | Entrar | Iniciar sesión, Registrarse |
+| Logueado | su nombre (+ sello Admin) | Perfil, Configuración, Cerrar sesión |
+
+**Páginas nuevas**, porque el menú las necesitaba para no dar 404:
+
+| Ruta | Qué muestra |
+|---|---|
+| `/perfil` | Nombre, mail, plan, hasta cuándo está paga la suscripción y fecha de alta. |
+| `/configuracion` | Formulario para cambiar el nombre. |
+
+Las dos leen la sesión en el servidor y, si no hay, redirigen a
+`/login?siguiente=…`, así después del login se vuelve a donde se quería ir.
+
+### Decisiones
+
+- **El panel no usa `role="menu"`.** Ese rol le promete al lector de pantalla
+  navegación con flechas, que no implementamos. Con `aria-expanded` sobre el
+  botón y una lista de enlaces alcanza, y se recorre con Tab como el resto del
+  header.
+- **Cierra por clic afuera, Escape y clic en una opción.** Los escuchas de
+  `document` se agregan solo mientras está abierto.
+- **Sin efecto que cierre al cambiar de ruta.** La primera versión lo hacía con
+  un `useEffect` sobre `pathname`, pero el linter de React 19 rechaza llamar a
+  `setState` dentro de un efecto (`react-hooks/set-state-in-effect`). Era
+  redundante: el clic en el panel y el clic afuera ya cubren todos los casos.
+- **De configuración solo se cambia el nombre.** Es lo único que la base le
+  permite editar al usuario (`grant update (nombre)` en el esquema). El mail y
+  la contraseña los maneja Supabase Auth y piden confirmación por mail: quedan
+  para más adelante.
+- **El panel se ancla a la izquierda en celular** (`sm:right-0` de ahí para
+  arriba). Anclado siempre a la derecha, en 375px arrancaba en −121px y se
+  salía de la pantalla.
+
+### Verificado en `localhost:3000`
+- Barra más grande en escritorio y en celular (375px), sin scroll horizontal.
+- El desplegable de "Entrar" abre, muestra las dos opciones, y cierra con
+  Escape y con clic afuera.
+- `/perfil` y `/configuracion` sin sesión redirigen a `/login` conservando
+  `siguiente`.
+- `npx eslint` limpio en los archivos tocados.
+
+**Pendiente de probar con una sesión abierta:** el desplegable del nombre y las
+dos páginas con datos reales. Requiere loguearse con una cuenta propia.
+
+---
+
 ## 2026-10-01 (2) — Base de datos y login con Supabase
 
 ### Qué se pidió

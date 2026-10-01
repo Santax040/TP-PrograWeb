@@ -17,25 +17,25 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-2 font-titular text-sm uppercase tracking-wide">
+        <nav className="flex flex-wrap items-center gap-x-3 gap-y-2 font-titular text-lg uppercase tracking-wide sm:text-xl">
           {categorias.map((c, i) => (
             <Link
               key={c.slug}
               href={`/notas/categoria/${c.slug}`}
-              className={`papel inline-block px-2 py-1 transition-transform hover:rotate-0 hover:bg-acido ${giros[i % giros.length]}`}
+              className={`papel inline-block px-3 py-1.5 transition-transform hover:rotate-0 hover:bg-acido ${giros[i % giros.length]}`}
             >
               {c.nombre}
             </Link>
           ))}
           <Link
             href="/agenda"
-            className="inline-block rotate-2 bg-sangre px-3 py-1 text-papel shadow-[3px_3px_0_var(--papel)] transition-transform hover:rotate-0"
+            className="inline-block rotate-2 bg-sangre px-3.5 py-1.5 text-papel shadow-[3px_3px_0_var(--papel)] transition-transform hover:rotate-0"
           >
             Agenda
           </Link>
           <Link
             href="/suscribite"
-            className="inline-block -rotate-2 bg-acido px-3 py-1 text-tinta shadow-[3px_3px_0_var(--sangre)] transition-transform hover:rotate-0"
+            className="inline-block -rotate-2 bg-acido px-3.5 py-1.5 text-tinta shadow-[3px_3px_0_var(--sangre)] transition-transform hover:rotate-0"
           >
             Suscribite
           </Link>

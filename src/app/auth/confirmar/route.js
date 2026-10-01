@@ -2,29 +2,31 @@ import { NextResponse } from "next/server";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 
 /**
- * Destino del link que llega por mail al registrarse.
+ * Vuelta del login con Google.
  *
- * Supabase manda al usuario acá con un código de un solo uso. Lo canjeamos por
- * una sesión (eso deja la cuenta confirmada y logueada) y lo llevamos al
- * inicio. Si el código no sirve, lo mandamos al login con un aviso.
+ * Supabase manda al usuario acá con un código de un solo uso. Lo canjeamos
+ * por una sesión (eso deja las cookies de login) y lo llevamos a donde
+ * quería ir. Si canceló en Google o el código no sirve, vuelve al login con
+ * un aviso.
  */
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const tokenHash = searchParams.get("token_hash");
-  const type = searchParams.get("type");
+  const siguiente = searchParams.get("siguiente");
 
-  const supabase = await crearClienteServidor();
+  // Solo rutas internas, para que nadie arme un link que redirija a otro sitio.
+  const destino =
+    siguiente?.startsWith("/") && !siguiente.startsWith("//") ? siguiente : "/";
 
-  let error = new Error("Link incompleto");
+  if (searchParams.get("error")) {
+    return NextResponse.redirect(`${origin}/login?aviso=cancelado`);
+  }
+
   if (code) {
-    ({ error } = await supabase.auth.exchangeCodeForSession(code));
-  } else if (tokenHash && type) {
-    ({ error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type }));
+    const supabase = await crearClienteServidor();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) return NextResponse.redirect(`${origin}${destino}`);
   }
 
-  if (error) {
-    return NextResponse.redirect(`${origin}/login?aviso=link-invalido`);
-  }
-  return NextResponse.redirect(`${origin}/`);
+  return NextResponse.redirect(`${origin}/login?aviso=link-invalido`);
 }

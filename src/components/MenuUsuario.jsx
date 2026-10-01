@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Avatar from "@/components/Avatar";
 import { crearClienteNavegador } from "@/lib/supabase/navegador";
 
 /**
- * Parte del header que depende de quién está mirando: "Entrar" para
- * visitantes, o el nombre y el botón de salir para quien inició sesión.
+ * Parte del header que depende de quién está mirando.
+ *
+ * Visitante: un botón "Entrar" que despliega iniciar sesión y registrarse.
+ * Logueado: su nombre, que despliega perfil, configuración y cerrar sesión.
  *
  * Es un componente de cliente a propósito. Si el header leyera la sesión en
  * el servidor, todas las páginas pasarían a generarse en cada visita; así
@@ -32,7 +35,7 @@ export default function MenuUsuario() {
       }
       const { data: fila } = await supabase
         .from("perfiles")
-        .select("nombre, rol")
+        .select("nombre, rol, avatar_url")
         .eq("id", data.user.id)
         .maybeSingle();
       if (vigente) setPerfil(fila ?? { nombre: data.user.email, rol: "usuario" });
@@ -58,14 +61,15 @@ export default function MenuUsuario() {
 
   // Mientras carga, un lugar vacío del mismo tamaño para que el header no salte.
   if (perfil === undefined) {
-    return <span className="inline-block h-8 w-20" aria-hidden="true" />;
+    return <span className="inline-block h-9 w-28" aria-hidden="true" />;
   }
 
+  // Con Google, entrar y registrarse son lo mismo: un solo botón alcanza.
   if (perfil === null) {
     return (
       <Link
         href="/login"
-        className="papel inline-block rotate-1 px-3 py-1 transition-transform hover:rotate-0 hover:bg-acido"
+        className="papel inline-block rotate-1 px-3 py-1.5 transition-transform hover:rotate-0 hover:bg-acido"
       >
         Entrar
       </Link>
@@ -73,18 +77,111 @@ export default function MenuUsuario() {
   }
 
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className="max-w-40 truncate font-marcador normal-case text-acido" title={perfil.nombre}>
-        {perfil.nombre}
-      </span>
-      {perfil.rol === "admin" && <span className="sello bg-papel text-xs">Admin</span>}
+    <Desplegable
+      etiquetaAccesible={`Menú de ${perfil.nombre}`}
+      clasesBoton="-rotate-1 border-2 border-acido px-3 py-1 hover:bg-acido/15"
+      etiqueta={
+        <>
+          {perfil.avatar_url && <Avatar url={perfil.avatar_url} tamano={28} />}
+          <span
+            className="max-w-36 truncate font-marcador normal-case text-acido"
+            title={perfil.nombre}
+          >
+            {perfil.nombre}
+          </span>
+          {perfil.rol === "admin" && <span className="sello bg-papel text-xs">Admin</span>}
+        </>
+      }
+    >
+      <Opcion href="/perfil">Perfil</Opcion>
+      <Opcion href="/configuracion">Configuración</Opcion>
+      <Opcion onClick={salir}>Cerrar sesión</Opcion>
+    </Desplegable>
+  );
+}
+
+/**
+ * Botón que abre y cierra un panel de opciones.
+ *
+ * Se cierra al elegir una opción, al hacer clic afuera y al apretar Escape.
+ * No usa `role="menu"`: para un panel de enlaces
+ * alcanza con `aria-expanded`, y así se recorre con Tab como el resto del
+ * header, sin prometer una navegación por flechas que no implementamos.
+ */
+function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
+  const [abierto, setAbierto] = useState(false);
+  const caja = useRef(null);
+
+  // Los escuchas se agregan solo mientras está abierto, y se sacan al cerrar.
+  useEffect(() => {
+    if (!abierto) return;
+
+    function alApuntar(evento) {
+      if (!caja.current?.contains(evento.target)) setAbierto(false);
+    }
+    function alTeclear(evento) {
+      if (evento.key === "Escape") setAbierto(false);
+    }
+
+    document.addEventListener("pointerdown", alApuntar);
+    document.addEventListener("keydown", alTeclear);
+    return () => {
+      document.removeEventListener("pointerdown", alApuntar);
+      document.removeEventListener("keydown", alTeclear);
+    };
+  }, [abierto]);
+
+  return (
+    <div ref={caja} className="relative">
       <button
         type="button"
-        onClick={salir}
-        className="papel inline-block -rotate-1 px-2 py-1 uppercase transition-transform hover:rotate-0 hover:bg-sangre hover:text-papel"
+        aria-expanded={abierto}
+        aria-label={etiquetaAccesible}
+        onClick={() => setAbierto((v) => !v)}
+        className={`inline-flex items-center gap-2 transition-transform hover:rotate-0 ${clasesBoton}`}
       >
-        Salir
+        {etiqueta}
+        <span
+          aria-hidden="true"
+          className={`text-[0.6em] leading-none transition-transform ${abierto ? "rotate-180" : ""}`}
+        >
+          ▼
+        </span>
       </button>
-    </span>
+
+      {abierto && (
+        // El clic en el panel cierra: cubre tanto el mouse como el Enter
+        // sobre un enlace, que también dispara un evento de clic.
+        //
+        // En celular el botón queda a la izquierda del renglón y un panel
+        // anclado a la derecha se saldría de la pantalla; desde `sm` la
+        // navegación va alineada a la derecha y el anclaje se invierte.
+        <ul
+          onClick={() => setAbierto(false)}
+          className="papel absolute left-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] -rotate-1 border-2 border-tinta p-1 shadow-[5px_5px_0_rgba(0,0,0,0.6)] sm:left-auto sm:right-0"
+        >
+          {children}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function Opcion({ href, onClick, children }) {
+  const clases =
+    "block w-full px-3 py-2 text-left font-titular text-base uppercase tracking-wide text-tinta transition-colors hover:bg-acido";
+
+  return (
+    <li>
+      {href ? (
+        <Link href={href} className={clases}>
+          {children}
+        </Link>
+      ) : (
+        <button type="button" onClick={onClick} className={clases}>
+          {children}
+        </button>
+      )}
+    </li>
   );
 }

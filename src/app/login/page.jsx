@@ -1,16 +1,20 @@
-import Link from "next/link";
-import FormularioAuth from "@/components/FormularioAuth";
+import BotonGoogle from "@/components/BotonGoogle";
 import Recorte from "@/components/Recorte";
 
 export const metadata = {
   title: "Entrar",
-  description: "Iniciá sesión en la revista.",
+  description: "Entrá a la revista con tu cuenta de Google.",
 };
 
 const avisos = {
-  "link-invalido": "El link del mail no sirve o ya se usó. Probá entrar o registrate de nuevo.",
+  cancelado: "Cancelaste el ingreso con Google. Cuando quieras, probá de nuevo.",
+  "link-invalido": "No se pudo completar el ingreso. Probá de nuevo.",
 };
 
+/**
+ * Única puerta de entrada: no hay registro aparte. La primera vez que alguien
+ * entra con Google, se le crea la cuenta y el perfil.
+ */
 export default async function LoginPage({ searchParams }) {
   const { aviso, siguiente } = await searchParams;
 
@@ -30,15 +34,8 @@ export default async function LoginPage({ searchParams }) {
       )}
 
       <div className="cinta mt-12 rotate-1">
-        <FormularioAuth modo="login" siguiente={siguiente} />
+        <BotonGoogle siguiente={siguiente} />
       </div>
-
-      <p className="mt-10">
-        ¿No tenés cuenta?{" "}
-        <Link href="/registro" className="font-bold text-acido underline decoration-sangre decoration-2 underline-offset-4">
-          Registrate gratis
-        </Link>
-      </p>
     </div>
   );
 }
