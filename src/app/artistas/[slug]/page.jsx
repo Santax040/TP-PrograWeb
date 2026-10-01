@@ -40,14 +40,14 @@ export default async function ArtistaPage({ params }) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
-      <header className="border-b border-hormigon pb-12">
-        <p className="font-mono text-xs uppercase tracking-[0.22em] text-acero">
+      <header className="cartel relative overflow-hidden px-6 py-12 sm:px-12">
+        <p className="font-ancha text-[0.65rem] uppercase text-white/80">
           {artista.genero}
         </p>
-        <h1 className="titular-apretado mt-4 font-titular text-5xl font-semibold text-pizarra sm:text-7xl">
+        <h1 className="titular-apretado resplandor mt-6 font-titular text-5xl font-extralight lowercase sm:text-7xl">
           {artista.nombre}
         </h1>
-        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-acero">{artista.bio}</p>
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/85">{artista.bio}</p>
       </header>
 
       {fechas.length > 0 && (
@@ -74,7 +74,7 @@ export default async function ArtistaPage({ params }) {
 
       <Link
         href="/agenda"
-        className="mt-16 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
+        className="etiqueta mt-16 text-cobalto transition-colors hover:bg-cobalto hover:text-white"
       >
         ← Volver a la agenda
       </Link>

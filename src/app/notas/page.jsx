@@ -16,10 +16,10 @@ export default async function NotasPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
       <header className="mb-16">
-        <h1 className="text-4xl sm:text-6xl">
+        <h1 className="text-5xl sm:text-7xl">
           <Titular texto="Notas" volanta="Archivo completo" />
         </h1>
-        <p className="mt-6 text-base leading-relaxed text-acero">
+        <p className="mt-6 text-base leading-relaxed text-humo">
           {articulos.length} publicadas, de la más nueva a la más vieja.
         </p>
       </header>

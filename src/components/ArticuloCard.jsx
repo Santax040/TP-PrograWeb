@@ -15,11 +15,11 @@ export default function ArticuloCard({ articulo, destacado = false }) {
       <Link href={`/notas/${articulo.slug}`} className="group flex h-full flex-col">
         <div className={`bruma relative ${destacado ? "h-72 sm:h-96" : "h-44"}`}>
           <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
-          <span className="absolute left-4 top-4 z-[1] bg-vidrio/90 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-pizarra">
+          <span className="absolute left-4 top-4 z-[2] rounded-full border border-white/60 bg-white/25 px-3 py-1 font-ancha text-[0.6rem] uppercase text-white backdrop-blur-md">
             {categoria?.nombre}
           </span>
           {articulo.premium && (
-            <span className="etiqueta absolute bottom-4 right-4 z-[1] bg-vidrio/90 text-acero">
+            <span className="etiqueta absolute bottom-4 right-4 z-[2] bg-marino/60 text-cian backdrop-blur-md">
               Suscriptores
             </span>
           )}
@@ -27,18 +27,18 @@ export default function ArticuloCard({ articulo, destacado = false }) {
 
         <div className={`flex flex-1 flex-col gap-3 ${destacado ? "p-7 sm:p-9" : "p-6"}`}>
           <h3
-            className={`titular-apretado font-titular font-semibold text-pizarra ${
-              destacado ? "text-3xl sm:text-4xl" : "text-xl"
+            className={`titular-apretado font-titular font-light lowercase text-marino ${
+              destacado ? "text-3xl sm:text-5xl" : "text-2xl"
             }`}
           >
             <span className="subrayado group-hover:subrayado-activo">{articulo.titulo}</span>
           </h3>
 
-          <p className={`leading-relaxed text-acero ${destacado ? "text-base" : "text-sm"}`}>
+          <p className={`leading-relaxed text-humo ${destacado ? "text-base" : "text-sm"}`}>
             {articulo.bajada}
           </p>
 
-          <p className="mt-auto pt-4 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+          <p className="mt-auto border-t border-white/70 pt-4 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalto">
             {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
           </p>
         </div>

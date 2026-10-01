@@ -41,22 +41,22 @@ export default async function EventoPage({ params }) {
       <article className="tarjeta">
         <div className="bruma relative h-56 sm:h-72">
           <div className={`h-full w-full bg-gradient-to-br ${evento.portada}`} />
-          <span className="absolute left-5 top-5 z-[1] bg-vidrio/90 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-pizarra">
+          <span className="absolute left-5 top-5 z-[2] rounded-full border border-white/60 bg-white/25 px-3 py-1 font-ancha text-[0.6rem] uppercase text-white backdrop-blur-md">
             {evento.genero}
           </span>
         </div>
 
         <div className="px-6 py-12 sm:px-12">
-          <h1 className="titular-apretado font-titular text-3xl font-semibold text-pizarra sm:text-5xl">
+          <h1 className="titular-apretado font-titular text-4xl font-extralight lowercase text-marino sm:text-6xl">
             {evento.nombre}
           </h1>
 
-          <ul className="mt-12 flex flex-col gap-2 border-y border-hormigon py-10">
+          <ul className="mt-12 flex flex-col gap-3 border-y border-white/80 py-10">
             {ordenado.map((a, i) => (
               <li key={a.slug}>
                 <Link
                   href={`/artistas/${a.slug}`}
-                  className={`titular-apretado font-titular font-semibold text-pizarra transition-colors hover:text-agua ${
+                  className={`titular-apretado font-titular font-light lowercase text-marino transition-colors hover:text-cobalto ${
                     tamanosLineup[Math.min(i, tamanosLineup.length - 1)]
                   }`}
                 >
@@ -66,30 +66,30 @@ export default async function EventoPage({ params }) {
             ))}
           </ul>
 
-          <p className="mt-10 max-w-lg text-lg leading-relaxed text-acero">{evento.descripcion}</p>
+          <p className="mt-10 max-w-lg text-lg leading-relaxed text-humo">{evento.descripcion}</p>
 
-          <dl className="mt-12 grid gap-px border border-hormigon bg-hormigon sm:grid-cols-3">
-            <div className="bg-vidrio p-5">
-              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+          <dl className="cartel mt-12 grid gap-px overflow-hidden sm:grid-cols-3">
+            <div className="p-5">
+              <dt className="font-ancha text-[0.55rem] uppercase text-white/70">
                 Fecha
               </dt>
-              <dd className="mt-2 font-titular text-base text-pizarra">
+              <dd className="mt-2 font-titular text-base font-light lowercase">
                 {formatearFecha(evento.fecha)}
               </dd>
             </div>
-            <div className="bg-vidrio p-5">
-              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+            <div className="p-5">
+              <dt className="font-ancha text-[0.55rem] uppercase text-white/70">
                 Dónde
               </dt>
-              <dd className="mt-2 font-titular text-base text-pizarra">
+              <dd className="mt-2 font-titular text-base font-light lowercase">
                 {evento.lugar}, {evento.ciudad}
               </dd>
             </div>
-            <div className="bg-vidrio p-5">
-              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+            <div className="p-5">
+              <dt className="font-ancha text-[0.55rem] uppercase text-white/70">
                 Entradas desde
               </dt>
-              <dd className="mt-2 font-mono text-xl text-agua">
+              <dd className="resplandor mt-2 font-mono text-xl text-cian">
                 {formatearPrecio(evento.precioDesde)}
               </dd>
             </div>
@@ -99,7 +99,7 @@ export default async function EventoPage({ params }) {
 
       <Link
         href="/agenda"
-        className="mt-14 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
+        className="etiqueta mt-14 text-cobalto transition-colors hover:bg-cobalto hover:text-white"
       >
         ← Volver a la agenda
       </Link>

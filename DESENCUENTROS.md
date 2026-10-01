@@ -11,6 +11,45 @@ Entrada más reciente arriba.
 
 ---
 
+## #3 — La primera versión de Gen X Soft Club no se parecía a la onda
+**Fecha:** 2026-10-01
+**Tipo:** interpretación estética
+
+**Lo que se pidió**
+Cambiar la estética de la revista a Gen X Soft Club.
+
+**Lo que se hizo**
+Una versión clara y fría: fondo gris casi blanco, tarjetas blancas planas,
+acentos celeste apagado y verde musgo, fotos desaturadas. Se armó a partir de
+la descripción del concepto (señalética, minimalismo, plantas entre el
+cemento), no de imágenes.
+
+**Dónde estuvo la diferencia**
+Al usuario no le gustó. Las referencias que dejó después en la carpeta
+`Gen X Soft Club` muestran otra cosa: azul cobalto y cian saturados, brillo,
+fotos movidas teñidas de azul, vidrio, letra minúscula y ancha. Lo que se hizo
+quedó demasiado sobrio, más cerca de un sitio corporativo que de un flyer de
+trip-hop del 2000.
+
+**Por qué pasó**
+"Gen X Soft Club" es un nombre de nicho y se lo tradujo desde su definición
+escrita. La parte "soft" se leyó como "apagado", cuando en las imágenes es
+"difuso y luminoso". No se pidieron referencias antes de diseñar.
+
+**Qué se cambia**
+- Ante un pedido estético con nombre propio (una "onda", un "mood"), pedir
+  imágenes de referencia antes de diseñar, o mostrar una muestra chica antes
+  de rehacer todo el sitio.
+- Cuando hay referencias, diseñar mirándolas y anotar en la bitácora qué se
+  tomó de cada una.
+
+**Cómo se resolvió**
+Segunda versión hecha a partir de las seis imágenes (bitácora, entrada (5)).
+
+**Estado:** a confirmar por el usuario.
+
+---
+
 ## #2 — La base y el login "no cambiaron nada" en la página
 **Fecha:** 2026-10-01
 **Tipo:** comunicación (repetición de #0.3)

@@ -27,10 +27,10 @@ export default async function AgendaPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
       <header className="mb-16">
-        <h1 className="text-4xl sm:text-6xl">
+        <h1 className="text-5xl sm:text-7xl">
           <Titular texto="Agenda" volanta="Próximas fechas" />
         </h1>
-        <p className="mt-6 text-base leading-relaxed text-acero">
+        <p className="mt-6 text-base leading-relaxed text-humo">
           {eventos.length} fechas confirmadas.
         </p>
       </header>
@@ -38,7 +38,7 @@ export default async function AgendaPage() {
       <div className="flex flex-col gap-16">
         {[...porMes.entries()].map(([mes, delMes]) => (
           <section key={mes}>
-            <h2 className="mb-6 border-b border-hormigon pb-3 font-mono text-xs uppercase tracking-[0.22em] text-acero">
+            <h2 className="mb-6 flex items-center gap-4 font-ancha text-[0.65rem] uppercase text-cobalto after:h-px after:flex-1 after:bg-white/80">
               {mes}
             </h2>
             <div className="flex flex-col gap-4">

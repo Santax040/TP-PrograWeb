@@ -69,7 +69,7 @@ export default function MenuUsuario() {
     return (
       <Link
         href="/login"
-        className="tarjeta inline-block px-4 py-1.5 font-titular text-sm uppercase tracking-[0.1em] text-pizarra transition-colors hover:text-agua"
+        className="inline-block rounded-full border border-white/80 px-4 py-1.5 text-sm text-white transition-colors hover:bg-white/15"
       >
         Entrar
       </Link>
@@ -79,17 +79,17 @@ export default function MenuUsuario() {
   return (
     <Desplegable
       etiquetaAccesible={`Menú de ${perfil.nombre}`}
-      clasesBoton="tarjeta px-3 py-1.5"
+      clasesBoton="rounded-full border border-white/80 py-1 pl-1 pr-3 text-white transition-colors hover:bg-white/15"
       etiqueta={
         <>
           {perfil.avatar_url && <Avatar url={perfil.avatar_url} tamano={28} />}
           <span
-            className="max-w-36 truncate font-texto text-sm font-semibold normal-case text-pizarra"
+            className="max-w-36 truncate font-texto text-sm font-semibold normal-case text-white"
             title={perfil.nombre}
           >
             {perfil.nombre}
           </span>
-          {perfil.rol === "admin" && <span className="etiqueta text-musgo">Admin</span>}
+          {perfil.rol === "admin" && <span className="etiqueta text-cian">Admin</span>}
         </>
       }
     >
@@ -158,7 +158,7 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
         // navegación va alineada a la derecha y el anclaje se invierte.
         <ul
           onClick={() => setAbierto(false)}
-          className="absolute left-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] border border-hormigon bg-vidrio p-1 shadow-[0_12px_32px_-16px_rgba(27,36,39,0.4)] sm:left-auto sm:right-0"
+          className="absolute left-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl border border-white bg-white/85 p-1.5 shadow-[0_18px_40px_-18px_#0b1a3dcc] backdrop-blur-xl sm:left-auto sm:right-0"
         >
           {children}
         </ul>
@@ -169,7 +169,7 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
 
 function Opcion({ href, onClick, children }) {
   const clases =
-    "block w-full px-3 py-2 text-left font-titular text-sm uppercase tracking-[0.1em] text-pizarra transition-colors hover:bg-niebla hover:text-agua";
+    "block w-full rounded-lg px-3 py-2 text-left font-titular text-sm lowercase text-marino transition-colors hover:bg-cobalto hover:text-white";
 
   return (
     <li>

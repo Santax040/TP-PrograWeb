@@ -7,6 +7,86 @@ Los errores y malentendidos se registran aparte, en
 
 ---
 
+## 2026-10-01 (5) — Gen X Soft Club, segunda versión: todo azul, a partir de las referencias
+
+### Qué se pidió
+La primera versión de Gen X Soft Club no le gustó al usuario. Dejó seis
+imágenes de referencia en la carpeta `Gen X Soft Club` (fuera del repo) y pidió
+rehacer **solo el formato**, sin tocar contenido ni funcionalidad.
+
+### Qué muestran las referencias
+- Flyer "gen X soft club": azul hielo, título blanco en minúscula que brilla,
+  datos en versalita ancha, texto alineado a la derecha, renglones de pantalla.
+- Carteles de aeropuerto ("Gates A"): panel azul cobalto con letra blanca y
+  pictogramas.
+- Tapa de Macy Gray y foto de Kate Moss: fotos movidas, teñidas de azul
+  profundo.
+- Cartel de salida de emergencia: brillo cian.
+- PS2: el violeta del logo y los colores saturados.
+
+La versión anterior era gris claro, con verde musgo y tarjetas blancas planas:
+sobria, casi corporativa. Las referencias son lo contrario: **saturadas,
+azules y luminosas**.
+
+### Qué se hizo
+
+| | Versión 1 | Versión 2 |
+|---|---|---|
+| Fondo | gris `#EEF1F3` liso | cielo degradado cobalto → hielo, con manchas de luz cian y lavanda y renglones finos, fijo |
+| Superficies | tarjeta blanca, borde gris, esquinas rectas | vidrio esmerilado (`backdrop-filter`), borde blanco, esquinas redondeadas, brillo cian al pasar |
+| Header | gris translúcido | cartel de aeropuerto: banda cobalto, letra blanca, flecha ↑ |
+| Marquesina | gris, "En cartel" | tablero de salidas: azul noche con letra cian que brilla, "Salidas" |
+| Títulos | Archivo semibold | Lexend extralight en minúscula |
+| Etiquetas | rectangulares, Archivo | píldoras en Lexend Zetta (extra ancha) |
+| Fotos | desaturadas, velo celeste | blanco y negro teñido cobalto → cian, renglones y barrido de luz |
+| Portada | título negro sobre gris | hero tipo flyer: panel cobalto, título blanco con resplandor, descripción a la derecha |
+| Footer | gris | azul noche con un halo cobalto |
+
+**Tokens** (`globals.css`), renombrados porque los valores cambiaron de
+significado:
+
+| Antes | Ahora | Valor |
+|---|---|---|
+| `niebla` | `cielo` | `#C9D8F2` |
+| `vidrio` | `escarcha` | `#FFFFFF` |
+| `hormigon` | `linea` | blanco translúcido |
+| `pizarra` | `marino` | `#0B1A3D` |
+| `acero` | `humo` | `#445A8A` |
+| `agua` | `cobalto` | `#1F45D6` |
+| `musgo` | `lavanda` | `#7B6CFF` |
+| — | `cian` | `#7FF4FF`, solo para brillos sobre fondo oscuro |
+
+**Piezas nuevas:** `.cartel` (panel cobalto con letra blanca, se usa en el
+hero, el bloque de fecha de los eventos, los botones principales, los datos
+del evento y la cabecera del artista), `resplandor` (brillo de letra) y
+`linea-brillo` (línea degradé debajo de los títulos).
+
+**Tipografías:** salen Archivo; entran Lexend (títulos) y Lexend Zetta (logo
+y etiquetas). Quedan Mulish para el texto corrido e IBM Plex Mono para fechas.
+
+### Decisiones
+- **Minúscula por CSS, no en el texto.** Los textos siguen escritos igual
+  ("Agenda", "Suscribite"); la clase `lowercase` los muestra en minúscula. Si
+  se vuelve atrás, no hay que reescribir contenido.
+- **El cian solo va sobre fondo oscuro.** Sobre el cielo claro no se lee; ahí
+  el acento es el cobalto.
+- **El header es pegajoso solo desde tablet.** En celular ocupa dos renglones
+  y tapaba un cuarto de la pantalla al bajar.
+- **Bug encontrado al verificar:** las fotos se veían grises. La foto tiene
+  `transform` (para el zoom al pasar), y eso hacía que se pintara por encima
+  del velo azul. Se subió el velo a `z-index: 1` y las etiquetas sobre la foto
+  a `z-[2]`.
+
+### Verificado en `localhost:3000`
+- Portada, nota, agenda, evento, suscribite y login en 1440px y en 375px. Sin
+  scroll horizontal en celular. Sin errores en la consola.
+- `npx eslint src` limpio y `npm run build` sin errores.
+
+**Pendiente:** ver el menú desplegable del usuario con una sesión abierta, y
+publicarlo (está en la rama `rediseno-gxsc`, no en `main`).
+
+---
+
 ## 2026-10-01 (4) — Login con Google (OAuth) en lugar de mail y contraseña
 
 ### Qué se pidió

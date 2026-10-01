@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }) {
       </header>
 
       {avisos[aviso] && (
-        <p role="status" className="mb-8 border-l-2 border-agua bg-vidrio px-4 py-3 text-sm text-pizarra">
+        <p role="status" className="tarjeta mb-8 border-l-4 !border-l-cobalto px-4 py-3 text-sm text-marino">
           {avisos[aviso]}
         </p>
       )}

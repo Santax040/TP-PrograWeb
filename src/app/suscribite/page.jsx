@@ -12,20 +12,20 @@ export default function SuscribitePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
       <header className="mb-16">
-        <h1 className="text-4xl sm:text-6xl">
+        <h1 className="text-5xl sm:text-7xl">
           <Titular texto="Suscribite" volanta="Planes" />
         </h1>
-        <p className="mt-6 max-w-xl text-base leading-relaxed text-acero">
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-humo">
           Bancá la revista y leé todo lo que no se publica abierto.
         </p>
       </header>
 
       {!pagosActivos && (
-        <div className="mb-16 max-w-2xl border-l-2 border-agua bg-vidrio px-5 py-4">
-          <p className="font-titular text-sm uppercase tracking-[0.1em] text-pizarra">
+        <div className="tarjeta mb-16 max-w-2xl border-l-4 !border-l-cobalto px-6 py-5">
+          <p className="font-titular text-lg font-light lowercase text-marino">
             Todavía no se puede pagar
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-acero">
+          <p className="mt-2 text-sm leading-relaxed text-humo">
             Los pagos están en camino. Mientras tanto, las notas exclusivas se leen
             gratis.
           </p>
@@ -37,27 +37,27 @@ export default function SuscribitePage() {
           <article
             key={plan.slug}
             className={`tarjeta relative flex flex-col p-7 ${
-              plan.destacado ? "border-agua" : ""
+              plan.destacado ? "!border-cobalto ring-1 ring-cian shadow-[0_0_32px_-6px_#7ff4ffb3]" : ""
             }`}
           >
             {plan.destacado && (
-              <span className="etiqueta absolute right-6 top-6 text-agua">Conviene</span>
+              <span className="etiqueta absolute right-6 top-6 text-cobalto">Conviene</span>
             )}
 
-            <h2 className="font-titular text-2xl font-semibold uppercase tracking-[0.06em] text-pizarra">
+            <h2 className="font-titular text-3xl font-extralight lowercase text-marino">
               {plan.nombre}
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-acero">{plan.bajada}</p>
+            <p className="mt-2 text-sm leading-relaxed text-humo">{plan.bajada}</p>
 
-            <p className="mt-8 border-y border-hormigon py-6">
+            <p className="mt-8 border-y border-white/80 py-6">
               {plan.precio === 0 ? (
-                <span className="font-mono text-4xl text-pizarra">Gratis</span>
+                <span className="font-titular text-4xl font-extralight lowercase text-cobalto">Gratis</span>
               ) : (
                 <>
-                  <span className="font-mono text-4xl text-pizarra">
+                  <span className="font-titular text-4xl font-extralight text-cobalto">
                     {formatearPrecio(plan.precio)}
                   </span>
-                  <span className="ml-2 font-mono text-xs uppercase tracking-[0.18em] text-acero">
+                  <span className="ml-2 font-mono text-xs uppercase tracking-[0.18em] text-humo">
                     / {plan.periodo}
                   </span>
                 </>
@@ -66,9 +66,9 @@ export default function SuscribitePage() {
 
             <ul className="mt-8 flex flex-1 flex-col gap-3">
               {plan.beneficios.map((b) => (
-                <li key={b} className="flex gap-3 text-sm leading-relaxed text-acero">
-                  <span aria-hidden="true" className="text-musgo">
-                    —
+                <li key={b} className="flex gap-3 text-sm leading-relaxed text-humo">
+                  <span aria-hidden="true" className="text-lavanda">
+                    ◆
                   </span>
                   {b}
                 </li>
@@ -79,12 +79,12 @@ export default function SuscribitePage() {
               {plan.precio === 0 ? (
                 <Link
                   href="/notas"
-                  className="block bg-pizarra px-4 py-3 text-center font-titular text-sm uppercase tracking-[0.1em] text-niebla transition-colors hover:bg-agua"
+                  className="cartel block !rounded-full px-4 py-3 text-center font-titular text-sm lowercase transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
                 >
                   Empezar a leer
                 </Link>
               ) : (
-                <p className="border border-hormigon px-4 py-3 text-center font-titular text-sm uppercase tracking-[0.1em] text-acero">
+                <p className="rounded-full border border-white px-4 py-3 text-center font-titular text-sm lowercase text-humo">
                   Próximamente
                 </p>
               )}
@@ -93,7 +93,7 @@ export default function SuscribitePage() {
         ))}
       </div>
 
-      <p className="mt-16 max-w-xl text-sm text-acero">
+      <p className="mt-16 max-w-xl text-sm text-humo">
         Precios ficticios. Este sitio es un trabajo práctico y no procesa pagos.
       </p>
     </div>

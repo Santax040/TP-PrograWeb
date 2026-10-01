@@ -1,141 +1,218 @@
 @import "tailwindcss";
 
 /*
- * Estética Gen X Soft Club: el futurismo tranquilo de fines de los 90 y
- * principios de los 2000. Superficies claras y frías, mucho aire, bordes de
- * un pixel, tipografía humanista de señalética y fotos lavadas. Nada girado,
- * nada hecho a mano: todo alineado a una grilla, como un andén o un aeropuerto.
+ * Estética Gen X Soft Club, segunda versión. Sale de las imágenes de
+ * referencia de la carpeta "Gen X Soft Club": flyers de trip-hop en azul
+ * hielo, carteles de aeropuerto azul cobalto con letra blanca, fotos movidas
+ * y teñidas de azul, el brillo cian de un cartel de salida de emergencia.
+ *
+ * Todo es azul: el fondo es un cielo degradado, las superficies son vidrio
+ * esmerilado y los títulos van en minúscula, finos y anchos.
  */
 :root {
-  --niebla: #eef1f3;      /* fondo general, blanco con tinte frío */
-  --vidrio: #ffffff;      /* tarjetas y superficies elevadas */
-  --hormigon: #d9e0e3;    /* bordes, separadores, superficies apagadas */
-  --pizarra: #1b2427;     /* texto principal, casi negro azulado */
-  --acero: #67787f;       /* texto secundario y metadatos */
-  --agua: #7fa8b8;        /* acento frío: enlaces, estados activos */
-  --musgo: #8da88f;       /* el verde de las plantas entre el cemento */
+  --cielo: #c9d8f2;       /* fondo general, azul hielo */
+  --escarcha: #ffffff;    /* superficies: se usa con transparencia, como vidrio */
+  --linea: #ffffffb3;     /* bordes de vidrio, blanco translúcido */
+  --marino: #0b1a3d;      /* texto principal y fondos oscuros, azul noche */
+  --humo: #445a8a;        /* texto secundario y metadatos */
+  --cobalto: #1f45d6;     /* el azul de los carteles: acentos, botones, header */
+  --lavanda: #7b6cff;     /* acento secundario, el violeta del logo de PS2 */
+  --cian: #7ff4ff;        /* brillo: el cartel de salida, solo sobre fondo oscuro */
 }
 
 @theme inline {
-  --color-niebla: var(--niebla);
-  --color-vidrio: var(--vidrio);
-  --color-hormigon: var(--hormigon);
-  --color-pizarra: var(--pizarra);
-  --color-acero: var(--acero);
-  --color-agua: var(--agua);
-  --color-musgo: var(--musgo);
-  --font-titular: var(--font-archivo);
+  --color-cielo: var(--cielo);
+  --color-escarcha: var(--escarcha);
+  --color-linea: var(--linea);
+  --color-marino: var(--marino);
+  --color-humo: var(--humo);
+  --color-cobalto: var(--cobalto);
+  --color-lavanda: var(--lavanda);
+  --color-cian: var(--cian);
+  --font-titular: var(--font-lexend);
+  --font-ancha: var(--font-lexend-zetta);
   --font-texto: var(--font-mulish);
   --font-mono: var(--font-plex-mono);
 }
 
+/*
+ * Fondo: un cielo que va del cobalto arriba al hielo abajo, con dos manchas
+ * de luz desenfocadas (cian y lavanda) y renglones finos como de pantalla.
+ * Queda fijo: el contenido se desliza por encima, como detrás de un vidrio.
+ */
 body {
-  background-color: var(--niebla);
-  color: var(--pizarra);
+  background-color: var(--cielo);
+  background-image:
+    repeating-linear-gradient(0deg, #ffffff14 0 1px, transparent 1px 4px),
+    radial-gradient(60% 45% at 12% 8%, #7ff4ff73, transparent 70%),
+    radial-gradient(50% 40% at 92% 35%, #7b6cff4d, transparent 70%),
+    radial-gradient(70% 50% at 50% 100%, #ffffffb3, transparent 70%),
+    linear-gradient(180deg, #8fb0ee 0%, #bccff2 38%, #dfe8f8 100%);
+  background-attachment: fixed;
+  color: var(--marino);
   font-family: var(--font-mulish), ui-sans-serif, system-ui, sans-serif;
 }
 
 ::selection {
-  background: var(--agua);
-  color: var(--vidrio);
+  background: var(--cian);
+  color: var(--marino);
 }
 
-/* El foco se ve siempre, y en el color de acento. */
 :focus-visible {
-  outline: 2px solid var(--agua);
+  outline: 2px solid var(--cobalto);
   outline-offset: 2px;
+  box-shadow: 0 0 0 5px #7ff4ff99;
 }
 
 /* --- Piezas ------------------------------------------------------------- */
 
-/* Superficie elevada: blanca, borde de un pixel, sombra apenas perceptible. */
+/*
+ * Vidrio esmerilado: blanco translúcido, desenfoca lo que hay detrás, borde
+ * blanco y esquinas redondeadas. Al pasar por encima se enciende un brillo
+ * cian, como un cartel que se prende.
+ */
 .tarjeta {
-  background-color: var(--vidrio);
-  border: 1px solid var(--hormigon);
-  transition: border-color 200ms, box-shadow 200ms, transform 200ms;
+  overflow: hidden;
+  border: 1px solid var(--linea);
+  border-radius: 14px;
+  background-color: #ffffff80;
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 #ffffffe6,
+    0 14px 34px -20px #1f45d673;
+  transition: border-color 250ms, box-shadow 250ms, transform 250ms;
 }
 .tarjeta:hover {
-  border-color: var(--agua);
-  box-shadow: 0 8px 24px -12px rgba(27, 36, 39, 0.25);
+  border-color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 0 0 1px #7ff4ffcc,
+    0 0 28px -4px #7ff4ffb3,
+    0 18px 40px -22px #1f45d6a6;
+  transform: translateY(-2px);
 }
 
-/* Etiqueta chica de señalética: versalita, borde fino, nada de relleno fuerte. */
+/* Panel de cartel: azul cobalto lleno, letra blanca. Como "Gates A". */
+.cartel {
+  border-radius: 14px;
+  background-color: var(--cobalto);
+  background-image:
+    linear-gradient(180deg, #ffffff2e, transparent 45%),
+    linear-gradient(120deg, #2a55ee, #1736b0);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 #ffffff66,
+    0 18px 40px -22px #0b1a3dcc;
+}
+
+/*
+ * Etiqueta chica: píldora con letra ancha en versalita, como los datos del
+ * flyer ("THE VIRGIL · 3.07.26 · 10PM").
+ */
 .etiqueta {
   display: inline-block;
   border: 1px solid currentColor;
-  padding: 2px 8px;
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 0.7rem;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-family: var(--font-lexend-zetta), sans-serif;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   line-height: 1.6;
 }
 
 /*
- * Tratamiento de foto: desaturada, fría y apenas desenfocada, como una foto
- * sacada al pasar por la ventanilla. Es la marca visual de la estética.
+ * Tratamiento de foto: todo pasa a azul. Primero se lleva la imagen a
+ * blanco y negro y después se la tiñe con un degradé cobalto → cian, así
+ * cualquier portada (las de la base vienen en fucsias y naranjas) termina
+ * en la misma gama. Encima, renglones finos y un barrido de luz que simula
+ * la foto movida. Los velos van con `z-index: 1` porque la foto tiene
+ * `transform` y, si no, se pintaría por encima de ellos; las etiquetas que
+ * van sobre la foto usan `z-[2]`.
  */
 .bruma {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
 }
 .bruma > :first-child {
-  filter: saturate(0.18) contrast(0.88) brightness(1.16) blur(0.5px);
-  transition: filter 400ms;
+  filter: grayscale(1) contrast(1.15) brightness(1.05) blur(1.5px);
+  transform: scale(1.06);
+  transition: filter 500ms, transform 700ms;
 }
 .bruma:hover > :first-child {
-  filter: saturate(0.45) contrast(0.95) brightness(1.06) blur(0);
+  filter: grayscale(1) contrast(1.2) brightness(1.1) blur(0);
+  transform: scale(1);
 }
-/*
- * Velo frío encima. Las portadas vienen de la base con gradientes fuertes
- * del diseño anterior (fucsias, naranjas); esto las lleva a todas a la misma
- * temperatura sin tener que tocar los datos.
- */
+.bruma::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(160deg, #1f45d6, #5f8cff 45%, #7ff4ff);
+  mix-blend-mode: color;
+  pointer-events: none;
+}
 .bruma::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    170deg,
-    rgba(127, 168, 184, 0.45),
-    rgba(141, 168, 143, 0.22) 55%,
-    rgba(27, 36, 39, 0.18)
-  );
+  z-index: 1;
+  background:
+    repeating-linear-gradient(0deg, #ffffff1f 0 1px, transparent 1px 3px),
+    linear-gradient(100deg, transparent 20%, #ffffff59 48%, transparent 70%),
+    radial-gradient(80% 60% at 85% 15%, #7ff4ff80, transparent 70%);
+  mix-blend-mode: screen;
   pointer-events: none;
 }
 
-/* Subrayado fino que crece al pasar por encima. Reemplaza al resaltador. */
+/* Subrayado fino que crece al pasar por encima. */
 @utility subrayado {
-  background-image: linear-gradient(var(--agua), var(--agua));
+  background-image: linear-gradient(90deg, var(--cobalto), var(--cian));
   background-repeat: no-repeat;
   background-position: 0 100%;
-  background-size: 0% 1px;
+  background-size: 0% 2px;
   transition: background-size 300ms;
 }
 @utility subrayado-activo {
-  background-size: 100% 1px;
+  background-size: 100% 2px;
 }
 
-/* Interlineado ajustado para titulares grandes. */
+/* Interlineado para titulares grandes en minúscula. */
 @utility titular-apretado {
-  letter-spacing: -0.02em;
-  line-height: 0.95;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-/* Primera letra de la nota: grande y en el color de acento, sin estridencia. */
+/* Brillo de letra blanca sobre azul, como el título del flyer. */
+@utility resplandor {
+  text-shadow:
+    0 0 18px #ffffffb3,
+    0 0 42px #7ff4ff99;
+}
+
+/* Línea de degradé cobalto → cian, la firma debajo de los títulos. */
+@utility linea-brillo {
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cobalto), var(--cian));
+  box-shadow: 0 0 12px #7ff4ffb3;
+}
+
+/* Primera letra de la nota: grande, fina y en cobalto. */
 .capitular::first-letter {
   float: left;
-  margin: 0.1em 0.1em 0 0;
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 3.6em;
-  font-weight: 600;
+  margin: 0.08em 0.12em 0 0;
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 3.8em;
+  font-weight: 300;
   line-height: 0.82;
-  color: var(--agua);
+  color: var(--cobalto);
 }
 
 /*
- * Cinta de novedades: acá se lee como el cartel de salidas de una estación.
- * El contenido va duplicado para que el bucle no tenga salto.
+ * Cinta de novedades: el cartel de salidas. Letra cian que brilla sobre
+ * azul noche. El contenido va duplicado para que el bucle no tenga salto.
  */
 @keyframes marquesina {
   from {
@@ -151,7 +228,6 @@ body {
   animation: marquesina 48s linear infinite;
 }
 
-/* Respeta a quien configuró el sistema para reducir animaciones. */
 @media (prefers-reduced-motion: reduce) {
   .marquesina {
     animation: none;

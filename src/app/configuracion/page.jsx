@@ -38,14 +38,14 @@ export default async function ConfiguracionPage() {
 
       <FormularioNombre nombreActual={perfil?.nombre ?? ""} />
 
-      <p className="mt-10 text-sm leading-relaxed text-acero">
+      <p className="mt-10 text-sm leading-relaxed text-humo">
         El mail y la foto los maneja Google: se actualizan solos al volver a entrar.
       </p>
 
       <p className="mt-8">
         <Link
           href="/perfil"
-          className="font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
+          className="etiqueta text-cobalto transition-colors hover:bg-cobalto hover:text-white"
         >
           ← Volver al perfil
         </Link>

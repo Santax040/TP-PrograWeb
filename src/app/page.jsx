@@ -28,17 +28,35 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-20">
-      <section className="mb-24 max-w-3xl">
-        <p className="font-mono text-xs uppercase tracking-[0.22em] text-acero">
-          Revista digital
-        </p>
-        <h1 className="titular-apretado mt-6 font-titular text-5xl font-semibold text-pizarra sm:text-7xl lg:text-8xl">
-          {site.tagline}
-        </h1>
-        <p className="mt-10 max-w-xl text-lg leading-relaxed text-acero">
-          {site.descripcion}
-        </p>
-        <span aria-hidden="true" className="mt-12 block h-px w-24 bg-agua" />
+      {/* Hero con forma de flyer: panel azul, título blanco que brilla,
+          datos en versalita ancha y la descripción alineada a la derecha. */}
+      <section className="cartel relative mb-24 overflow-hidden px-6 py-14 sm:px-12 sm:py-20">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-cian/40 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-32 left-10 h-72 w-96 rounded-full bg-lavanda/50 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,#ffffff14_0_1px,transparent_1px_4px)]"
+        />
+
+        <div className="relative">
+          <p className="flex flex-wrap gap-x-10 gap-y-2 font-ancha text-[0.65rem] uppercase text-white/80">
+            <span>Revista digital</span>
+            <span>Buenos Aires</span>
+            <span>{new Date().getFullYear()}</span>
+          </p>
+          <h1 className="titular-apretado resplandor mt-8 max-w-4xl font-titular text-5xl font-extralight lowercase sm:text-7xl lg:text-8xl">
+            {site.tagline}
+          </h1>
+          <p className="mt-12 ml-auto max-w-sm text-right font-titular text-lg font-light lowercase leading-loose text-white/90 sm:text-xl">
+            {site.descripcion}
+          </p>
+        </div>
       </section>
 
       <section className="mb-28 grid gap-8 lg:grid-cols-3">

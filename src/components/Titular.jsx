@@ -1,28 +1,24 @@
 /**
- * Titular de página.
- *
- * Reemplaza al viejo `Recorte`, que armaba el texto con letras recortadas de
- * revista. Acá la estética es la contraria: una sola tipografía de
- * señalética, bien grande, apretada y alineada, con una línea fina debajo
- * como la de un cartel de andén.
+ * Titular de página, en la letra del flyer: minúscula, fina y grande, con
+ * una volanta en versalita ancha encima y una línea de brillo debajo.
  *
  * @param {Object} props
  * @param {string} props.texto
- * @param {string} [props.volanta] - Línea chica encima, en monoespaciada.
+ * @param {string} [props.volanta] - Línea chica encima, en letra ancha.
  * @param {string} [props.className]
  */
 export default function Titular({ texto, volanta, className = "" }) {
   return (
     <span className={`block ${className}`}>
       {volanta && (
-        <span className="mb-3 block font-mono text-xs uppercase tracking-[0.2em] text-acero">
+        <span className="mb-4 block font-ancha text-[0.65rem] uppercase tracking-[0.08em] text-cobalto">
           {volanta}
         </span>
       )}
-      <span className="titular-apretado block font-titular font-semibold text-pizarra">
+      <span className="titular-apretado block font-titular font-extralight lowercase text-marino">
         {texto}
       </span>
-      <span aria-hidden="true" className="mt-5 block h-px w-16 bg-agua" />
+      <span aria-hidden="true" className="linea-brillo mt-6 block w-20" />
     </span>
   );
 }

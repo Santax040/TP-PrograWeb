@@ -19,27 +19,27 @@ export default function FormularioNombre({ nombreActual }) {
       className="tarjeta flex flex-col gap-6 p-7"
     >
       <label className="flex flex-col gap-1">
-        <span className="font-mono text-xs uppercase tracking-[0.18em] text-acero">Nombre</span>
+        <span className="font-ancha text-[0.6rem] uppercase text-cobalto">Nombre</span>
         <input
           required
           name="nombre"
           maxLength={60}
           autoComplete="nickname"
           defaultValue={estado.nombre ?? nombreActual}
-          className="border border-hormigon bg-niebla px-3 py-2.5 text-pizarra outline-none transition-colors focus:border-agua"
+          className="rounded-lg border border-white bg-white/70 px-3 py-2.5 text-marino outline-none transition-shadow focus:shadow-[0_0_0_1px_#1f45d6,0_0_16px_#7ff4ffb3]"
         />
-        <span className="text-xs text-acero">
+        <span className="text-xs text-humo">
           Es el que aparece en el header. Hasta 60 caracteres.
         </span>
       </label>
 
       {estado.error && (
-        <p role="alert" className="border-l-2 border-agua bg-niebla px-3 py-2 text-sm text-pizarra">
+        <p role="alert" className="rounded-lg border-l-2 border-cobalto bg-white/70 px-3 py-2 text-sm text-marino">
           {estado.error}
         </p>
       )}
       {estado.ok && (
-        <p role="status" className="border-l-2 border-musgo bg-niebla px-3 py-2 text-sm text-pizarra">
+        <p role="status" className="rounded-lg border-l-2 border-lavanda bg-white/70 px-3 py-2 text-sm text-marino">
           {estado.ok}
         </p>
       )}
@@ -47,7 +47,7 @@ export default function FormularioNombre({ nombreActual }) {
       <button
         type="submit"
         disabled={pendiente}
-        className="self-start bg-pizarra px-6 py-2.5 font-titular text-sm uppercase tracking-[0.1em] text-niebla transition-colors hover:bg-agua disabled:opacity-60"
+        className="cartel self-start !rounded-full px-7 py-2.5 font-titular text-sm lowercase transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3] disabled:opacity-60"
       >
         {pendiente ? "Guardando…" : "Guardar"}
       </button>

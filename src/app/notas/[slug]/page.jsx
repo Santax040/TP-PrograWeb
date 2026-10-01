@@ -38,36 +38,36 @@ export default async function NotaPage({ params }) {
 
   return (
     <article className="pb-12">
-      <div className="bruma h-64 sm:h-96">
+      <div className="bruma h-64 sm:h-[28rem]">
         <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
       </div>
 
       <div className="mx-auto max-w-3xl px-4">
-        <header className="border-b border-hormigon py-12">
+        <header className="tarjeta relative z-[1] -mt-24 px-6 py-10 sm:-mt-32 sm:px-10">
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={`/notas/categoria/${articulo.categoria}`}
-              className="etiqueta text-acero transition-colors hover:text-agua"
+              className="etiqueta text-cobalto transition-colors hover:bg-cobalto hover:text-white"
             >
               {categoria?.nombre}
             </Link>
             {articulo.premium && (
               <Link
                 href="/suscribite"
-                className="etiqueta text-musgo transition-colors hover:text-agua"
+                className="etiqueta text-lavanda transition-colors hover:bg-lavanda hover:text-white"
               >
                 Suscriptores
               </Link>
             )}
           </div>
 
-          <h1 className="titular-apretado mt-7 font-titular text-4xl font-semibold text-pizarra sm:text-6xl">
+          <h1 className="titular-apretado mt-7 font-titular text-4xl font-extralight lowercase text-marino sm:text-6xl">
             {articulo.titulo}
           </h1>
 
-          <p className="mt-7 text-xl leading-relaxed text-acero">{articulo.bajada}</p>
+          <p className="mt-7 text-xl leading-relaxed text-humo">{articulo.bajada}</p>
 
-          <p className="mt-8 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-acero">
+          <p className="mt-8 border-t border-white/80 pt-5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-cobalto">
             {articulo.autor} · {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
           </p>
         </header>
@@ -75,20 +75,20 @@ export default async function NotaPage({ params }) {
         {/* Mientras no haya pagos, la nota premium se lee completa, pero se
             avisa y se ofrece el camino para suscribirse. */}
         {articulo.premium && !pagosActivos && (
-          <aside className="mt-12 border-l-2 border-agua bg-vidrio px-5 py-4">
-            <p className="font-titular text-sm uppercase tracking-[0.1em] text-pizarra">
+          <aside className="cartel mt-12 px-6 py-5">
+            <p className="font-titular text-lg font-light lowercase">
               Nota exclusiva, abierta por ahora
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-acero">
+            <p className="mt-2 text-sm leading-relaxed text-white/80">
               Cuando se activen los pagos va a ser solo para suscriptores.{" "}
-              <Link href="/suscribite" className="text-agua underline underline-offset-4">
+              <Link href="/suscribite" className="text-cian underline underline-offset-4">
                 Mirá los planes →
               </Link>
             </p>
           </aside>
         )}
 
-        <div className="mt-12 flex flex-col gap-6 text-lg leading-[1.75] text-pizarra">
+        <div className="mt-12 flex flex-col gap-6 text-lg leading-[1.75] text-marino">
           {articulo.cuerpo.map((parrafo, i) => (
             <p key={i} className={i === 0 ? "capitular" : undefined}>
               {parrafo}
@@ -97,15 +97,15 @@ export default async function NotaPage({ params }) {
         </div>
 
         {artistas.length > 0 && (
-          <section className="mt-20 border-t border-hormigon pt-10">
-            <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.22em] text-acero">
+          <section className="mt-20 border-t border-white/80 pt-10">
+            <h2 className="mb-6 font-ancha text-[0.65rem] uppercase text-cobalto">
               Aparecen en esta nota
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {artistas.map((a) => (
                 <Link key={a.slug} href={`/artistas/${a.slug}`} className="tarjeta block px-5 py-4">
-                  <p className="font-titular text-lg font-semibold text-pizarra">{a.nombre}</p>
-                  <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+                  <p className="font-titular text-xl font-light lowercase text-marino">{a.nombre}</p>
+                  <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalto">
                     {a.genero}
                   </p>
                 </Link>
@@ -116,7 +116,7 @@ export default async function NotaPage({ params }) {
 
         <Link
           href="/notas"
-          className="mt-16 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
+          className="etiqueta mt-16 text-cobalto transition-colors hover:bg-cobalto hover:text-white"
         >
           ← Volver a las notas
         </Link>
