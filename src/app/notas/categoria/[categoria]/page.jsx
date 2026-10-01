@@ -4,6 +4,9 @@ import Recorte from "@/components/Recorte";
 import { getArticulosPorCategoria } from "@/lib/data";
 import { categorias } from "@/lib/site";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   return categorias.map((c) => ({ categoria: c.slug }));
 }

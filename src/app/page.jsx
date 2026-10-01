@@ -5,6 +5,9 @@ import TituloSeccion from "@/components/TituloSeccion";
 import { getArticulos, getArticulosDestacados, getEventos } from "@/lib/data";
 import { site } from "@/lib/site";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 /**
  * Portada de la revista.
  *

@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { getArtistas, getEvento, getEventos } from "@/lib/data";
 import { formatearFecha, formatearPrecio } from "@/lib/formato";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 /** Tamaños del line-up, de mayor a menor, como en los afiches de festival. */
 const tamanosLineup = ["text-5xl sm:text-7xl", "text-4xl sm:text-5xl", "text-3xl sm:text-4xl"];
 

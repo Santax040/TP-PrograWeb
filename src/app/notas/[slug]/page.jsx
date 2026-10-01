@@ -4,6 +4,9 @@ import { getArticulo, getArticulos, getArtistas } from "@/lib/data";
 import { categorias, pagosActivos } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 /**
  * Le dice a Next qué notas existen, para generarlas como HTML estático
  * durante el build en vez de armarlas en cada visita.

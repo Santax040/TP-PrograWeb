@@ -11,6 +11,39 @@ Entrada más reciente arriba.
 
 ---
 
+## #2 — La base y el login "no cambiaron nada" en la página
+**Fecha:** 2026-10-01
+**Tipo:** comunicación (repetición de #0.3)
+
+**Lo que se pidió**
+> Crear la base de datos de la revista y permitir hacer login con distintos
+> tipos de usuarios.
+
+**Lo que se hizo**
+Se armó todo y se verificó en `localhost`. Al entregar se listó al final, como
+uno de tres pasos pendientes, que faltaba cargar las variables en Vercel y
+subir a `main`.
+
+**Dónde estuvo la diferencia**
+El usuario miró el sitio publicado y lo vio igual que antes.
+
+**Por qué pasó**
+- Es el mismo error que #0.3. La lección ("decir dónde se puede ver") se
+  aplicó a medias: el dato estaba, pero enterrado al final de un resumen largo
+  y sin decir **"todavía no lo vas a ver en la página"**.
+- Además, el cambio es mayormente invisible: el contenido es el mismo, solo
+  cambió de dónde sale. No se avisó qué iba a cambiar a la vista.
+
+**Qué se cambia**
+- La primera línea de la entrega dice dónde se puede ver el cambio. Si no
+  está publicado, se dice ahí: "todavía no está en la página".
+- Si el cambio casi no se ve, decir qué es lo visible ("aparece 'Entrar' en el
+  header") para que el usuario sepa qué buscar.
+
+**Estado:** a la espera de que el usuario autorice publicar.
+
+---
+
 ## #1 — Contenido "solo para suscriptores" sin forma de suscribirse
 **Fecha:** 2026-09-24
 **Tipo:** error de diseño

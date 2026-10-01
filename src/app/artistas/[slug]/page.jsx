@@ -10,6 +10,9 @@ import {
   getTodosLosArtistas,
 } from "@/lib/data";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const artistas = await getTodosLosArtistas();
   return artistas.map((a) => ({ slug: a.slug }));

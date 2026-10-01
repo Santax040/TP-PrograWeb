@@ -7,6 +7,196 @@ Los errores y malentendidos se registran aparte, en
 
 ---
 
+## 2026-10-01 (2) — Base de datos y login con Supabase
+
+### Qué se pidió
+Base de datos para guardar el contenido de la revista y login con distintos
+tipos de usuario y permisos. Se acordó:
+- **Lector y redactor son el mismo rol (`usuario`):** cualquiera que se
+  registra puede leer y escribir sus propias notas.
+- **Suscriptor no es un rol:** es el plan del usuario (libre, mensual o
+  anual), que se activa cuando pague.
+- Se mantiene un rol **`admin`** para moderar y cargar artistas y eventos.
+- El panel para escribir y editar notas queda para la próxima tanda.
+
+### Qué se hizo
+
+**Base de datos** (carpeta `supabase/migrations/`, aplicada con `supabase db push`):
+
+| Tabla | Para qué |
+|---|---|
+| `perfiles` | Datos propios de la revista por usuario: nombre, `rol` (usuario/admin), `plan` y `suscripcion_hasta`. El login en sí (mail y contraseña) lo guarda Supabase en `auth.users`. |
+| `categorias` | Fiestas, Música, Quilombo, Entrevistas. |
+| `articulos` | Las notas. `estado` borrador/publicada, `autor_id` (vacío en las de la redacción), `firma` visible. |
+| `artistas` | Fichas de artistas. |
+| `eventos` | Agenda. |
+| `articulo_artistas` | Qué artistas se mencionan en cada nota. |
+| `evento_artistas` | Line-up de cada evento, con `orden` (1 = cabeza de cartel). |
+
+- Al registrarse alguien, un trigger le crea el perfil automáticamente con rol
+  `usuario` y plan `libre`.
+- El contenido que estaba escrito a mano en `data.js` se pasó a la base con
+  una migración generada por script (`20261001180100_contenido_inicial.sql`),
+  para no copiar texto a mano.
+
+**Permisos** (Row Level Security: cada tabla solo deja hacer lo que una regla permite):
+
+| Quién | Puede |
+|---|---|
+| Visitante sin login | Leer notas publicadas, artistas y eventos. Nada más. |
+| `usuario` | Lo anterior. Crear notas, que quedan siempre a su nombre, y editar o borrar **solo las suyas**. Ver sus borradores. Cambiar su nombre. |
+| `admin` | Todo: notas de cualquiera, destacar en portada, artistas, eventos, ver todos los perfiles. |
+
+Además:
+- Un usuario **no puede cambiarse el rol ni el plan**: solo tiene permiso
+  sobre la columna `nombre` de su perfil.
+- Un usuario **no puede destacar** su nota en la portada ni pasársela a otro
+  autor. Un trigger lo corrige aunque lo intente.
+
+**Sitio:**
+- `src/lib/data.js` ahora consulta Supabase. Las funciones mantienen nombre y
+  forma de datos, así que **ninguna página cambió su lógica**.
+- Las páginas de contenido siguen siendo estáticas, con `revalidate = 60`:
+  toman los cambios de la base en, como mucho, un minuto, sin volver a
+  desplegar.
+- Páginas nuevas **`/login`** y **`/registro`**, y ruta **`/auth/confirmar`**
+  para el link del mail de confirmación.
+- En el header: "Entrar" para visitantes, o el nombre del usuario (con sello
+  "Admin" si corresponde) y "Salir".
+- `src/proxy.js` mantiene viva la sesión. Es el antiguo `middleware`, que en
+  Next 16 cambió de nombre.
+- Mejora de paso: `getArtistas` ahora respeta el orden del line-up (antes
+  devolvía el orden de la lista general).
+
+### Decisiones
+- **Supabase** como base y como sistema de login: es Postgres de verdad y trae
+  la autenticación resuelta (contraseñas, mails, sesiones), así que no hace
+  falta escribir esa parte a mano, que es delicada.
+- **Los permisos viven en la base y no en el código de Next.** Aunque alguien
+  llame a la API de Supabase directamente, sin pasar por el sitio, las reglas
+  se cumplen igual.
+- **El header lee la sesión en el navegador (`MenuUsuario`).** Si lo hiciera en
+  el servidor, todas las páginas pasarían a generarse en cada visita y se
+  perdería que sean estáticas.
+- **Dos clientes de Supabase en el servidor:** `supabasePublico`, sin cookies,
+  para el contenido (permite páginas estáticas), y `crearClienteServidor`, con
+  cookies, para el login.
+- **Clave `publishable` en el código.** Es pública por diseño; lo que protege
+  los datos son las reglas de la base. La clave secreta no se usa en ningún
+  lado.
+- **Funciones auxiliares en un esquema `privado`.** El chequeo de seguridad de
+  Supabase (`supabase db advisors`) marcó que `es_admin()` y las funciones de
+  los triggers se podían llamar desde la API pública. Se movieron
+  (`20261001180200_ajustes_seguridad.sql`). El chequeo quedó sin avisos.
+- **`premium` sigue sin bloquear nada.** Mientras `pagosActivos` sea `false`,
+  las notas premium se leen completas. La función `privado.es_suscriptor()`
+  queda lista para cuando haya pagos.
+- **Descartado:** un rol `suscriptor` separado. Mezclaba "qué puede hacer" con
+  "qué pagó", y sin pagos nadie podría llegar a tenerlo.
+
+### Verificación
+- ESLint sin errores. Build OK: 31 páginas, el contenido estático con
+  revalidación de 1 minuto.
+- Navegador: la home, las notas, la agenda y las fichas de artistas muestran
+  los mismos datos que antes, incluidos los filtros por artista. Una nota
+  inexistente da 404. Login y registro se ven bien en celular, sin scroll
+  horizontal.
+- **Permisos:** `supabase/pruebas/permisos.sql` simula un visitante, dos
+  usuarios y un admin, y verifica 18 casos: escribir notas propias, no tocar
+  las ajenas, no verse borradores ajenos, no cambiarse rol ni plan, etc. Corre
+  dentro de una transacción que se deshace, así que no deja datos. **18/18 OK.**
+- No se probó registrar una cuenta real: queda para hacerla a mano (ver
+  pendientes).
+
+### Cómo se usa
+- Volver a correr la prueba de permisos:
+  `supabase db query --linked -f supabase/pruebas/permisos.sql`
+- Hacer admin a alguien (después de que se registre):
+  `supabase db query --linked "update perfiles set rol = 'admin' where id = (select id from auth.users where email = 'MAIL')"`
+- Cambios futuros a la base: `supabase migration new <nombre>`, escribir el
+  SQL y `supabase db push`.
+
+### Publicación
+- **Variables en Vercel:** `NEXT_PUBLIC_SUPABASE_URL` y
+  `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` cargadas en production, preview y
+  development.
+  - Problema encontrado: al pasarlas con `|` desde PowerShell 5 se les coló
+    una marca BOM invisible (`ï»¿`) al principio, que rompía la URL. Se
+    detectó bajando los valores con `vercel env pull` y comparándolos. Se
+    volvieron a cargar desde bash y ahora coinciden exactamente.
+  - `vercel link` agregó un `.env*` duplicado al final del `.gitignore` que
+    volvía a ignorar `.env.example`. Se sacó.
+- **Configuración del login en `supabase/config.toml`:** confirmación por mail
+  desactivada (registrarse loguea directo, porque el mail gratis de Supabase
+  manda muy pocos por hora), `site_url` apuntando al sitio publicado y URLs
+  permitidas para el sitio y para localhost. El resto de los valores se igualó
+  a los que ya tenía el proyecto, para que `supabase config push` cambie solo
+  esos tres.
+  - **Falta aplicarla** (`supabase config push`): el asistente no tiene
+    permiso para cambiar la configuración del proyecto, así que lo corre el
+    usuario. Hasta entonces, registrarse pide confirmar el mail.
+
+### Pendiente
+- Correr `supabase config push`.
+- Primer admin.
+- Panel para escribir y editar notas (próxima tanda).
+
+---
+
+## 2026-10-01 — Instalación de la CLI de Supabase
+
+### Qué se hizo
+- Se instaló **Scoop** (gestor de paquetes de Windows) a nivel usuario, en
+  `~\scoop`, y se agregó `~\scoop\shims` al PATH del usuario.
+- Con Scoop se instaló la **CLI de Supabase 2.119.0**. El comando `supabase`
+  queda disponible en cualquier terminal nueva.
+- No se tocó código del proyecto: la CLI es una herramienta de la máquina.
+
+### Decisiones
+- **Scoop en vez de npm.** Supabase no soporta `npm install -g supabase`; para
+  Windows recomienda Scoop. Winget no tiene el paquete. Otra opción era
+  `npx supabase`, pero hay que anteponerlo a cada comando y es más lento.
+- **Sin permisos de administrador.** Scoop instala todo dentro de la carpeta
+  del usuario.
+
+### Cómo actualizarla
+```
+scoop update supabase
+```
+
+### Problema con `supabase login` en la red de la empresa
+- **Síntoma:** al pegar el código de verificación, la CLI tira
+  `failed to execute http request: Transport error (GET https://api.supabase.com/platform/cli/login/...)`.
+- **Causa probable:** la máquina pasa por **Netskope**, que inspecciona el
+  tráfico HTTPS y lo firma con un certificado propio
+  (`ca.publicisgroupe.de.goskope.com`). Windows confía en ese certificado. La
+  parte de la CLI escrita en Deno trae su propia lista de certificados y lo
+  rechaza. Los comandos que corre la parte en Go, como `projects list`, sí
+  llegan al servidor.
+- **Ajuste aplicado:** variable de entorno de usuario `DENO_TLS_CA_STORE=system`,
+  para que la CLI use los certificados de Windows. Se aplica en terminales
+  nuevas.
+- **Alternativa sin código de verificación:** generar un token en
+  https://supabase.com/dashboard/account/tokens y correr
+  `supabase login --token <token>`. Ese comando no hace la llamada que falla.
+- **Resultado:** se entró con un token (`cli-tp`) y `supabase projects list`
+  muestra el proyecto `Santax040's Project` (ref `tsqcqboypfnyqhhyexte`,
+  us-east-1). El repo todavía no está vinculado al proyecto (`supabase link`).
+- El token no se guarda en el repo ni en este archivo. El `token.txt` que se
+  usó para pasarlo se mandó a la Papelera.
+
+### Vinculación del repo con el proyecto
+- `supabase init` creó la carpeta `supabase/` con `config.toml` (la
+  configuración de la CLI) y su propio `.gitignore`.
+- `supabase link --project-ref tsqcqboypfnyqhhyexte` vinculó el repo con el
+  proyecto en la nube. No hizo falta la contraseña de la base: alcanza con el
+  token de la cuenta.
+- La referencia al proyecto vinculado queda en `supabase/.temp/`, que no se
+  sube a git. En el repo solo se suben `config.toml` y `.gitignore`, que no
+  tienen secretos.
+
+---
+
 ## 2026-09-24 (6) — Página de suscripción
 
 Resuelve el desencuentro #1: había contenido marcado "solo suscriptores" sin

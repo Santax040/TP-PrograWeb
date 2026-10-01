@@ -1,4 +1,5 @@
 import Link from "next/link";
+import MenuUsuario from "@/components/MenuUsuario";
 import { categorias, site } from "@/lib/site";
 
 const giros = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
@@ -38,6 +39,7 @@ export default function Header() {
           >
             Suscribite
           </Link>
+          <MenuUsuario />
         </nav>
       </div>
     </header>

@@ -2,6 +2,9 @@ import EventoCard from "@/components/EventoCard";
 import Recorte from "@/components/Recorte";
 import { getEventos } from "@/lib/data";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 export const metadata = {
   title: "Agenda",
   description: "Fiestas y recitales confirmados.",

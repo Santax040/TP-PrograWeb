@@ -2,6 +2,9 @@ import ArticuloCard from "@/components/ArticuloCard";
 import Recorte from "@/components/Recorte";
 import { getArticulos } from "@/lib/data";
 
+// Vuelve a consultar la base como mucho una vez por minuto.
+export const revalidate = 60;
+
 export const metadata = {
   title: "Notas",
   description: "Todas las notas publicadas.",
