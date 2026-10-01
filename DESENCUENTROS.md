@@ -40,7 +40,12 @@ El usuario miró el sitio publicado y lo vio igual que antes.
 - Si el cambio casi no se ve, decir qué es lo visible ("aparece 'Entrar' en el
   header") para que el usuario sepa qué buscar.
 
-**Estado:** a la espera de que el usuario autorice publicar.
+**Cómo se resolvió**
+El usuario autorizó publicar. Se cargaron las variables en Vercel, se subió a
+`main` (`fdaeb75`) y se verificó en revista-digital-musica.vercel.app que
+aparecen "Entrar", `/login` y `/registro`.
+
+**Estado:** resuelto.
 
 ---
 
