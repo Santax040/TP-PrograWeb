@@ -1,155 +1,142 @@
 @import "tailwindcss";
 
 /*
- * Estética fanzine / fotocopia: papel sucio pegado con cinta sobre fondo
- * negro, tinta negra y dos colores de choque (amarillo ácido y rojo sello).
+ * Estética Gen X Soft Club: el futurismo tranquilo de fines de los 90 y
+ * principios de los 2000. Superficies claras y frías, mucho aire, bordes de
+ * un pixel, tipografía humanista de señalética y fotos lavadas. Nada girado,
+ * nada hecho a mano: todo alineado a una grilla, como un andén o un aeropuerto.
  */
 :root {
-  --carbon: #0d0c0b;
-  --papel: #ebe5d5;
-  --papel-sucio: #d6cdb6;
-  --tinta: #141210;
-  --acido: #d7ff1f;
-  --sangre: #ff2e1f;
-  --gris: #6f6a5e;
-
-  /* Ruido en escala de grises generado con SVG: da la textura de fotocopia. */
-  --ruido: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.4'/></svg>");
+  --niebla: #eef1f3;      /* fondo general, blanco con tinte frío */
+  --vidrio: #ffffff;      /* tarjetas y superficies elevadas */
+  --hormigon: #d9e0e3;    /* bordes, separadores, superficies apagadas */
+  --pizarra: #1b2427;     /* texto principal, casi negro azulado */
+  --acero: #67787f;       /* texto secundario y metadatos */
+  --agua: #7fa8b8;        /* acento frío: enlaces, estados activos */
+  --musgo: #8da88f;       /* el verde de las plantas entre el cemento */
 }
 
 @theme inline {
-  --color-carbon: var(--carbon);
-  --color-papel: var(--papel);
-  --color-papel-sucio: var(--papel-sucio);
-  --color-tinta: var(--tinta);
-  --color-acido: var(--acido);
-  --color-sangre: var(--sangre);
-  --color-gris: var(--gris);
-  --font-titular: var(--font-anton);
-  --font-maquina: var(--font-courier);
-  --font-marcador: var(--font-marker);
-  --font-sucio: var(--font-dirt);
+  --color-niebla: var(--niebla);
+  --color-vidrio: var(--vidrio);
+  --color-hormigon: var(--hormigon);
+  --color-pizarra: var(--pizarra);
+  --color-acero: var(--acero);
+  --color-agua: var(--agua);
+  --color-musgo: var(--musgo);
+  --font-titular: var(--font-archivo);
+  --font-texto: var(--font-mulish);
+  --font-mono: var(--font-plex-mono);
 }
 
 body {
-  background-color: var(--carbon);
-  background-image: var(--ruido);
-  color: var(--papel);
-  font-family: var(--font-courier), ui-monospace, monospace;
-}
-
-/* Grano de fotocopia sobre toda la pantalla. No intercepta clics. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  background-image: var(--ruido);
-  opacity: 0.18;
-  mix-blend-mode: overlay;
+  background-color: var(--niebla);
+  color: var(--pizarra);
+  font-family: var(--font-mulish), ui-sans-serif, system-ui, sans-serif;
 }
 
 ::selection {
-  background: var(--acido);
-  color: var(--tinta);
+  background: var(--agua);
+  color: var(--vidrio);
 }
 
-/* --- Piezas del collage -------------------------------------------------- */
-
-/* Hoja de papel sucio. */
-.papel {
-  background-color: var(--papel);
-  background-image: var(--ruido);
-  background-blend-mode: multiply;
-  color: var(--tinta);
+/* El foco se ve siempre, y en el color de acento. */
+:focus-visible {
+  outline: 2px solid var(--agua);
+  outline-offset: 2px;
 }
 
-/* Borde inferior roto, como papel arrancado a mano. */
-.roto {
-  clip-path: polygon(
-    0 0, 100% 0, 100% calc(100% - 6px), 95% 100%, 90% calc(100% - 5px),
-    84% 100%, 78% calc(100% - 7px), 71% 100%, 65% calc(100% - 4px),
-    58% 100%, 52% calc(100% - 6px), 45% 100%, 39% calc(100% - 5px),
-    32% 100%, 26% calc(100% - 7px), 19% 100%, 13% calc(100% - 4px),
-    6% 100%, 0 calc(100% - 6px)
-  );
+/* --- Piezas ------------------------------------------------------------- */
+
+/* Superficie elevada: blanca, borde de un pixel, sombra apenas perceptible. */
+.tarjeta {
+  background-color: var(--vidrio);
+  border: 1px solid var(--hormigon);
+  transition: border-color 200ms, box-shadow 200ms, transform 200ms;
+}
+.tarjeta:hover {
+  border-color: var(--agua);
+  box-shadow: 0 8px 24px -12px rgba(27, 36, 39, 0.25);
 }
 
-/* Tira de cinta de papel pegando la hoja. Va en un contenedor externo,
-   porque el recorte de `.roto` la cortaría. */
-.cinta {
+/* Etiqueta chica de señalética: versalita, borde fino, nada de relleno fuerte. */
+.etiqueta {
+  display: inline-block;
+  border: 1px solid currentColor;
+  padding: 2px 8px;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.6;
+}
+
+/*
+ * Tratamiento de foto: desaturada, fría y apenas desenfocada, como una foto
+ * sacada al pasar por la ventanilla. Es la marca visual de la estética.
+ */
+.bruma {
   position: relative;
+  overflow: hidden;
 }
-.cinta::before {
-  content: "";
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  z-index: 2;
-  width: 96px;
-  height: 24px;
-  transform: translateX(-50%) rotate(-4deg);
-  background: rgba(240, 232, 200, 0.55);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+.bruma > :first-child {
+  filter: saturate(0.18) contrast(0.88) brightness(1.16) blur(0.5px);
+  transition: filter 400ms;
 }
-
-/* Imagen "fotocopiada": contraste alto y trama de puntos encima. */
-.fotocopia {
-  position: relative;
-  filter: contrast(1.4) saturate(1.3);
+.bruma:hover > :first-child {
+  filter: saturate(0.45) contrast(0.95) brightness(1.06) blur(0);
 }
-.fotocopia::after {
+/*
+ * Velo frío encima. Las portadas vienen de la base con gradientes fuertes
+ * del diseño anterior (fucsias, naranjas); esto las lleva a todas a la misma
+ * temperatura sin tener que tocar los datos.
+ */
+.bruma::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.55) 1px, transparent 1.5px);
-  background-size: 5px 5px;
-  mix-blend-mode: multiply;
-}
-
-/* Sello de goma. */
-.sello {
-  display: inline-block;
-  border: 3px double var(--sangre);
-  color: var(--sangre);
-  padding: 2px 10px;
-  font-family: var(--font-anton), sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  transform: rotate(-7deg);
-  opacity: 0.9;
-}
-
-/* Resaltador amarillo pasado a mano sobre el texto. Declarado con
-   @utility para poder usarlo con variantes, como `group-hover:marcado`. */
-@utility marcado {
   background: linear-gradient(
-    transparent 50%,
-    var(--acido) 50%,
-    var(--acido) 88%,
-    transparent 88%
+    170deg,
+    rgba(127, 168, 184, 0.45),
+    rgba(141, 168, 143, 0.22) 55%,
+    rgba(27, 36, 39, 0.18)
   );
-  box-decoration-break: clone;
+  pointer-events: none;
 }
 
-/* Impresión corrida: el color rojo desfasado detrás del negro. */
-@utility corrido {
-  text-shadow: 3px 2px 0 var(--sangre);
+/* Subrayado fino que crece al pasar por encima. Reemplaza al resaltador. */
+@utility subrayado {
+  background-image: linear-gradient(var(--agua), var(--agua));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 300ms;
+}
+@utility subrayado-activo {
+  background-size: 100% 1px;
 }
 
-/* Primera letra de la nota, grande y en rojo. */
+/* Interlineado ajustado para titulares grandes. */
+@utility titular-apretado {
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+/* Primera letra de la nota: grande y en el color de acento, sin estridencia. */
 .capitular::first-letter {
   float: left;
-  margin: 0.08em 0.12em 0 0;
-  font-family: var(--font-anton), sans-serif;
-  font-size: 4.2em;
-  line-height: 0.8;
-  color: var(--sangre);
+  margin: 0.1em 0.1em 0 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 3.6em;
+  font-weight: 600;
+  line-height: 0.82;
+  color: var(--agua);
 }
 
-/* Cinta de noticias que se desplaza. El contenido va duplicado para que
-   el bucle no tenga salto. */
+/*
+ * Cinta de novedades: acá se lee como el cartel de salidas de una estación.
+ * El contenido va duplicado para que el bucle no tenga salto.
+ */
 @keyframes marquesina {
   from {
     transform: translateX(0);
@@ -161,7 +148,7 @@ body::before {
 .marquesina {
   display: flex;
   width: max-content;
-  animation: marquesina 40s linear infinite;
+  animation: marquesina 48s linear infinite;
 }
 
 /* Respeta a quien configuró el sistema para reducir animaciones. */

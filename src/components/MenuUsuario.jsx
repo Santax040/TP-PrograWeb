@@ -69,7 +69,7 @@ export default function MenuUsuario() {
     return (
       <Link
         href="/login"
-        className="papel inline-block rotate-1 px-3 py-1.5 transition-transform hover:rotate-0 hover:bg-acido"
+        className="tarjeta inline-block px-4 py-1.5 font-titular text-sm uppercase tracking-[0.1em] text-pizarra transition-colors hover:text-agua"
       >
         Entrar
       </Link>
@@ -79,17 +79,17 @@ export default function MenuUsuario() {
   return (
     <Desplegable
       etiquetaAccesible={`Menú de ${perfil.nombre}`}
-      clasesBoton="-rotate-1 border-2 border-acido px-3 py-1 hover:bg-acido/15"
+      clasesBoton="tarjeta px-3 py-1.5"
       etiqueta={
         <>
           {perfil.avatar_url && <Avatar url={perfil.avatar_url} tamano={28} />}
           <span
-            className="max-w-36 truncate font-marcador normal-case text-acido"
+            className="max-w-36 truncate font-texto text-sm font-semibold normal-case text-pizarra"
             title={perfil.nombre}
           >
             {perfil.nombre}
           </span>
-          {perfil.rol === "admin" && <span className="sello bg-papel text-xs">Admin</span>}
+          {perfil.rol === "admin" && <span className="etiqueta text-musgo">Admin</span>}
         </>
       }
     >
@@ -138,14 +138,14 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
         aria-expanded={abierto}
         aria-label={etiquetaAccesible}
         onClick={() => setAbierto((v) => !v)}
-        className={`inline-flex items-center gap-2 transition-transform hover:rotate-0 ${clasesBoton}`}
+        className={`inline-flex items-center gap-2 ${clasesBoton}`}
       >
         {etiqueta}
         <span
           aria-hidden="true"
           className={`text-[0.6em] leading-none transition-transform ${abierto ? "rotate-180" : ""}`}
         >
-          ▼
+          ▾
         </span>
       </button>
 
@@ -158,7 +158,7 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
         // navegación va alineada a la derecha y el anclaje se invierte.
         <ul
           onClick={() => setAbierto(false)}
-          className="papel absolute left-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] -rotate-1 border-2 border-tinta p-1 shadow-[5px_5px_0_rgba(0,0,0,0.6)] sm:left-auto sm:right-0"
+          className="absolute left-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] border border-hormigon bg-vidrio p-1 shadow-[0_12px_32px_-16px_rgba(27,36,39,0.4)] sm:left-auto sm:right-0"
         >
           {children}
         </ul>
@@ -169,7 +169,7 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
 
 function Opcion({ href, onClick, children }) {
   const clases =
-    "block w-full px-3 py-2 text-left font-titular text-base uppercase tracking-wide text-tinta transition-colors hover:bg-acido";
+    "block w-full px-3 py-2 text-left font-titular text-sm uppercase tracking-[0.1em] text-pizarra transition-colors hover:bg-niebla hover:text-agua";
 
   return (
     <li>

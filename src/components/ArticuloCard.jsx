@@ -2,56 +2,45 @@ import Link from "next/link";
 import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
-/** Giros leves para que las hojas parezcan pegadas a mano, no alineadas. */
-const giros = ["-rotate-1", "rotate-1", "rotate-[0.5deg]", "-rotate-[1.5deg]", "rotate-[1.5deg]"];
-
 /**
  * @param {Object} props
  * @param {import("@/lib/data").Articulo} props.articulo
  * @param {boolean} [props.destacado] - Variante de portada: más aire y tipografía grande.
- * @param {number} [props.indice] - Posición en la grilla. Solo define el giro de la hoja.
  */
-export default function ArticuloCard({ articulo, destacado = false, indice = 0 }) {
+export default function ArticuloCard({ articulo, destacado = false }) {
   const categoria = categorias.find((c) => c.slug === articulo.categoria);
 
   return (
-    <article
-      className={`cinta transition-transform duration-200 hover:z-10 hover:rotate-0 hover:scale-[1.02] ${giros[indice % giros.length]}`}
-    >
-      <Link href={`/notas/${articulo.slug}`} className="group block">
-        <div className="papel roto shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
-          <div
-            className={`fotocopia relative bg-gradient-to-br ${articulo.portada} ${
-              destacado ? "h-64 sm:h-80" : "h-40"
+    <article className="tarjeta h-full">
+      <Link href={`/notas/${articulo.slug}`} className="group flex h-full flex-col">
+        <div className={`bruma relative ${destacado ? "h-72 sm:h-96" : "h-44"}`}>
+          <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
+          <span className="absolute left-4 top-4 z-[1] bg-vidrio/90 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-pizarra">
+            {categoria?.nombre}
+          </span>
+          {articulo.premium && (
+            <span className="etiqueta absolute bottom-4 right-4 z-[1] bg-vidrio/90 text-acero">
+              Suscriptores
+            </span>
+          )}
+        </div>
+
+        <div className={`flex flex-1 flex-col gap-3 ${destacado ? "p-7 sm:p-9" : "p-6"}`}>
+          <h3
+            className={`titular-apretado font-titular font-semibold text-pizarra ${
+              destacado ? "text-3xl sm:text-4xl" : "text-xl"
             }`}
           >
-            <span className="absolute left-3 top-3 z-[1] bg-tinta px-2 py-0.5 font-titular text-xs uppercase tracking-widest text-papel">
-              {categoria?.nombre}
-            </span>
-            {articulo.premium && (
-              <span className="sello absolute bottom-3 right-3 z-[1] bg-papel/85 text-xs">
-                Solo suscriptores
-              </span>
-            )}
-          </div>
+            <span className="subrayado group-hover:subrayado-activo">{articulo.titulo}</span>
+          </h3>
 
-          <div className="flex flex-col gap-3 p-5 pb-7">
-            <h3
-              className={`font-titular uppercase leading-[0.95] tracking-tight ${
-                destacado ? "text-4xl sm:text-5xl" : "text-2xl"
-              }`}
-            >
-              <span className="group-hover:marcado">{articulo.titulo}</span>
-            </h3>
+          <p className={`leading-relaxed text-acero ${destacado ? "text-base" : "text-sm"}`}>
+            {articulo.bajada}
+          </p>
 
-            <p className={`leading-snug text-tinta/80 ${destacado ? "text-lg" : "text-sm"}`}>
-              {articulo.bajada}
-            </p>
-
-            <p className="border-t border-dashed border-tinta/40 pt-2 text-xs uppercase tracking-wider text-gris">
-              {formatearFecha(articulo.fecha)} / {articulo.minutosLectura} min
-            </p>
-          </div>
+          <p className="mt-auto pt-4 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+            {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
+          </p>
         </div>
       </Link>
     </article>

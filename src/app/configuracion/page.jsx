@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import FormularioNombre from "@/components/FormularioNombre";
-import Recorte from "@/components/Recorte";
+import Titular from "@/components/Titular";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 
 export const metadata = {
@@ -29,28 +29,25 @@ export default async function ConfiguracionPage() {
     .maybeSingle();
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-5xl sm:text-6xl">
-        <Recorte texto="Config" />
-      </h1>
-      <p className="mt-4 -rotate-1 font-marcador text-xl text-acido">
-        cómo te ven los demás.
+    <div className="mx-auto max-w-md px-4 py-16">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl">
+          <Titular texto="Configuración" volanta="Tu cuenta" />
+        </h1>
+      </header>
+
+      <FormularioNombre nombreActual={perfil?.nombre ?? ""} />
+
+      <p className="mt-10 text-sm leading-relaxed text-acero">
+        El mail y la foto los maneja Google: se actualizan solos al volver a entrar.
       </p>
 
-      <div className="cinta mt-12 rotate-1">
-        <FormularioNombre nombreActual={perfil?.nombre ?? ""} />
-      </div>
-
-      <p className="mt-10 text-sm text-papel/70">
-        El mail y la contraseña todavía no se cambian desde acá.
-      </p>
-
-      <p className="mt-6">
+      <p className="mt-8">
         <Link
           href="/perfil"
-          className="font-bold text-acido underline decoration-sangre decoration-2 underline-offset-4"
+          className="font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
         >
-          Volver al perfil
+          ← Volver al perfil
         </Link>
       </p>
     </div>

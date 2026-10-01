@@ -39,26 +39,23 @@ export default async function ArtistaPage({ params }) {
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
-      <p className="mb-4 inline-block -rotate-2 bg-acido px-2 font-titular text-sm uppercase tracking-widest text-tinta">
-        {artista.genero}
-      </p>
-      <h1 className="corrido font-titular text-6xl uppercase leading-[0.9] tracking-tight text-papel sm:text-8xl">
-        {artista.nombre}
-      </h1>
-
-      <div className="cinta mt-10 max-w-2xl rotate-1">
-        <p className="papel roto p-6 pb-9 text-lg leading-snug shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
-          {artista.bio}
+    <div className="mx-auto max-w-4xl px-4 py-16">
+      <header className="border-b border-hormigon pb-12">
+        <p className="font-mono text-xs uppercase tracking-[0.22em] text-acero">
+          {artista.genero}
         </p>
-      </div>
+        <h1 className="titular-apretado mt-4 font-titular text-5xl font-semibold text-pizarra sm:text-7xl">
+          {artista.nombre}
+        </h1>
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-acero">{artista.bio}</p>
+      </header>
 
       {fechas.length > 0 && (
         <section className="mt-20">
           <TituloSeccion titulo="Próximas fechas" />
-          <div className="flex flex-col gap-5">
-            {fechas.map((e, i) => (
-              <EventoCard key={e.slug} evento={e} indice={i} />
+          <div className="flex flex-col gap-4">
+            {fechas.map((e) => (
+              <EventoCard key={e.slug} evento={e} />
             ))}
           </div>
         </section>
@@ -67,9 +64,9 @@ export default async function ArtistaPage({ params }) {
       {notas.length > 0 && (
         <section className="mt-20">
           <TituloSeccion titulo="En la revista" />
-          <div className="grid gap-10 sm:grid-cols-2">
-            {notas.map((a, i) => (
-              <ArticuloCard key={a.slug} articulo={a} indice={i} />
+          <div className="grid gap-8 sm:grid-cols-2">
+            {notas.map((a) => (
+              <ArticuloCard key={a.slug} articulo={a} />
             ))}
           </div>
         </section>
@@ -77,9 +74,9 @@ export default async function ArtistaPage({ params }) {
 
       <Link
         href="/agenda"
-        className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
+        className="mt-16 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
       >
-        ← volver a la agenda
+        ← Volver a la agenda
       </Link>
     </div>
   );

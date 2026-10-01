@@ -3,8 +3,11 @@ import { getArticulos, getEventos } from "@/lib/data";
 import { formatearFechaCorta } from "@/lib/formato";
 
 /**
- * Cinta de "última hora" debajo del header, armada con las próximas fechas
- * y las notas más nuevas. Se genera desde los datos, no está escrita a mano.
+ * Cinta de novedades debajo del header, armada con las próximas fechas y las
+ * notas más nuevas. Se genera desde los datos, no está escrita a mano.
+ *
+ * Se lee como el cartel de salidas de una estación: monoespaciada, gris y
+ * separada por puntos.
  */
 export default async function Marquesina() {
   const [eventos, articulos] = await Promise.all([getEventos(), getArticulos()]);
@@ -12,7 +15,7 @@ export default async function Marquesina() {
   const items = [
     ...eventos.slice(0, 3).map((e) => ({
       href: `/agenda/${e.slug}`,
-      texto: `${formatearFechaCorta(e.fecha)} — ${e.nombre}`,
+      texto: `${formatearFechaCorta(e.fecha)} · ${e.nombre}`,
     })),
     ...articulos.slice(0, 3).map((a) => ({
       href: `/notas/${a.slug}`,
@@ -28,20 +31,20 @@ export default async function Marquesina() {
         href={item.href}
         tabIndex={copia === 0 ? 0 : -1}
         aria-hidden={copia === 1}
-        className="flex shrink-0 items-center gap-4 px-4 hover:underline"
+        className="flex shrink-0 items-center gap-5 px-5 transition-colors hover:text-agua"
       >
-        <span className="text-sangre">✶</span>
-        <span className="whitespace-nowrap uppercase">{item.texto}</span>
+        <span className="text-hormigon">·</span>
+        <span className="whitespace-nowrap">{item.texto}</span>
       </Link>
     ));
 
   return (
-    <div className="overflow-hidden border-y-2 border-tinta bg-acido py-2 font-titular text-sm tracking-wide text-tinta">
+    <div className="overflow-hidden border-b border-hormigon bg-vidrio py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-acero">
       <div className="marquesina">
-        <span className="shrink-0 bg-tinta px-3 text-acido">ÚLTIMA HORA</span>
+        <span className="shrink-0 pl-4 text-pizarra">En cartel</span>
         {renglon(0)}
-        <span className="shrink-0 bg-tinta px-3 text-acido" aria-hidden="true">
-          ÚLTIMA HORA
+        <span className="shrink-0 pl-4 text-pizarra" aria-hidden="true">
+          En cartel
         </span>
         {renglon(1)}
       </div>

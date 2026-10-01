@@ -1,5 +1,5 @@
 import BotonGoogle from "@/components/BotonGoogle";
-import Recorte from "@/components/Recorte";
+import Titular from "@/components/Titular";
 
 export const metadata = {
   title: "Entrar",
@@ -19,23 +19,20 @@ export default async function LoginPage({ searchParams }) {
   const { aviso, siguiente } = await searchParams;
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-5xl sm:text-6xl">
-        <Recorte texto="Entrar" />
-      </h1>
-      <p className="mt-4 -rotate-1 font-marcador text-xl text-acido">
-        los de adentro, por acá.
-      </p>
+    <div className="mx-auto max-w-md px-4 py-16">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl">
+          <Titular texto="Entrar" volanta="Tu cuenta" />
+        </h1>
+      </header>
 
       {avisos[aviso] && (
-        <p role="status" className="mt-8 rotate-1 border-2 border-acido px-3 py-2 text-acido">
+        <p role="status" className="mb-8 border-l-2 border-agua bg-vidrio px-4 py-3 text-sm text-pizarra">
           {avisos[aviso]}
         </p>
       )}
 
-      <div className="cinta mt-12 rotate-1">
-        <BotonGoogle siguiente={siguiente} />
-      </div>
+      <BotonGoogle siguiente={siguiente} />
     </div>
   );
 }

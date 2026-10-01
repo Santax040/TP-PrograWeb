@@ -80,6 +80,80 @@ Que el perfil se cargue con OAuth. Se acordó: **solo Google**, y que
 
 ---
 
+## 2026-10-01 (4) — Cambio de estética: de fanzine grunge a Gen X Soft Club
+
+### Qué se pidió
+Cambiar el mood de la revista al concepto **Gen X Soft Club**: la estética de
+fines de los 90 y principios de los 2000 catalogada por el CARI. Es una rama
+"aterrizada" del futurismo Y2K — fotografía movida y fría, tipografía humanista
+de señalética, minimalismo, estaciones y aeropuertos, plantas entre el cemento.
+
+Se eligió la variante **clara y fría** sobre la nocturna.
+
+### Qué se hizo
+
+Es lo contrario del diseño anterior en todos los ejes, así que se rehízo el
+sistema completo.
+
+| | Antes (fanzine) | Ahora (GXSC) |
+|---|---|---|
+| Fondo | negro carbón con ruido | `#EEF1F3`, blanco con tinte frío |
+| Texto | papel crudo | `#1B2427`, casi negro azulado |
+| Acentos | amarillo ácido, rojo sangre | `#7FA8B8` agua, `#8DA88F` musgo |
+| Tipografías | Anton, Rubik Dirt, Permanent Marker, Courier | Archivo, Mulish, IBM Plex Mono |
+| Superficies | papel roto, cinta, sombras duras | tarjetas blancas, borde de 1px |
+| Composición | todo girado y superpuesto | todo alineado a la grilla |
+| Fotos | fotocopia de alto contraste | desaturadas, frías, apenas desenfocadas |
+
+**Tokens nuevos** (`globals.css`): `niebla`, `vidrio`, `hormigon`, `pizarra`,
+`acero`, `agua`, `musgo`. Se renombraron en vez de solo cambiarles el valor:
+dejar un `--sangre` que en realidad es celeste habría sido una trampa para
+quien lea el código después.
+
+**Utilidades reemplazadas:**
+
+| Antes | Ahora |
+|---|---|
+| `.papel` + `.roto` + `.cinta` | `.tarjeta` |
+| `.fotocopia` | `.bruma` |
+| `.sello` | `.etiqueta` |
+| `.marcado` (resaltador) | `.subrayado` (línea fina que crece) |
+| `.corrido` (impresión desfasada) | — eliminada |
+| `--ruido` (textura SVG) | — eliminada |
+
+**Componente eliminado:** `Recorte.jsx`, que armaba los títulos con letras
+recortadas de revista estilo carta de secuestro. Lo reemplaza `Titular.jsx`:
+una sola tipografía, grande, apretada, con volanta monoespaciada opcional y una
+línea fina debajo.
+
+**Archivos tocados:** los 11 componentes y las 12 páginas.
+
+### Decisiones
+
+- **Las portadas no se tocaron en la base.** Vienen con gradientes fuertes del
+  diseño anterior (fucsias, naranjas, violetas). En vez de migrar los datos, el
+  filtro de `.bruma` los lleva a todos a la misma temperatura fría:
+  `saturate(0.18)` más un velo celeste encima. Si algún día cambian los datos,
+  el tratamiento sigue funcionando igual.
+- **La marquesina se quedó, pero cambió de registro.** Era una cinta de "última
+  hora" en amarillo ácido; ahora es monoespaciada y gris, y se lee como el
+  cartel de salidas de una estación. Es de las piezas más GXSC del sitio.
+- **El header pasó a ser pegajoso** (`sticky`) con fondo semitransparente y
+  `backdrop-blur`. Encaja con la señalética y gana navegación.
+- **Se agregó un estilo de foco visible** (`:focus-visible`) en el color de
+  acento. El diseño anterior no tenía ninguno.
+
+### Verificado en `localhost:3000`
+- Portada, nota, agenda, evento, artista, categoría, notas, suscribite y login,
+  en 1440px y en 375px. Sin scroll horizontal en celular.
+- `npx eslint src` limpio y `npm run build` sin errores: `/perfil`,
+  `/configuracion` y `/login` siguen siendo dinámicas y el resto estático.
+
+**Pendiente de probar con una sesión abierta:** el desplegable del nombre, el
+avatar de Google y las páginas de perfil y configuración con datos reales.
+
+---
+
 ## 2026-10-01 (3) — Barra más grande y menús desplegables en el header
 
 ### Qué se pidió

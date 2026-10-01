@@ -1,5 +1,5 @@
 import ArticuloCard from "@/components/ArticuloCard";
-import Recorte from "@/components/Recorte";
+import Titular from "@/components/Titular";
 import { getArticulos } from "@/lib/data";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
@@ -14,17 +14,19 @@ export default async function NotasPage() {
   const articulos = await getArticulos();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="text-5xl sm:text-7xl">
-        <Recorte texto="Notas" />
-      </h1>
-      <p className="mb-14 mt-4 -rotate-1 font-marcador text-xl text-acido">
-        {articulos.length} publicadas, de la más nueva a la más vieja.
-      </p>
+    <div className="mx-auto max-w-6xl px-4 py-16">
+      <header className="mb-16">
+        <h1 className="text-4xl sm:text-6xl">
+          <Titular texto="Notas" volanta="Archivo completo" />
+        </h1>
+        <p className="mt-6 text-base leading-relaxed text-acero">
+          {articulos.length} publicadas, de la más nueva a la más vieja.
+        </p>
+      </header>
 
-      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-        {articulos.map((a, i) => (
-          <ArticuloCard key={a.slug} articulo={a} indice={i} />
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {articulos.map((a) => (
+          <ArticuloCard key={a.slug} articulo={a} />
         ))}
       </div>
     </div>

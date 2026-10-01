@@ -37,8 +37,8 @@ export default function BotonGoogle({ siguiente = "/" }) {
   }
 
   return (
-    <div className="papel roto flex flex-col items-start gap-4 p-6 pb-10 shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
-      <p className="leading-snug">
+    <div className="tarjeta flex flex-col items-start gap-5 p-7">
+      <p className="leading-relaxed text-acero">
         Entrás con tu cuenta de Google. Si es la primera vez, te creamos el perfil con tu
         nombre y tu foto.
       </p>
@@ -47,14 +47,14 @@ export default function BotonGoogle({ siguiente = "/" }) {
         type="button"
         onClick={entrar}
         disabled={yendo}
-        className="inline-flex -rotate-1 items-center gap-3 border-2 border-tinta bg-papel px-5 py-2 font-titular text-lg uppercase tracking-wide text-tinta shadow-[4px_4px_0_var(--sangre)] transition-transform hover:rotate-0 hover:bg-acido disabled:opacity-60"
+        className="inline-flex items-center gap-3 border border-hormigon bg-vidrio px-5 py-2.5 font-titular text-sm uppercase tracking-[0.1em] text-pizarra transition-colors hover:border-agua hover:text-agua disabled:opacity-60"
       >
         <LogoGoogle />
         {yendo ? "Yendo a Google…" : "Entrar con Google"}
       </button>
 
       {error && (
-        <p role="alert" className="-rotate-1 border-2 border-sangre px-3 py-2 font-bold text-sangre">
+        <p role="alert" className="border-l-2 border-agua bg-vidrio px-3 py-2 text-sm text-pizarra">
           {error}
         </p>
       )}

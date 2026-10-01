@@ -6,8 +6,8 @@ import { formatearFecha, formatearPrecio } from "@/lib/formato";
 // Vuelve a consultar la base como mucho una vez por minuto.
 export const revalidate = 60;
 
-/** Tamaños del line-up, de mayor a menor, como en los afiches de festival. */
-const tamanosLineup = ["text-5xl sm:text-7xl", "text-4xl sm:text-5xl", "text-3xl sm:text-4xl"];
+/** Tamaños del line-up, de mayor a menor: el cabeza de cartel primero. */
+const tamanosLineup = ["text-4xl sm:text-6xl", "text-2xl sm:text-4xl", "text-xl sm:text-2xl"];
 
 export async function generateStaticParams() {
   const eventos = await getEventos();
@@ -37,62 +37,71 @@ export default async function EventoPage({ params }) {
     .filter((a) => a !== undefined);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      <div className="cinta rotate-[0.8deg]">
-        <div className="papel roto shadow-[8px_8px_0_rgba(0,0,0,0.7)]">
-          <div className={`fotocopia relative h-48 bg-gradient-to-br sm:h-64 ${evento.portada}`}>
-            <span className="absolute left-4 top-4 z-[1] bg-tinta px-2 py-0.5 font-titular text-xs uppercase tracking-widest text-acido">
-              {evento.genero}
-            </span>
-          </div>
-
-          <div className="px-6 pb-12 pt-8 text-center sm:px-12">
-            <h1 className="font-titular text-4xl uppercase leading-[0.92] tracking-tight sm:text-6xl">
-              {evento.nombre}
-            </h1>
-
-            <ul className="mt-10 flex flex-col items-center gap-1">
-              {ordenado.map((a, i) => (
-                <li key={a.slug}>
-                  <Link
-                    href={`/artistas/${a.slug}`}
-                    className={`font-titular uppercase leading-none hover:text-sangre ${
-                      tamanosLineup[Math.min(i, tamanosLineup.length - 1)]
-                    }`}
-                  >
-                    {a.nombre}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <p className="mx-auto mt-10 max-w-lg text-lg leading-snug">{evento.descripcion}</p>
-
-            <dl className="mt-10 grid border-2 border-tinta text-left sm:grid-cols-3">
-              <div className="border-b-2 border-dashed border-tinta p-4 sm:border-b-0 sm:border-r-2">
-                <dt className="text-xs uppercase tracking-widest text-gris">Fecha</dt>
-                <dd className="mt-1 font-titular text-lg uppercase">{formatearFecha(evento.fecha)}</dd>
-              </div>
-              <div className="border-b-2 border-dashed border-tinta p-4 sm:border-b-0 sm:border-r-2">
-                <dt className="text-xs uppercase tracking-widest text-gris">Dónde</dt>
-                <dd className="mt-1 font-titular text-lg uppercase">
-                  {evento.lugar}, {evento.ciudad}
-                </dd>
-              </div>
-              <div className="bg-acido p-4">
-                <dt className="text-xs uppercase tracking-widest text-tinta/70">Entradas desde</dt>
-                <dd className="mt-1 font-titular text-2xl">{formatearPrecio(evento.precioDesde)}</dd>
-              </div>
-            </dl>
-          </div>
+    <div className="mx-auto max-w-3xl px-4 py-16">
+      <article className="tarjeta">
+        <div className="bruma relative h-56 sm:h-72">
+          <div className={`h-full w-full bg-gradient-to-br ${evento.portada}`} />
+          <span className="absolute left-5 top-5 z-[1] bg-vidrio/90 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-pizarra">
+            {evento.genero}
+          </span>
         </div>
-      </div>
+
+        <div className="px-6 py-12 sm:px-12">
+          <h1 className="titular-apretado font-titular text-3xl font-semibold text-pizarra sm:text-5xl">
+            {evento.nombre}
+          </h1>
+
+          <ul className="mt-12 flex flex-col gap-2 border-y border-hormigon py-10">
+            {ordenado.map((a, i) => (
+              <li key={a.slug}>
+                <Link
+                  href={`/artistas/${a.slug}`}
+                  className={`titular-apretado font-titular font-semibold text-pizarra transition-colors hover:text-agua ${
+                    tamanosLineup[Math.min(i, tamanosLineup.length - 1)]
+                  }`}
+                >
+                  {a.nombre}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-10 max-w-lg text-lg leading-relaxed text-acero">{evento.descripcion}</p>
+
+          <dl className="mt-12 grid gap-px border border-hormigon bg-hormigon sm:grid-cols-3">
+            <div className="bg-vidrio p-5">
+              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+                Fecha
+              </dt>
+              <dd className="mt-2 font-titular text-base text-pizarra">
+                {formatearFecha(evento.fecha)}
+              </dd>
+            </div>
+            <div className="bg-vidrio p-5">
+              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+                Dónde
+              </dt>
+              <dd className="mt-2 font-titular text-base text-pizarra">
+                {evento.lugar}, {evento.ciudad}
+              </dd>
+            </div>
+            <div className="bg-vidrio p-5">
+              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+                Entradas desde
+              </dt>
+              <dd className="mt-2 font-mono text-xl text-agua">
+                {formatearPrecio(evento.precioDesde)}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </article>
 
       <Link
         href="/agenda"
-        className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
+        className="mt-14 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
       >
-        ← volver a la agenda
+        ← Volver a la agenda
       </Link>
     </div>
   );

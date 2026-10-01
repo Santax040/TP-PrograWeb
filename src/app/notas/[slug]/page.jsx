@@ -37,83 +37,77 @@ export default async function NotaPage({ params }) {
   const artistas = await getArtistas(articulo.artistas);
 
   return (
-    <article className="pb-8">
-      <div className={`fotocopia roto h-56 bg-gradient-to-br sm:h-80 ${articulo.portada}`} />
+    <article className="pb-12">
+      <div className="bruma h-64 sm:h-96">
+        <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
+      </div>
 
-      <div className="mx-auto -mt-24 max-w-3xl px-4 sm:-mt-32">
-        <div className="cinta -rotate-[0.6deg]">
-          <div className="papel roto px-6 pb-12 pt-8 shadow-[8px_8px_0_rgba(0,0,0,0.7)] sm:px-12">
-            <div className="flex flex-wrap items-center gap-3">
+      <div className="mx-auto max-w-3xl px-4">
+        <header className="border-b border-hormigon py-12">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href={`/notas/categoria/${articulo.categoria}`}
+              className="etiqueta text-acero transition-colors hover:text-agua"
+            >
+              {categoria?.nombre}
+            </Link>
+            {articulo.premium && (
               <Link
-                href={`/notas/categoria/${articulo.categoria}`}
-                className="bg-tinta px-2 py-0.5 font-titular text-xs uppercase tracking-widest text-papel hover:bg-sangre"
+                href="/suscribite"
+                className="etiqueta text-musgo transition-colors hover:text-agua"
               >
-                {categoria?.nombre}
+                Suscriptores
               </Link>
-              {articulo.premium && (
-                <Link href="/suscribite" className="sello text-xs hover:bg-sangre hover:text-papel">
-                  Solo suscriptores
-                </Link>
-              )}
-            </div>
-
-            <h1 className="mt-5 font-titular text-4xl uppercase leading-[0.92] tracking-tight sm:text-6xl">
-              {articulo.titulo}
-            </h1>
-
-            <p className="mt-6 text-xl italic leading-snug">
-              <span className="marcado">{articulo.bajada}</span>
-            </p>
-
-            <p className="mt-6 border-y-2 border-dashed border-tinta/40 py-2 text-xs uppercase tracking-wider text-gris">
-              Por {articulo.autor} / {formatearFecha(articulo.fecha)} /{" "}
-              {articulo.minutosLectura} min de lectura
-            </p>
-
-            {/* Mientras no haya pagos, la nota premium se lee completa, pero se
-                avisa y se ofrece el camino para suscribirse. */}
-            {articulo.premium && !pagosActivos && (
-              <aside className="mt-6 -rotate-1 bg-acido p-4 leading-snug text-tinta shadow-[4px_4px_0_var(--tinta)]">
-                <p className="font-titular uppercase">Nota exclusiva, gratis por ahora</p>
-                <p className="mt-1 text-sm">
-                  Cuando se activen los pagos va a ser solo para suscriptores.{" "}
-                  <Link href="/suscribite" className="font-bold underline underline-offset-2 hover:text-sangre">
-                    Mirá los planes →
-                  </Link>
-                </p>
-              </aside>
             )}
-
-            <div className="mt-8 flex flex-col gap-5 text-lg leading-relaxed">
-              {articulo.cuerpo.map((parrafo, i) => (
-                <p key={i} className={i === 0 ? "capitular" : undefined}>
-                  {parrafo}
-                </p>
-              ))}
-            </div>
-
-            <p className="mt-10 text-right font-marcador text-2xl text-sangre">
-              — fin —
-            </p>
           </div>
+
+          <h1 className="titular-apretado mt-7 font-titular text-4xl font-semibold text-pizarra sm:text-6xl">
+            {articulo.titulo}
+          </h1>
+
+          <p className="mt-7 text-xl leading-relaxed text-acero">{articulo.bajada}</p>
+
+          <p className="mt-8 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-acero">
+            {articulo.autor} · {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
+          </p>
+        </header>
+
+        {/* Mientras no haya pagos, la nota premium se lee completa, pero se
+            avisa y se ofrece el camino para suscribirse. */}
+        {articulo.premium && !pagosActivos && (
+          <aside className="mt-12 border-l-2 border-agua bg-vidrio px-5 py-4">
+            <p className="font-titular text-sm uppercase tracking-[0.1em] text-pizarra">
+              Nota exclusiva, abierta por ahora
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-acero">
+              Cuando se activen los pagos va a ser solo para suscriptores.{" "}
+              <Link href="/suscribite" className="text-agua underline underline-offset-4">
+                Mirá los planes →
+              </Link>
+            </p>
+          </aside>
+        )}
+
+        <div className="mt-12 flex flex-col gap-6 text-lg leading-[1.75] text-pizarra">
+          {articulo.cuerpo.map((parrafo, i) => (
+            <p key={i} className={i === 0 ? "capitular" : undefined}>
+              {parrafo}
+            </p>
+          ))}
         </div>
 
         {artistas.length > 0 && (
-          <section className="mt-16">
-            <h2 className="mb-6 -rotate-1 font-marcador text-2xl text-acido">
-              aparecen en esta nota:
+          <section className="mt-20 border-t border-hormigon pt-10">
+            <h2 className="mb-6 font-mono text-xs uppercase tracking-[0.22em] text-acero">
+              Aparecen en esta nota
             </h2>
-            <div className="flex flex-wrap gap-4">
-              {artistas.map((a, i) => (
-                <Link
-                  key={a.slug}
-                  href={`/artistas/${a.slug}`}
-                  className={`papel block px-4 py-3 shadow-[4px_4px_0_var(--sangre)] transition-transform hover:rotate-0 ${
-                    i % 2 === 0 ? "-rotate-2" : "rotate-2"
-                  }`}
-                >
-                  <p className="font-titular text-xl uppercase">{a.nombre}</p>
-                  <p className="text-xs uppercase tracking-wider text-gris">{a.genero}</p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {artistas.map((a) => (
+                <Link key={a.slug} href={`/artistas/${a.slug}`} className="tarjeta block px-5 py-4">
+                  <p className="font-titular text-lg font-semibold text-pizarra">{a.nombre}</p>
+                  <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-acero">
+                    {a.genero}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -122,9 +116,9 @@ export default async function NotaPage({ params }) {
 
         <Link
           href="/notas"
-          className="mt-14 inline-block font-marcador text-lg text-acido underline decoration-wavy underline-offset-4 hover:text-papel"
+          className="mt-16 inline-block font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
         >
-          ← volver a las notas
+          ← Volver a las notas
         </Link>
       </div>
     </article>

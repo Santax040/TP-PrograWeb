@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Avatar from "@/components/Avatar";
-import Recorte from "@/components/Recorte";
+import Titular from "@/components/Titular";
 import { formatearFecha } from "@/lib/formato";
 import { planes } from "@/lib/site";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
@@ -50,46 +50,46 @@ export default async function PerfilPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="text-5xl sm:text-6xl">
-        <Recorte texto="Perfil" />
-      </h1>
-      <p className="mt-4 -rotate-1 font-marcador text-xl text-acido">
-        quién sos acá adentro.
-      </p>
+    <div className="mx-auto max-w-2xl px-4 py-16">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl">
+          <Titular texto="Perfil" volanta="Tu cuenta" />
+        </h1>
 
-      {(perfil?.avatar_url || perfil?.rol === "admin") && (
-        <div className="mt-8 flex items-center gap-4">
-          {perfil?.avatar_url && (
-            <Avatar url={perfil.avatar_url} tamano={72} className="-rotate-2 shadow-[4px_4px_0_var(--sangre)]" />
-          )}
-          {perfil?.rol === "admin" && <span className="sello bg-papel">Admin</span>}
-        </div>
-      )}
+        {(perfil?.avatar_url || perfil?.rol === "admin") && (
+          <div className="mt-10 flex items-center gap-5">
+            {perfil?.avatar_url && <Avatar url={perfil.avatar_url} tamano={72} />}
+            {perfil?.rol === "admin" && <span className="etiqueta text-musgo">Admin</span>}
+          </div>
+        )}
+      </header>
 
-      <dl className="cinta papel roto mt-12 rotate-1 divide-y-2 divide-tinta/15 p-6 pb-10 shadow-[6px_6px_0_rgba(0,0,0,0.6)]">
+      <dl className="tarjeta divide-y divide-hormigon px-7">
         {datos.map((d) => (
-          <div key={d.etiqueta} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3">
-            <dt className="font-titular text-sm uppercase tracking-wide text-tinta/80">
+          <div
+            key={d.etiqueta}
+            className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4"
+          >
+            <dt className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-acero">
               {d.etiqueta}
             </dt>
-            <dd className="font-bold text-tinta">{d.valor}</dd>
+            <dd className="text-pizarra">{d.valor}</dd>
           </div>
         ))}
       </dl>
 
-      <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3">
         <Link
           href="/configuracion"
-          className="inline-block -rotate-1 bg-sangre px-5 py-2 font-titular text-lg uppercase tracking-wide text-papel shadow-[4px_4px_0_var(--tinta)] transition-transform hover:rotate-0"
+          className="inline-block bg-pizarra px-6 py-2.5 font-titular text-sm uppercase tracking-[0.1em] text-niebla transition-colors hover:bg-agua"
         >
           Editar datos
         </Link>
         <Link
           href="/suscribite"
-          className="font-bold text-acido underline decoration-sangre decoration-2 underline-offset-4"
+          className="font-mono text-xs uppercase tracking-[0.18em] text-acero transition-colors hover:text-agua"
         >
-          Ver los planes
+          Ver los planes →
         </Link>
       </div>
     </div>
