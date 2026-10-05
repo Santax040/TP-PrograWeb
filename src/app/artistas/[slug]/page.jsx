@@ -44,7 +44,7 @@ export default async function ArtistaPage({ params }) {
         <p className="font-ancha text-[0.65rem] uppercase text-white/80">
           {artista.genero}
         </p>
-        <h1 className="titular-apretado resplandor mt-6 font-titular text-5xl font-extralight lowercase sm:text-7xl">
+        <h1 className="titular-apretado resplandor mt-6 font-titular text-5xl font-light sm:text-7xl">
           {artista.nombre}
         </h1>
         <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/85">{artista.bio}</p>

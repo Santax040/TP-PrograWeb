@@ -41,13 +41,13 @@ export default async function EventoPage({ params }) {
       <article className="tarjeta">
         <div className="bruma relative h-56 sm:h-72">
           <div className={`h-full w-full bg-gradient-to-br ${evento.portada}`} />
-          <span className="absolute left-5 top-5 z-[2] rounded-full border border-white/60 bg-white/25 px-3 py-1 font-ancha text-[0.6rem] uppercase text-white backdrop-blur-md">
+          <span className="absolute left-5 top-5 z-[2] border border-white/60 bg-white/25 px-3 py-1 font-ancha text-[0.6rem] uppercase text-white backdrop-blur-md">
             {evento.genero}
           </span>
         </div>
 
         <div className="px-6 py-12 sm:px-12">
-          <h1 className="titular-apretado font-titular text-4xl font-extralight lowercase text-marino sm:text-6xl">
+          <h1 className="titular-apretado font-titular text-4xl font-light text-marino sm:text-6xl">
             {evento.nombre}
           </h1>
 
@@ -56,7 +56,7 @@ export default async function EventoPage({ params }) {
               <li key={a.slug}>
                 <Link
                   href={`/artistas/${a.slug}`}
-                  className={`titular-apretado font-titular font-light lowercase text-marino transition-colors hover:text-cobalto ${
+                  className={`titular-apretado font-titular font-light text-marino transition-colors hover:text-cobalto ${
                     tamanosLineup[Math.min(i, tamanosLineup.length - 1)]
                   }`}
                 >
@@ -73,7 +73,7 @@ export default async function EventoPage({ params }) {
               <dt className="font-ancha text-[0.55rem] uppercase text-white/70">
                 Fecha
               </dt>
-              <dd className="mt-2 font-titular text-base font-light lowercase">
+              <dd className="mt-2 font-titular text-base font-light">
                 {formatearFecha(evento.fecha)}
               </dd>
             </div>
@@ -81,7 +81,7 @@ export default async function EventoPage({ params }) {
               <dt className="font-ancha text-[0.55rem] uppercase text-white/70">
                 Dónde
               </dt>
-              <dd className="mt-2 font-titular text-base font-light lowercase">
+              <dd className="mt-2 font-titular text-base font-light">
                 {evento.lugar}, {evento.ciudad}
               </dd>
             </div>

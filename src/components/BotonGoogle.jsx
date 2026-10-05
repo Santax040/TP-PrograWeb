@@ -47,14 +47,14 @@ export default function BotonGoogle({ siguiente = "/" }) {
         type="button"
         onClick={entrar}
         disabled={yendo}
-        className="inline-flex items-center gap-3 rounded-full border border-white bg-white px-6 py-3 font-titular text-base lowercase text-marino shadow-[0_8px_24px_-12px_#1f45d6] transition-shadow hover:shadow-[0_0_0_1px_#7ff4ff,0_0_24px_#7ff4ffb3] disabled:opacity-60"
+        className="inline-flex items-center gap-3 border border-white bg-white px-6 py-3 font-titular text-base text-marino shadow-[0_8px_24px_-12px_#1f45d6] transition-shadow hover:shadow-[0_0_0_1px_#7ff4ff,0_0_24px_#7ff4ffb3] disabled:opacity-60"
       >
         <LogoGoogle />
         {yendo ? "Yendo a Google…" : "Entrar con Google"}
       </button>
 
       {error && (
-        <p role="alert" className="rounded-lg border-l-2 border-cobalto bg-white/70 px-3 py-2 text-sm text-marino">
+        <p role="alert" className=" border-l-2 border-cobalto bg-white/70 px-3 py-2 text-sm text-marino">
           {error}
         </p>
       )}
