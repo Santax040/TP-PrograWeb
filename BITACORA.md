@@ -20,6 +20,40 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-05 (10) — Limpieza: se borran las propuestas descartadas
+
+### Qué se pidió
+"Borra el resto si ya está", después de publicar Exo 2.
+
+### Qué se hizo
+- **Carpetas:** se borraron las seis copias de trabajo de `../variantes/`
+  (con sus `node_modules`) y la carpeta misma, donde solo quedaban los logs
+  de instalación y build.
+- **Ramas locales borradas:** `gxsc-a-terminal`, `gxsc-b-flyer`,
+  `gxsc-c-consola`, `gxsc-d-anden`, `gxsc-e-collage`, `gxsc-f-cianotipo`,
+  `fuentes-exo`, `fuentes-albert`, `rediseno-gxsc` y `diseno-grunge`.
+- **Ramas borradas en GitHub:** `rediseno-gxsc` y `diseno-grunge`.
+- **`launch.json`** (en `Programacion Web/.claude/` y en `TP/.claude/`):
+  quedó solo la configuración del sitio, en el puerto 3000.
+- Queda una sola rama, `main`, igual a la de GitHub.
+
+### Qué se perdió y qué no
+- `e-collage`, `fuentes-exo`, `rediseno-gxsc` y `diseno-grunge` estaban
+  enteras en `main`: no se perdió nada.
+- Las propuestas A, B, C, D y F y la versión con Albert Sans tenían commits
+  propios que no están en `main`. Se perdieron a propósito: eran las
+  descartadas. Su descripción, sus decisiones y lo que se aprendió quedan en
+  las entradas (2), (3) y (8) de esta bitácora.
+
+### ⚑ Para charlar
+- **[rareza]** Las ramas que se borraron en GitHub pueden haber dejado
+  previews viejos en Vercel. No molestan, pero se pueden limpiar desde el
+  panel de Vercel.
+- Quedan resueltos los **[a decidir]** de borrar propuestas de las entradas
+  (7) y (9).
+
+---
+
 ## 2026-10-05 (9) — Se publica Exo 2 como fuente general
 
 ### Qué se pidió
