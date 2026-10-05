@@ -5,6 +5,397 @@ Registro de cambios y decisiones del proyecto. Entrada más reciente arriba.
 Los errores y malentendidos se registran aparte, en
 [DESENCUENTROS.md](DESENCUENTROS.md).
 
+**Marcas ⚑ (desde el 2026-10-05).** Cada entrada termina con una sección
+**⚑ Para charlar** donde se anota lo que conviene revisar juntos más adelante.
+Cada punto lleva su tipo:
+
+- **[error]**: algo que hizo mal el asistente, aunque lo haya corregido antes
+  de entregar.
+- **[rareza]**: algo que se comporta distinto de lo esperable, del proyecto o
+  de las herramientas.
+- **[atajo]**: algo que se resolvió rápido a propósito y deja deuda.
+- **[a decidir]**: una pregunta abierta para el usuario.
+
+Para encontrarlas todas, buscar "⚑".
+
+---
+
+## 2026-10-05 (7) — Collage pasa a ser el diseño oficial y se publica
+
+### Qué se pidió
+"Este nuevo diseño es el oficial": commitear y pushear todo para que sea lo
+que se ve en la página publicada.
+
+### Qué se hizo
+- **`CLAUDE.md` → `## Diseño`** reescrita para la propuesta E: tokens,
+  tipografías, piezas, layout y las lecciones de esta tanda (`@layer
+  components`, `grid-cols-1` en celular, contorno solo en tamaños grandes, las
+  cuatro opciones del header).
+- **Se commitearon los documentos** que estaban pendientes en
+  `rediseno-gxsc`: esta bitácora, `CLAUDE.md` y `DESENCUENTROS.md`.
+- **Se unió `gxsc-e-collage` a `rediseno-gxsc`**, y `rediseno-gxsc` a `main`.
+  Fue un avance directo: `main` no tenía commits nuevos.
+- **Push de `main` a GitHub.** Vercel publica `main` en
+  revista-digital-musica.vercel.app.
+
+### Decisiones
+- **Se publica todo junto:** la versión 2 azul y el Collage van en la misma
+  subida. La 2 nunca llegó a producción; en el historial queda como paso
+  intermedio.
+- **Las ramas de las otras propuestas no se suben a GitHub** y siguen locales
+  con sus carpetas en `../variantes/`. Borrarlas no tiene vuelta atrás: se
+  pregunta antes.
+
+### ⚑ Para charlar
+- **[a decidir]** Borrar las propuestas descartadas: ramas `gxsc-a`…`gxsc-f`
+  (menos `e`), `diseno-grunge` y las carpetas de `../variantes/`, que ocupan
+  bastante disco (cada una tiene su `node_modules`).
+- **[rareza]** `rediseno-gxsc` y `main` quedan iguales. De acá en adelante
+  conviene trabajar directo en `main`, como dice la regla del proyecto.
+- **[atajo]** Siguen pendientes los puntos de las entradas (5) y (6): el
+  evento "Subsuelo Presenta: Octubre" en la base, "Suscribete" o
+  "Suscribite", y "Eventos" o "Agenda".
+
+---
+
+## 2026-10-05 (6) — Marcas ⚑ para charlar más adelante
+
+### Qué se pidió
+Registrar todo en la bitácora y, de acá en adelante, marcar las cosas raras,
+los errores del asistente y las peculiaridades, para charlarlas después.
+
+### Qué se hizo
+- Arriba de este archivo quedó explicada la convención: cada entrada cierra
+  con **⚑ Para charlar** y cada punto lleva su tipo (**[error]**,
+  **[rareza]**, **[atajo]** o **[a decidir]**).
+- Se marcaron hacia atrás todas las entradas de esta conversación, desde
+  2026-10-01 (5) hasta 2026-10-05 (5). Algunos errores se habían corregido
+  antes de entregar y no estaban escritos en ningún lado: ahora quedan
+  anotados.
+
+### Decisiones
+- **Con DESENCUENTROS.md se reparten así:** allá van los casos en que lo que
+  se pidió y lo que se hizo no coincidieron. Acá, con ⚑, va todo lo demás que
+  conviene revisar: errores atrapados a tiempo, rarezas de las herramientas,
+  deudas y preguntas abiertas.
+
+### ⚑ Para charlar
+- **[a decidir]** Cuando se repasen las marcas, ver si alguna merece pasar a
+  DESENCUENTROS.md o convertirse en una regla de `CLAUDE.md`.
+
+---
+
+## 2026-10-05 (5) — La revista se llama Artificial y deja de tener lema
+
+### Qué se pidió
+"El título de la página tiene que ser Artificial", y borrar "noche, música y
+quilombo".
+
+### Qué se hizo (rama `gxsc-e-collage`)
+- `site.js`: `nombre` pasó de "SUBSUELO" a **"Artificial"**, escrito en caja
+  normal. Donde el diseño lo pide (header, portada, footer) se muestra en
+  mayúscula con la clase `uppercase`.
+- Se eliminó `site.tagline` y todos sus usos: debajo del logo en el header,
+  debajo del título grande de la portada y en el título de la pestaña.
+- Título de la pestaña: la portada dice "Artificial" y las demás páginas
+  "Agenda — Artificial", "Notas — Artificial", etc.
+- Como el logo ahora es de un solo renglón, el header se alinea al centro.
+
+### Pendiente
+- En la base, un evento se llama "Subsuelo Presenta: Octubre" y aparece en la
+  marquesina y en la agenda. Es contenido, no diseño, y la base es la de
+  producción: no se tocó sin preguntar.
+- La categoría "Quilombo" sigue existiendo (ya no está en el header).
+
+### Verificado
+En `localhost:3005`: el título y los textos ya no incluyen el lema; sin scroll
+horizontal; `eslint` sin errores.
+
+### ⚑ Para charlar
+
+- **[a decidir]** En la base hay un evento que se llama "Subsuelo Presenta:
+  Octubre" y se ve en la marquesina y en la agenda. La base es la misma que
+  usa producción, así que no se tocó.
+- **[a decidir]** "Suscribete" sin voseo, cuando el resto del sitio dice
+  "Suscribite", "Entrás"… Se escribió como lo pidió el usuario.
+- **[a decidir]** El menú dice "Eventos", pero la página adentro sigue
+  titulándose "Agenda".
+- **[rareza]** "Quilombo" sigue siendo una categoría con página propia, aunque
+  ya no aparece en el header ni en el lema.
+
+---
+
+## 2026-10-05 (4) — Elegida la propuesta E (Collage). Menú de cuatro opciones
+
+### Qué se pidió
+El usuario eligió **E · Collage** y empezó a ajustarla. Primer cambio: que el
+header diga solo "MUSICA - EVENTOS - SUSCRIBETE - ENTRAR".
+
+### Qué se hizo (rama `gxsc-e-collage`)
+- `Header.jsx`: el menú pasó de seis opciones a cuatro, en mono y en
+  mayúscula, como los rótulos del HUD:
+  - **Música** → `/notas/categoria/musica`
+  - **Eventos** → `/agenda`
+  - **Suscribete** → `/suscribite`, como botón azul
+  - **Entrar** → el mismo de antes; con sesión iniciada sigue mostrando el
+    nombre con su menú
+- Fiestas, Quilombo y Entrevistas salieron del header. Sus páginas siguen
+  existiendo y se llega a ellas desde la etiqueta de cada nota.
+
+### Decisiones
+- "Suscribete" se escribió tal cual lo pidió el usuario, aunque el resto del
+  sitio usa voseo ("Suscribite"). La dirección `/suscribite` no cambió.
+- La página `/agenda` todavía se llama "Agenda" adentro; en el menú figura
+  como "Eventos".
+
+### Verificado
+En `localhost:3005`: el header muestra las cuatro opciones. `eslint` sin errores.
+
+### ⚑ Para charlar
+
+- **[rareza]** Todo el ajuste de E se hace en su rama (`gxsc-e-collage`,
+  carpeta `variantes/e-collage`), pero la bitácora se escribe en `TP/` (rama
+  `rediseno-gxsc`). Hasta que E pase a `rediseno-gxsc`, el código y su registro
+  viven en lugares distintos.
+- **[atajo]** `CLAUDE.md` → `## Diseño` todavía describe la versión 2 (Lexend,
+  vidrio, `.cartel` cobalto). Hay que reescribirla para E.
+- **[a decidir]** Las otras cinco propuestas (A, B, C, D, F) siguen con sus
+  ramas y carpetas. Borrarlas no tiene vuelta atrás: se pregunta antes.
+
+---
+
+## 2026-10-05 (3) — Tres propuestas más (D, E, F), una por cada foto nueva
+
+### Qué se pidió
+El usuario sumó tres fotos a `../Gen X Soft Club/`, cada una con colores y
+esquemas distintos, y pidió tres propuestas nuevas tomándolas de referencia.
+
+### Las fotos y lo que se tomó de cada una
+
+| Foto | Colores | Esquema | Propuesta |
+|---|---|---|---|
+| Nine Days, *The Madding Crowd* | lima, chartreuse, blanco quemado, banda violeta con amarillo | foto movida a todo el ancho cruzada por una banda horizontal; subtítulo en itálica a la derecha | **D · Andén** |
+| Gen X *Young Adult / Contemporary Soft Club* | menta, agua, lavanda, un panel azul | collage de capas translúcidas, marcos blancos corridos, líneas de HUD, columnas de código, letra techno en contorno | **E · Collage** |
+| Aphex Twin, *SAW 85–92* (afiche) | cianotipo petróleo y turquesa, crema verdoso, papel gris claro | barras de código arriba, nombre calado en un recuadro, números gigantes en contorno, lista numerada, filetes, código de barras | **F · Cianotipo** |
+
+Se hicieron igual que A, B y C: una rama por propuesta, salida de
+`rediseno-gxsc`, con su copia en `../variantes/`.
+
+| Propuesta | Rama | Carpeta | Puerto |
+|---|---|---|---|
+| D · Andén | `gxsc-d-anden` | `variantes/d-anden` | 3004 |
+| E · Collage | `gxsc-e-collage` | `variantes/e-collage` | 3005 |
+| F · Cianotipo | `gxsc-f-cianotipo` | `variantes/f-cianotipo` | 3006 |
+
+### Cómo es cada una
+- **D · Andén.** Figtree en negrita minúscula y bajadas en itálica. El
+  header es la banda violeta, con el nombre partido en blanco y amarillo
+  ("sub" + "suelo", como "nine" + "days"). La portada es la foto de la nota
+  principal a todo el ancho, lima y sobreexpuesta, cruzada por la banda con
+  el título. Los títulos de sección también son bandas.
+- **E · Collage.** Audiowide (techno, en mayúscula y a veces solo contorno),
+  Share Tech Mono para los datos y Albert Sans para leer. La portada es un
+  collage en una grilla de 12 columnas con piezas que se superponen: el
+  nombre, la foto grande con su marco corrido, la foto chica, el panel azul
+  con la próxima fecha y líneas del HUD. Las columnas de código del costado
+  son los slugs y las fechas reales, y solo aparecen desde 1280px.
+- **F · Cianotipo.** Comfortaa en minúscula y Karla para leer. Header con
+  barras petróleo y el nombre en un recuadro de papel. La portada es el
+  afiche: el año y la próxima fecha en números enormes en contorno, las
+  secciones apiladas, un filete y el sumario numerado como lista de temas.
+  Debajo va un código de barras con datos reales: año y mes, cantidad de
+  notas y de fechas.
+
+### Autocrítica, mirando las páginas
+- **D:** la foto salía verde oliva oscuro y los reflejos parecían una
+  persiana. Se subió la exposición y se hicieron luces irregulares; ahora es
+  el lima quemado de la tapa.
+- **E:** el lema chico en contorno no se leía, y el nombre aparecía dos veces
+  muy grande. El lema pasó a mono y se achicó el nombre del header. Los
+  títulos de sección daban scroll horizontal en celular: ahora bajan de
+  renglón.
+- **F:** el panel salía demasiado oscuro y el texto petróleo no se leía
+  encima. Se aclaró hacia el crema del afiche, y la lista lleva un velo de
+  papel. El botón "Entrar" era blanco sobre papel: se pasó a petróleo.
+
+### Verificado
+- D, E y F en escritorio y en 375px, en portada, notas, agenda, evento,
+  artista, categoría, suscribite y login. Sin scroll horizontal y sin errores
+  en la consola. `eslint` y `npm run build` sin errores en las tres.
+- El panel admite cinco servidores a la vez. Quedaron corriendo B, D, E y F;
+  la versión actual (3000), A y C se frenaron y se levantan de nuevo desde el
+  `launch.json`.
+
+### Pendiente
+- Que el usuario elija entre las seis (A–F), o pida mezclar piezas.
+
+### ⚑ Para charlar
+
+- **[error]** D: la foto salía verde oliva oscuro, lejos del lima quemado de la
+  tapa. Fue por cómo funciona `mix-blend-mode: color`: conserva la luz de la
+  imagen original, y las portadas de la base son oscuras. Se corrigió
+  sobreexponiendo antes de teñir.
+- **[error]** E: el lema en letra de contorno a 12px no se leía; el contorno
+  sirve solo en tamaños grandes.
+- **[error]** E: los títulos de sección daban scroll horizontal en celular
+  (título, línea y enlace en un solo renglón sin `flex-wrap`).
+- **[error]** F: el panel de cianotipo salía tan oscuro que el texto petróleo
+  desaparecía encima, y el botón "Entrar" quedó blanco sobre papel: venía del
+  diseño anterior y no se revisó.
+- **[rareza]** El panel del navegador admite cinco servidores a la vez. Para
+  levantar E y F se frenaron la versión actual (3000), A y C.
+- **[rareza]** Con el tamaño de pantalla emulado (1440px), las capturas del
+  panel salen corridas o en blanco al hacer scroll. Se verificó con el tamaño
+  nativo del panel y midiendo el ancho por código.
+- **[atajo]** En D, el token `cian` contiene el amarillo de la banda.
+
+---
+
+## 2026-10-05 (2) — Tres propuestas de Gen X Soft Club para elegir
+
+### Qué se pidió
+Rehacer el formato en **tres versiones realmente distintas entre sí**, todas
+con Gen X Soft Club como referencia, mirando las páginas terminadas (no el
+código) para evaluar cuál replica mejor la onda. Las tres se muestran y el
+usuario elige la final.
+
+### Cómo se armó
+Cada propuesta es una rama propia, salida de `rediseno-gxsc`, con su copia de
+trabajo en `../variantes/` (fuera del repo, con `git worktree`). Así corren las
+tres a la vez sin pisarse:
+
+| Propuesta | Rama | Carpeta | Puerto |
+|---|---|---|---|
+| A · Terminal | `gxsc-a-terminal` | `variantes/a-terminal` | 3001 |
+| B · Flyer | `gxsc-b-flyer` | `variantes/b-flyer` | 3002 |
+| C · Consola | `gxsc-c-consola` | `variantes/c-consola` | 3003 |
+
+Se levantan desde el `launch.json` de la carpeta padre (`variante-a-terminal`,
+etc.). La versión actual (v2) sigue en `TP/`, puerto 3000, sin cambios.
+
+### Las tres propuestas
+
+Cada una sale de imágenes distintas de la carpeta de referencia, para que no
+fueran tres variaciones de lo mismo.
+
+| | A · Terminal | B · Flyer | C · Consola |
+|---|---|---|---|
+| Referencia | cartel "Gates A", pasillo de Supreme Particles | flyer gen x soft club, tapa de Macy Gray | PS2, cartel de salida |
+| Luz | de día, plana, sin brillo | bruma luminosa | de noche, brillo y profundidad |
+| Fondo | gris aguamarina `#E3ECEB` | ultramar `#2A3DB5` con luces que derivan | azul BIOS `#070B33` con piso en perspectiva y torres |
+| Letra | B612 y B612 Mono (las de la cabina de Airbus), caja normal | Unbounded finísima en minúscula + Hanken Grotesk | Michroma en minúscula + Chakra Petch |
+| Pieza fuerte | la portada es un tablero de salidas con todas las fechas | el nombre enorme y la composición del flyer | el menú principal con la opción que se enciende |
+| Categorías | puertas de embarque A, B, C, D | lista con comas, como "trip-hop, electronica, downtempo" | opciones del menú, con cantidad de notas |
+| Notas | paneles blancos con foto teñida verde agua | fotos con marco blanco y texto suelto, sin caja | memory cards translúcidas |
+
+### Autocrítica, mirando las páginas
+- **A:** la más clara y la más legible: el tablero se entiende al instante. Es
+  la que menos se parece a la onda: tiene el aeropuerto pero no lo "soft", ni
+  la bruma ni el brillo. Se corrigió la luz del pasillo sobre las fotos, que
+  quedaba como un óvalo blanco.
+- **B:** la más fiel. La portada es literalmente el flyer de la carpeta. Lo
+  flojo: letra blanca sobre azul en notas largas cansa más que texto oscuro
+  sobre claro, y los desenfoques grandes pesan en máquinas lentas. Se
+  corrigió la línea de datos, que salía pegada ("GALPÓN MECÁNICA3.10.26"), y el
+  nombre del hero, que se cortaba.
+- **C:** la más llamativa, pero tira más a Y2K / PS2 que a Gen X Soft Club,
+  que es más calmo. Se corrigió que las torres del fondo casi no se veían y
+  "1 notas".
+- **B y C** tenían scroll horizontal en la portada en celular: los nombres
+  largos de eventos estiraban la columna de la grilla. Se arregló con
+  `grid-cols-1`.
+
+**Recomendación:** B como réplica de Gen X Soft Club. Si se elige, se le puede
+sumar el tablero de salidas de A para la agenda.
+
+### Decisiones
+- **Los tokens conservan sus nombres en las tres** (`marino`, `cobalto`…)
+  para no tocar todas las páginas en un prototipo. En B y C el sitio es
+  oscuro y `marino` termina siendo el color del texto, casi blanco. La que se
+  elija se limpia: se renombran los tokens y se actualiza `## Diseño` en
+  `CLAUDE.md`.
+- **En B y C las piezas van en `@layer components`.** Fuera de capa, `.etiqueta`
+  le ganaba a utilidades como `flex` y rompía la línea de datos.
+
+### Verificado
+- Las tres en 1440px y 375px: portada, nota, evento, agenda, artista,
+  categoría, suscribite y login. Sin scroll horizontal y sin errores en la
+  consola.
+- `eslint` y `npm run build` sin errores en las tres.
+
+### Pendiente
+- Que el usuario elija. Después: llevar la elegida a `rediseno-gxsc`, limpiar
+  los tokens, actualizar `CLAUDE.md` y borrar las otras dos ramas y la carpeta
+  `variantes/`.
+
+### ⚑ Para charlar
+
+- **[rareza]** El primer `preview_start` levantó la versión actual en vez de
+  la variante: el panel lee el `launch.json` de la carpeta padre
+  (`Programacion Web/.claude/`), no el de `TP/.claude/`. Las configuraciones de
+  las variantes quedaron en los dos.
+- **[error]** B: la línea de datos salía pegada ("GALPÓN MECÁNICA3.10.26").
+  Las piezas propias estaban fuera de `@layer`, y en Tailwind 4 el CSS fuera
+  de capa le gana a las utilidades: `.etiqueta` pisaba al `flex`. En B, C, D,
+  E y F se pasaron a `@layer components`. A y la versión actual siguen con el
+  problema latente.
+- **[error]** B y C tenían scroll horizontal en la portada del celular: en una
+  grilla, una columna sin `grid-cols-1` se estira hasta el ancho del texto más
+  largo, aunque tenga `truncate`.
+- **[error]** C: las torres del fondo, que son la pieza principal, casi no se
+  veían, y la portada decía "1 notas".
+- **[error]** A: quedaron versalitas espaciadas de la versión anterior, que no
+  van con la señalética, y la luz del pasillo sobre las fotos salía como un
+  óvalo blanco.
+- **[atajo]** En B y C el sitio es oscuro y el token `marino` (pensado como
+  "texto oscuro") termina siendo el color del texto claro. Los nombres de
+  tokens mienten en esas propuestas.
+- **[rareza]** Cada propuesta es una copia completa del proyecto con su propio
+  `node_modules` (seis `npm ci`). Ocupa bastante disco: se limpia cuando se
+  borren las propuestas descartadas.
+- **[rareza]** Los heredocs de Bash con varios archivos fallaban con
+  "unexpected EOF". Se esquivó escribiendo los archivos de a uno.
+
+---
+
+## 2026-10-05 — Sección "Diseño" en CLAUDE.md y plugins de Claude Code
+
+### Qué se pidió
+Verificar los plugins nuevos de Claude Code (`frontend-design` y `supabase`) y
+agregar a `CLAUDE.md` una sección corta con las decisiones de diseño ya tomadas.
+Sin tocar código de la app.
+
+### Qué se hizo
+- **`CLAUDE.md`:** sección `## Diseño` debajo de `@AGENTS.md`, armada a partir
+  de `globals.css`, `layout.jsx`, los componentes, esta bitácora y
+  DESENCUENTROS.md. Tiene la referencia, los tokens, los roles de cada
+  tipografía, las piezas propias y los patrones de layout.
+- **Plugins:**
+  - `frontend-design`: cargado (skill `frontend-design:frontend-design`).
+  - `supabase`: habilitado en `.claude/settings.json`, pero no cargó. La
+    sesión se había abierto en la carpeta padre (`Programacion Web/`) y no leyó
+    la configuración de `TP/`. Como las sesiones se abren siempre ahí, se
+    habilitó también en `Programacion Web/.claude/settings.json` (fuera del
+    repo). Carga a partir de la próxima sesión.
+
+### Decisiones
+- **La sección vive solo en la rama `rediseno-gxsc`.** GXSC v2 todavía se está
+  probando en local; `main` sigue con el fanzine grunge. La sección lo aclara y
+  hay que borrarla o reescribirla si se descarta el rediseño.
+- **El rediseño no se publica todavía.** El usuario va a seguir ajustándolo en
+  la rama. Cada cambio de diseño actualiza también la sección de `CLAUDE.md`.
+- **El usuario confirmó** que las imágenes de `../Gen X Soft Club/` son la
+  referencia estética.
+- **Supabase no tiene un proyecto de desarrollo aparte:** el único
+  (`tsqcqboypfnyqhhyexte`) es el que usa producción. Hay que tenerlo en cuenta
+  antes de conectar el MCP.
+
+### ⚑ Para charlar
+
+- **[rareza]** Los cambios de documentación de esta entrada (`BITACORA.md`,
+  `CLAUDE.md`, `DESENCUENTROS.md`) siguen sin commitear en `rediseno-gxsc`.
+  Todo lo que se fue sumando a la bitácora después también.
+
 ---
 
 ## 2026-10-01 (5) — Gen X Soft Club, segunda versión: todo azul, a partir de las referencias
@@ -84,6 +475,23 @@ y etiquetas). Quedan Mulish para el texto corrido e IBM Plex Mono para fechas.
 
 **Pendiente:** ver el menú desplegable del usuario con una sesión abierta, y
 publicarlo (está en la rama `rediseno-gxsc`, no en `main`).
+
+### ⚑ Para charlar
+
+*(Agregado el 2026-10-05, mirando hacia atrás.)*
+
+- **[error]** Las fotos se veían grises en vez de azules: la foto tenía
+  `transform` (para el zoom al pasar), y eso la pintaba por encima del velo de
+  color. Se detectó al verificar y se corrigió antes de entregar.
+- **[error]** El header pegajoso tapaba un cuarto de la pantalla del celular.
+  Se dejó pegajoso solo desde tablet.
+- **[error]** Al pasar el menú a minúscula se reescribieron los textos
+  ("agenda", "suscribite") en vez de usar la clase `lowercase`. Se revirtió en
+  el momento.
+- **[error]** Al revisar el ancho de varias páginas, un script navegó solo por
+  todas ellas en la misma pestaña. No rompió nada, pero no era la intención.
+- **[rareza]** La bitácora tiene dos entradas "2026-10-01 (4)": la de OAuth y
+  la del cambio a Gen X Soft Club. Se numeraron en sesiones distintas.
 
 ---
 

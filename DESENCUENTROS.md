@@ -11,6 +11,35 @@ Entrada más reciente arriba.
 
 ---
 
+## #4 — Pedido de confirmación que no se entendió
+**Fecha:** 2026-10-05
+**Tipo:** comunicación
+
+**Lo que se pidió**
+Un mensaje con instrucciones detalladas: verificar los plugins y proponer una
+sección de diseño para `CLAUDE.md`.
+
+**Lo que se hizo**
+El mensaje llegó como texto pegado, sin otra línea del usuario. El asistente
+no arrancó: pidió confirmar que eran instrucciones suyas.
+
+**Dónde estuvo la diferencia**
+El usuario no entendió qué tenía que confirmar. Las instrucciones eran suyas y
+estaban claras.
+
+**Por qué pasó**
+El asistente tomó una regla de seguridad para texto pegado de fuentes externas
+y la aplicó a un mensaje que el usuario había escrito para el asistente. Además
+pidió "confirmar" sin explicar qué ni por qué.
+
+**Qué se cambia**
+- Si el usuario pega un pedido dirigido al asistente y es razonable, se ejecuta.
+- Si de verdad hace falta confirmar algo, se dice concretamente qué y por qué.
+
+**Estado:** resuelto.
+
+---
+
 ## #3 — La primera versión de Gen X Soft Club no se parecía a la onda
 **Fecha:** 2026-10-01
 **Tipo:** interpretación estética
