@@ -31,7 +31,16 @@ Para encontrarlas todas, buscar "⚑".
 - Queda: **Audiowide** para el logo y los títulos grandes, **Exo 2** para
   todo lo demás. Las reglas están en `CLAUDE.md` → `## Diseño` → Tipografía.
 
+### Verificado en producción
+- `eslint` y `npm run build` sin errores antes del push (`1f64105..b5608ac`).
+- En revista-digital-musica.vercel.app, midiendo la fuente de cada texto de la
+  portada: Audiowide en 5 elementos y Exo 2 en 101. No queda ninguna otra.
+
 ### ⚑ Para charlar
+- **[error]** Para saber cuándo estaba publicado, se buscó "Exo" en el HTML
+  con `curl` durante siete minutos. Nunca podía aparecer: `next/font` sirve las
+  fuentes con nombres generados. Había que medir la fuente en el navegador,
+  como se hizo después.
 - **[a decidir]** Borrar `fuentes-albert` y las ramas y carpetas de las
   propuestas descartadas (ver entrada 7).
 
