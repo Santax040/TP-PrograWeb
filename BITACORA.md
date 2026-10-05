@@ -20,6 +20,61 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-05 (8) — Menos fuentes: dos versiones para elegir
+
+### Qué se pidió
+El usuario notó que "cada parte parece que tiene una fuente distinta". Quiere
+menos fuentes, una más general, y conservar la de "Artificial" (Audiowide).
+Se acordó armar dos versiones para comparar antes de publicar.
+
+### Diagnóstico
+El sitio usaba 3 fuentes, y además Audiowide aparecía en tres formas (llena,
+en contorno, inclinada). A la vista eran unas cinco "letras" distintas:
+- **Audiowide** en el logo y los títulos, pero también en rótulos de 9 a 10px
+  (agenda, nota, perfil, formulario) y en la descripción inclinada de la
+  portada.
+- **Share Tech Mono** en el menú, las fechas, las etiquetas y la marquesina:
+  otra voz "techno" peleándose con Audiowide.
+- **Albert Sans** en el texto y los títulos de notas.
+
+### Qué se hizo
+Regla nueva, igual en las dos versiones:
+- **Audiowide solo para lo grande:** logo, título de la portada, footer y
+  títulos de página y de sección.
+- **Una fuente general para todo lo demás.** Lo que iba en mono pasa a la
+  utilidad nueva `rotulo` (espaciada y en peso medio, con `uppercase` donde
+  corresponde). Los rótulos chicos que estaban en Audiowide, también.
+- La descripción de la portada deja de estar inclinada, y la volanta de los
+  títulos deja de ir en contorno.
+- La letra capital de las notas pasa a la fuente general en negrita.
+- `CLAUDE.md` → `## Diseño` → Tipografía, reescrita con estas reglas.
+
+| Versión | Fuente general | Rama | Carpeta | Puerto |
+|---|---|---|---|---|
+| Exo 2 (recomendada) | Exo 2: curvas cuadradas, de la misma familia que Audiowide | `fuentes-exo` | `variantes/d-anden` | 3004 |
+| Albert Sans | Albert Sans: neutra, la de hoy | `fuentes-albert` | `variantes/f-cianotipo` | 3006 |
+
+### Verificado
+- Medido en la portada: cada versión usa exactamente dos fuentes (Audiowide en
+  5 lugares, la general en el resto).
+- Escritorio y 375px sin scroll horizontal en portada, notas, agenda, evento,
+  nota, artista, suscribite y login. `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[error]** La letra capital en Audiowide se veía como una barra azul, no
+  como una "L". Había quedado en la regla de "lo grande" sin mirarla aislada.
+  Se vio al revisar la nota y se pasó a la fuente general.
+- **[rareza]** Para no instalar todo de nuevo, las dos versiones usan las
+  carpetas de propuestas descartadas (`d-anden` y `f-cianotipo`) con otra rama.
+  Los nombres de las carpetas ya no dicen lo que tienen adentro. Las ramas
+  viejas `gxsc-d-anden` y `gxsc-f-cianotipo` siguen intactas.
+- **[rareza]** Al cambiar de rama, las pestañas del navegador de esas
+  carpetas se cerraron y hubo que reiniciar los servidores. Se agregaron
+  `fuentes-exo` y `fuentes-albert` al `launch.json`.
+- **[a decidir]** Exo 2 o Albert Sans. Nada de esto está publicado.
+
+---
+
 ## 2026-10-05 (7) — Collage pasa a ser el diseño oficial y se publica
 
 ### Qué se pidió
