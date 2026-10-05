@@ -20,6 +20,23 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-05 (9) — Se publica Exo 2 como fuente general
+
+### Qué se pidió
+"Nos vamos a quedar con fuente de exo, pusheala".
+
+### Qué se hizo
+- Se unió la rama `fuentes-exo` a `main` y se subió a GitHub. Vercel publica
+  `main`.
+- Queda: **Audiowide** para el logo y los títulos grandes, **Exo 2** para
+  todo lo demás. Las reglas están en `CLAUDE.md` → `## Diseño` → Tipografía.
+
+### ⚑ Para charlar
+- **[a decidir]** Borrar `fuentes-albert` y las ramas y carpetas de las
+  propuestas descartadas (ver entrada 7).
+
+---
+
 ## 2026-10-05 (8) — Menos fuentes: dos versiones para elegir
 
 ### Qué se pidió
