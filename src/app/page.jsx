@@ -33,7 +33,6 @@ export default async function Home() {
           <h1 className="font-ancha text-5xl uppercase leading-none text-white [text-shadow:0_0_30px_#ffffffcc] sm:text-7xl lg:text-8xl">
             {site.nombre}
           </h1>
-          <p className="contorno-oscuro mt-4 font-ancha text-xl uppercase sm:text-3xl">{site.tagline}</p>
         </div>
 
         {principal && (

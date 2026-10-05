@@ -39,7 +39,7 @@ const albert = Albert_Sans({
  */
 export const metadata = {
   title: {
-    default: `${site.nombre} — ${site.tagline}`,
+    default: site.nombre,
     template: `%s — ${site.nombre}`,
   },
   description: site.descripcion,

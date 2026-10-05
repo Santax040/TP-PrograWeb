@@ -9,12 +9,11 @@ import { site } from "@/lib/site";
 export default function Header() {
   return (
     <header className="relative z-40">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-x-8 gap-y-4 px-4 pb-4 pt-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-4 px-4 pb-4 pt-6">
         <Link href="/" className="group">
-          <span className="block font-ancha text-2xl text-white [text-shadow:0_0_18px_#ffffffb3]">
+          <span className="block font-ancha text-2xl uppercase text-white [text-shadow:0_0_18px_#ffffffb3]">
             {site.nombre}
           </span>
-          <span className="mt-1 block font-mono text-xs uppercase text-marino/70">{site.tagline}</span>
         </Link>
 
         {/* Solo cuatro opciones, en mayúscula como los rótulos del HUD. El
