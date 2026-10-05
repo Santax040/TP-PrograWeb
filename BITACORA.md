@@ -20,6 +20,46 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-05 (12) — La revista primero: notas antes que eventos, y eventos sin precio
+
+### Qué se pidió
+La prioridad del sitio es la revista. La sección de notas tiene que ir antes
+que la de próximos eventos. Artificial funciona como medio de difusión para
+productoras: anuncia fiestas, no las vende.
+
+### Qué se hizo
+- **Portada:** "Últimas notas" pasó arriba de "Lo que se viene".
+- **Sin precios en los eventos.** En el sitio no había ningún botón de compra,
+  pero el precio aparecía en tres lugares con tono de venta:
+  - Panel "Próxima fecha" de la portada: "desde $ 18.000" → ahora muestra el
+    lugar y la ciudad.
+  - Renglón de evento (`EventoCard`), en la portada y en la agenda: el precio
+    de la derecha → ahora el género, como etiqueta.
+  - Página del evento: "Entradas desde", resaltado en cian → ahora "Género". Se
+    sacó la etiqueta de género de la foto, que quedaba repetida.
+- **Aclaración en la página del evento:** "Artificial anuncia esta fecha. No
+  vendemos entradas: la venta la maneja cada productora."
+- Los precios de los planes de suscripción siguen, porque eso sí es el
+  servicio de la revista.
+
+### Verificado en `localhost:3000`
+Las secciones de la portada salen en el orden nuevo; en la portada y en la
+agenda no queda ningún "$"; la página del evento muestra fecha, lugar, género
+y la aclaración. Sin scroll horizontal. `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[rareza]** El evento "Artificial presenta: octubre" dice en su nombre que
+  lo organiza la revista, y debajo aparece "la venta la maneja cada
+  productora". Para ese evento en particular, las dos cosas chocan.
+- **[atajo]** El precio sigue guardado en la base (`precio_desde`) y se sigue
+  leyendo en `data.js`, aunque ya no se muestra. Se dejó por si vuelve a hacer
+  falta; si no, se puede sacar con una migración.
+- **[a decidir]** Otras formas de darle prioridad a las notas, todavía sin
+  hacer: que la marquesina pase notas en vez de fechas, o que el panel azul de
+  la portada destaque una nota en vez de la próxima fecha.
+
+---
+
 ## 2026-10-05 (11) — El evento "Subsuelo Presenta" pasa a "Artificial presenta: octubre"
 
 ### Qué se pidió

@@ -3,7 +3,6 @@ import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
 import { getArticulos, getArticulosDestacados, getEventos } from "@/lib/data";
-import { formatearPrecio } from "@/lib/formato";
 import { site } from "@/lib/site";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
@@ -14,6 +13,9 @@ export const revalidate = 60;
  * se ubican en una grilla de 12 columnas y se superponen a propósito: el
  * título, la foto grande con su marco corrido, la foto chica abajo a la
  * izquierda y el panel azul con la próxima fecha. En celular se apilan.
+ *
+ * Artificial es una revista: las notas van antes que la agenda. Los eventos se
+ * anuncian, no se venden, así que no se muestran precios.
  */
 export default async function Home() {
   const [destacados, todos, eventos] = await Promise.all([
@@ -87,7 +89,7 @@ export default async function Home() {
             </span>
             <span className="text-lg font-medium leading-tight">{proximo.nombre}</span>
             <span className="rotulo text-xs uppercase text-white/80">
-              {proximo.lugar}, desde {formatearPrecio(proximo.precioDesde)}
+              {proximo.lugar}, {proximo.ciudad}
             </span>
           </Link>
         )}
@@ -104,6 +106,14 @@ export default async function Home() {
       </section>
 
       <section className="mb-28">
+        <TituloSeccion titulo="Últimas notas" href="/notas" enlace="Todas las notas" />
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {restantes.map((a) => (
+            <ArticuloCard key={a.slug} articulo={a} />
+          ))}
+        </div>
+      </section>
+      <section>
         <TituloSeccion titulo="Lo que se viene" href="/agenda" enlace="La agenda entera" />
         <div className="grid grid-cols-1 gap-x-12 md:grid-cols-2">
           {eventos.slice(0, 6).map((e) => (
@@ -112,14 +122,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <section>
-        <TituloSeccion titulo="Últimas notas" href="/notas" enlace="Todas las notas" />
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {restantes.map((a) => (
-            <ArticuloCard key={a.slug} articulo={a} />
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

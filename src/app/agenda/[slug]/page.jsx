@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArtistas, getEvento, getEventos } from "@/lib/data";
-import { formatearFecha, formatearPrecio } from "@/lib/formato";
+import { formatearFecha } from "@/lib/formato";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
 export const revalidate = 60;
@@ -41,9 +41,6 @@ export default async function EventoPage({ params }) {
       <article className="tarjeta">
         <div className="bruma relative h-56 sm:h-72">
           <div className={`h-full w-full bg-gradient-to-br ${evento.portada}`} />
-          <span className="absolute left-5 top-5 z-[2] border border-white/60 bg-white/25 px-3 py-1 rotulo text-xs uppercase text-white backdrop-blur-md">
-            {evento.genero}
-          </span>
         </div>
 
         <div className="px-6 py-12 sm:px-12">
@@ -87,13 +84,18 @@ export default async function EventoPage({ params }) {
             </div>
             <div className="p-5">
               <dt className="rotulo text-xs uppercase text-white/70">
-                Entradas desde
+                Género
               </dt>
-              <dd className="resplandor mt-2 rotulo text-xl text-cian">
-                {formatearPrecio(evento.precioDesde)}
-              </dd>
+              <dd className="mt-2 font-titular text-base font-light">{evento.genero}</dd>
             </div>
           </dl>
+
+          {/* Artificial es una revista: anuncia las fechas de las productoras
+              pero no vende entradas. Se aclara para que nadie busque dónde pagar. */}
+          <p className="mt-6 text-sm leading-relaxed text-humo">
+            Artificial anuncia esta fecha. No vendemos entradas: la venta la maneja cada
+            productora.
+          </p>
         </div>
       </article>
 

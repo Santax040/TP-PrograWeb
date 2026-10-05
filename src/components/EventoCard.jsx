@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { formatearPrecio } from "@/lib/formato";
-
 /**
  * Evento como un renglón del HUD: la fecha como rótulo dentro de un marco blanco,
- * el nombre al lado y una línea fina que llega hasta el precio.
+ * el nombre al lado y el género a la derecha. Sin precio: la revista anuncia
+ * las fechas, no vende entradas.
  *
  * @param {Object} props
  * @param {import("@/lib/data").Evento} props.evento
@@ -28,9 +27,7 @@ export default function EventoCard({ evento }) {
           {evento.lugar}, {evento.ciudad}
         </span>
       </span>
-      <span className="hidden shrink-0 rotulo text-sm text-marino sm:block">
-        {formatearPrecio(evento.precioDesde)}
-      </span>
+      <span className="etiqueta hidden shrink-0 text-humo sm:inline-block">{evento.genero}</span>
     </Link>
   );
 }
