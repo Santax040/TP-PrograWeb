@@ -57,7 +57,7 @@ export default function SuscribitePage() {
                   <span className="font-titular text-4xl font-light text-cobalto">
                     {formatearPrecio(plan.precio)}
                   </span>
-                  <span className="ml-2 font-mono text-xs uppercase tracking-[0.18em] text-humo">
+                  <span className="ml-2 rotulo text-xs uppercase text-humo">
                     / {plan.periodo}
                   </span>
                 </>

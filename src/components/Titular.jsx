@@ -1,7 +1,6 @@
 /**
  * Titular de página como el "GEN X" de la referencia: letra techno llena de
- * blanco y, debajo, la volanta repetida en contorno, inclinada como
- * "contemporary soft club".
+ * blanco y, debajo, la volanta como rótulo en la fuente general.
  *
  * @param {Object} props
  * @param {string} props.texto
@@ -15,7 +14,7 @@ export default function Titular({ texto, volanta, className = "" }) {
         {texto}
       </span>
       {volanta && (
-        <span className="contorno-oscuro mt-3 block -skew-x-12 font-ancha text-lg uppercase sm:text-2xl">
+        <span className="rotulo mt-4 block text-sm uppercase text-humo sm:text-base">
           {volanta}
         </span>
       )}

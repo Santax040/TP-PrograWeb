@@ -18,7 +18,7 @@ export default function Header() {
 
         {/* Solo cuatro opciones, en mayúscula como los rótulos del HUD. El
             resto de las categorías se alcanza desde las notas. */}
-        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-sm uppercase text-marino">
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 rotulo text-sm uppercase text-marino">
           <Link href="/notas/categoria/musica" className="subrayado hover:subrayado-activo">
             Música
           </Link>

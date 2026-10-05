@@ -29,13 +29,17 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
 - Si un token cambia de significado, se renombra; no se le cambia solo el valor.
 - Un solo tema claro; no hay modo oscuro.
 
-### Tipografía (roles fijos, cargadas en `layout.jsx`)
-- `font-ancha` (Audiowide): logo, títulos de página y de sección. En
-  **mayúscula**, llena de blanco con brillo o solo en contorno.
-- `font-mono` (Share Tech Mono): datos del HUD, fechas, precios, la marquesina
-  y el menú del header, en mayúscula.
-- `font-texto` / `font-titular` (Albert Sans): texto corrido y títulos de
-  notas, en caja normal.
+### Tipografía (dos fuentes, cargadas en `layout.jsx`)
+- `font-ancha` (Audiowide): **solo lo grande**: el logo, el título de la
+  portada, el footer, los títulos de página (`Titular`) y de sección
+  (`TituloSeccion`), la capitular. Siempre en mayúscula, llena de blanco con
+  brillo o en contorno. Nunca en rótulos chicos ni en párrafos.
+- `font-texto` / `font-titular` (Exo 2): **todo lo demás**: texto, títulos de
+  notas, menú, fechas, precios, etiquetas, marquesina.
+- Para lo que antes iba en mono (menú, fechas, datos) se usa la utilidad
+  `rotulo` (espaciado y peso medio), con `uppercase` si corresponde. No hay
+  fuente mono.
+- Nada de texto inclinado (`skew`) ni contorno en tamaños chicos.
 - El texto fuente se escribe en caja normal ("Artificial", "Música"); la
   mayúscula se pone con la clase `uppercase`.
 
@@ -44,12 +48,13 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
   por encima aparece el marco corrido del HUD (`outline-offset`).
 - `.cartel`: panel azul translúcido con letra blanca (botón "Suscribete",
   próxima fecha, datos).
-- `.etiqueta`: rótulo del HUD, mono chica en mayúscula con raya a la izquierda.
+- `.etiqueta`: rótulo del HUD, chico, en mayúscula y espaciado, con raya a la
+  izquierda.
 - `.bruma`: tiñe de menta y agua lo que tenga como **primer hijo** (foto o
   gradiente de `portada`). Lo que vaya encima de la foto lleva `z-[2]`.
 - Utilidades: `contorno` (blanco) y `contorno-oscuro` (letra solo en borde,
   **solo en tamaños grandes**: a 12px no se lee), `subrayado` +
-  `group-hover:subrayado-activo`, `titular-apretado`, `resplandor`,
+  `group-hover:subrayado-activo`, `rotulo`, `titular-apretado`, `resplandor`,
   `linea-brillo` (línea blanca de 1px), `.capitular`, `.marquesina`.
 - Las piezas van en `@layer components`, así las utilidades de Tailwind pueden
   sobreescribirlas. Fuera de capa, le ganan a las utilidades.

@@ -38,7 +38,7 @@ export default async function AgendaPage() {
       <div className="flex flex-col gap-16">
         {[...porMes.entries()].map(([mes, delMes]) => (
           <section key={mes}>
-            <h2 className="mb-6 flex items-center gap-4 font-ancha text-[0.65rem] uppercase text-cobalto after:h-px after:flex-1 after:bg-white/80">
+            <h2 className="mb-6 flex items-center gap-4 rotulo text-xs uppercase text-cobalto after:h-px after:flex-1 after:bg-white/80">
               {mes}
             </h2>
             <div className="flex flex-col gap-4">

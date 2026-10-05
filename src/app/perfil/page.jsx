@@ -70,7 +70,7 @@ export default async function PerfilPage() {
             key={d.etiqueta}
             className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4"
           >
-            <dt className="font-ancha text-[0.55rem] uppercase text-cobalto">
+            <dt className="rotulo text-xs uppercase text-cobalto">
               {d.etiqueta}
             </dt>
             <dd className="text-marino">{d.valor}</dd>

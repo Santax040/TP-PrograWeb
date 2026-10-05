@@ -1,4 +1,4 @@
-import { Albert_Sans, Audiowide, Share_Tech_Mono } from "next/font/google";
+import { Audiowide, Exo_2 } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,12 +7,12 @@ import Codigo from "@/components/Codigo";
 import { site } from "@/lib/site";
 
 /*
- * Tres tipografías, cada una con un rol:
- * - Audiowide: la letra techno ancha de "GEN X", en mayúscula y a veces en
- *   contorno.
- * - Share Tech Mono: los datos de la pantalla, las columnas de código y los
- *   rótulos del HUD.
- * - Albert Sans: texto corrido y títulos de notas.
+ * Dos tipografías, nada más:
+ * - Audiowide: la letra techno de "ARTIFICIAL". Solo para lo grande: el logo,
+ *   los títulos de página y de sección.
+ * - Exo 2: todo lo demás. Menú, fechas, etiquetas, títulos de notas y texto.
+ *   Tiene las curvas cuadradas de la misma familia que Audiowide, así que
+ *   combina sin parecer otra letra.
  */
 const audiowide = Audiowide({
   variable: "--fuente-ancha",
@@ -20,15 +20,9 @@ const audiowide = Audiowide({
   subsets: ["latin"],
 });
 
-const shareTech = Share_Tech_Mono({
-  variable: "--fuente-mono",
-  weight: "400",
-  subsets: ["latin"],
-});
-
-const albert = Albert_Sans({
+const general = Exo_2({
   variable: "--fuente-texto",
-  weight: ["300", "400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
 });
@@ -49,7 +43,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="es"
-      className={`${audiowide.variable} ${shareTech.variable} ${albert.variable} h-full antialiased`}
+      className={`${audiowide.variable} ${general.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Codigo />

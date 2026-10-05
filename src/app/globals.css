@@ -31,7 +31,6 @@
   --font-titular: var(--fuente-texto);
   --font-ancha: var(--fuente-ancha);
   --font-texto: var(--fuente-texto);
-  --font-mono: var(--fuente-mono);
 }
 
 /*
@@ -85,15 +84,15 @@ body {
     color: #ffffff;
   }
 
-  /* Rótulo del HUD: mono chica en mayúscula, con una raya a la izquierda. */
+  /* Rótulo del HUD: chico, en mayúscula y espaciado, con una raya a la izquierda. */
   .etiqueta {
     display: inline-block;
     border-left: 2px solid currentColor;
     padding: 0 8px;
-    font-family: var(--fuente-mono), monospace;
     font-size: 0.75rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     line-height: 1.5;
   }
 
@@ -140,6 +139,15 @@ body {
 @utility contorno-oscuro {
   color: transparent;
   -webkit-text-stroke: 1.2px var(--marino);
+}
+
+/*
+ * Rótulo: la fuente general, espaciada y en peso medio. Es lo que antes hacía
+ * la mono: menú, fechas, precios, datos. La mayúscula se pone aparte.
+ */
+@utility rotulo {
+  letter-spacing: 0.1em;
+  font-weight: 500;
 }
 
 @utility subrayado {
