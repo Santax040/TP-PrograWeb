@@ -19,7 +19,7 @@ export default function FormularioNombre({ nombreActual }) {
       className="tarjeta flex flex-col gap-6 p-7"
     >
       <label className="flex flex-col gap-1">
-        <span className="font-ancha text-[0.6rem] uppercase text-cobalto">Nombre</span>
+        <span className="rotulo text-xs uppercase text-cobalto">Nombre</span>
         <input
           required
           name="nombre"

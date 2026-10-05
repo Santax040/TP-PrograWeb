@@ -67,7 +67,7 @@ export default async function NotaPage({ params }) {
 
           <p className="mt-7 text-xl leading-relaxed text-humo">{articulo.bajada}</p>
 
-          <p className="mt-8 border-t border-white/80 pt-5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-cobalto">
+          <p className="mt-8 border-t border-white/80 pt-5 rotulo text-[0.68rem] uppercase text-cobalto">
             {articulo.autor} · {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
           </p>
         </header>
@@ -98,14 +98,14 @@ export default async function NotaPage({ params }) {
 
         {artistas.length > 0 && (
           <section className="mt-20 border-t border-white/80 pt-10">
-            <h2 className="mb-6 font-ancha text-[0.65rem] uppercase text-cobalto">
+            <h2 className="mb-6 rotulo text-xs uppercase text-cobalto">
               Aparecen en esta nota
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {artistas.map((a) => (
                 <Link key={a.slug} href={`/artistas/${a.slug}`} className="tarjeta block px-5 py-4">
                   <p className="font-titular text-xl font-light text-marino">{a.nombre}</p>
-                  <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalto">
+                  <p className="mt-1 rotulo text-[0.65rem] uppercase text-cobalto">
                     {a.genero}
                   </p>
                 </Link>

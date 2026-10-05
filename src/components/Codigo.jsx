@@ -23,7 +23,7 @@ export default async function Codigo() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-y-0 left-0 z-0 hidden select-none gap-1 overflow-hidden pl-1 font-mono text-[10px] leading-[1.05] text-white/45 xl:flex"
+      className="pointer-events-none fixed inset-y-0 left-0 z-0 hidden select-none gap-1 overflow-hidden pl-1 text-[10px] leading-[1.05] text-white/45 xl:flex"
     >
       {columnas.map((texto, i) => (
         <span key={i} className="break-all [writing-mode:vertical-rl]">

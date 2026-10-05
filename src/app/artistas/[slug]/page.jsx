@@ -41,7 +41,7 @@ export default async function ArtistaPage({ params }) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
       <header className="cartel relative overflow-hidden px-6 py-12 sm:px-12">
-        <p className="font-ancha text-[0.65rem] uppercase text-white/80">
+        <p className="rotulo text-xs uppercase text-white/80">
           {artista.genero}
         </p>
         <h1 className="titular-apretado resplandor mt-6 font-titular text-5xl font-light sm:text-7xl">

@@ -59,7 +59,7 @@ export default async function Home() {
           </>
         )}
 
-        <p className="relative z-20 max-w-sm -skew-x-6 font-ancha text-sm uppercase leading-relaxed text-marino md:col-span-5 md:col-start-1 md:row-span-1 md:row-start-4 md:self-center">
+        <p className="relative z-20 max-w-sm text-lg leading-relaxed text-marino md:col-span-5 md:col-start-1 md:row-span-1 md:row-start-4 md:self-center">
           {site.descripcion}
         </p>
 
@@ -82,11 +82,11 @@ export default async function Home() {
             href={`/agenda/${proximo.slug}`}
             className="cartel relative z-30 flex flex-col justify-between p-4 transition-colors hover:bg-marino md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1"
           >
-            <span className="font-mono text-xs uppercase text-white/80">
+            <span className="rotulo text-xs uppercase text-white/80">
               Próxima fecha {proximo.fecha.replaceAll("-", ".")}
             </span>
             <span className="text-lg font-medium leading-tight">{proximo.nombre}</span>
-            <span className="font-mono text-xs uppercase text-white/80">
+            <span className="rotulo text-xs uppercase text-white/80">
               {proximo.lugar}, desde {formatearPrecio(proximo.precioDesde)}
             </span>
           </Link>

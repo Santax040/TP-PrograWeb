@@ -20,7 +20,7 @@ export default function ArticuloCard({ articulo, destacado = false }) {
           <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
           <span className="etiqueta absolute left-3 top-3 z-[2] text-white">{categoria?.nombre}</span>
           {articulo.premium && (
-            <span className="cartel absolute bottom-3 right-3 z-[2] px-2 py-0.5 font-mono text-xs uppercase">
+            <span className="cartel absolute bottom-3 right-3 z-[2] px-2 py-0.5 rotulo text-xs uppercase">
               Suscriptores
             </span>
           )}
@@ -37,7 +37,7 @@ export default function ArticuloCard({ articulo, destacado = false }) {
           <p className={`leading-relaxed text-humo ${destacado ? "text-base" : "text-sm"}`}>
             {articulo.bajada}
           </p>
-          <p className="mt-auto flex justify-between gap-4 pt-3 font-mono text-xs uppercase text-humo">
+          <p className="mt-auto flex justify-between gap-4 pt-3 rotulo text-xs uppercase text-humo">
             <span>{formatearFecha(articulo.fecha)}</span>
             <span>{articulo.minutosLectura} min</span>
           </p>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getEventos } from "@/lib/data";
 
 /**
- * El cartel de LED del andén: las próximas fechas en mono, pasando sobre una
+ * El cartel de LED del andén: las próximas fechas como rótulos, pasando sobre una
  * franja agua translúcida.
  */
 export default async function Marquesina() {
@@ -23,7 +23,7 @@ export default async function Marquesina() {
     ));
 
   return (
-    <div className="relative z-10 overflow-hidden border-b border-white/70 bg-cian/50 py-2 font-mono text-sm uppercase text-white backdrop-blur-sm">
+    <div className="relative z-10 overflow-hidden border-b border-white/70 bg-cian/50 py-2 rotulo text-sm uppercase text-white backdrop-blur-sm">
       <div className="marquesina">
         {renglon(0)}
         {renglon(1)}
