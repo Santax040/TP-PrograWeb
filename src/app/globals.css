@@ -179,8 +179,10 @@ body {
 .capitular::first-letter {
   float: left;
   margin: 0.06em 0.12em 0 0;
-  font-family: var(--fuente-ancha), sans-serif;
-  font-size: 3.4em;
+  /* En la fuente general: en Audiowide, letras como la L parecen una barra. */
+  font-family: var(--fuente-texto), sans-serif;
+  font-size: 3.6em;
+  font-weight: 700;
   line-height: 0.85;
   color: var(--cobalto);
 }

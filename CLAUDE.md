@@ -32,8 +32,9 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
 ### Tipografía (dos fuentes, cargadas en `layout.jsx`)
 - `font-ancha` (Audiowide): **solo lo grande**: el logo, el título de la
   portada, el footer, los títulos de página (`Titular`) y de sección
-  (`TituloSeccion`), la capitular. Siempre en mayúscula, llena de blanco con
-  brillo o en contorno. Nunca en rótulos chicos ni en párrafos.
+  (`TituloSeccion`). Siempre en mayúscula, llena de blanco con
+  brillo o en contorno. Nunca en rótulos chicos ni en párrafos, y tampoco en
+  la capitular: aislada, una L de Audiowide parece una barra.
 - `font-texto` / `font-titular` (Exo 2): **todo lo demás**: texto, títulos de
   notas, menú, fechas, precios, etiquetas, marquesina.
 - Para lo que antes iba en mono (menú, fechas, datos) se usa la utilidad
