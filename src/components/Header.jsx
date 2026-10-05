@@ -1,6 +1,6 @@
 import Link from "next/link";
 import MenuUsuario from "@/components/MenuUsuario";
-import { categorias, site } from "@/lib/site";
+import { site } from "@/lib/site";
 
 /**
  * Header sin fondo, montado sobre el andén: el nombre en la letra techno
@@ -17,21 +17,17 @@ export default function Header() {
           <span className="mt-1 block font-mono text-xs uppercase text-marino/70">{site.tagline}</span>
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-marino">
-          {categorias.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/notas/categoria/${c.slug}`}
-              className="subrayado hover:subrayado-activo"
-            >
-              {c.nombre}
-            </Link>
-          ))}
+        {/* Solo cuatro opciones, en mayúscula como los rótulos del HUD. El
+            resto de las categorías se alcanza desde las notas. */}
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-sm uppercase text-marino">
+          <Link href="/notas/categoria/musica" className="subrayado hover:subrayado-activo">
+            Música
+          </Link>
           <Link href="/agenda" className="subrayado hover:subrayado-activo">
-            Agenda
+            Eventos
           </Link>
           <Link href="/suscribite" className="cartel px-3 py-1 hover:bg-marino">
-            Suscribite
+            Suscribete
           </Link>
           <MenuUsuario />
         </nav>
