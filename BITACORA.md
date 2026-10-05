@@ -46,6 +46,14 @@ que se ve en la página publicada.
   con sus carpetas en `../variantes/`. Borrarlas no tiene vuelta atrás: se
   pregunta antes.
 
+### Verificado en producción
+- `eslint` y `npm run build` sin errores antes del push.
+- Push `a30e91a..1c42424` a `main`. A los 30 segundos,
+  revista-digital-musica.vercel.app ya mostraba el título "Artificial".
+- En el sitio publicado: el menú dice MÚSICA, EVENTOS, SUSCRIBETE y ENTRAR, la
+  portada es el collage y no hay scroll horizontal. Portada, notas, agenda,
+  evento, nota, categoría, suscribite, login y artista responden 200.
+
 ### ⚑ Para charlar
 - **[a decidir]** Borrar las propuestas descartadas: ramas `gxsc-a`…`gxsc-f`
   (menos `e`), `diseno-grunge` y las carpetas de `../variantes/`, que ocupan
