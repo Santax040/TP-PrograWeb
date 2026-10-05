@@ -11,11 +11,11 @@ import Link from "next/link";
  */
 export default function TituloSeccion({ titulo, href, enlace }) {
   return (
-    <div className="mb-10 flex items-center gap-5">
+    <div className="mb-10 flex flex-wrap items-center gap-x-5 gap-y-2">
       <h2 className="shrink-0 font-ancha text-xl uppercase text-white [text-shadow:0_0_16px_#ffffffb3] sm:text-3xl">
         {titulo}
       </h2>
-      <span aria-hidden="true" className="linea-brillo min-w-6 flex-1" />
+      <span aria-hidden="true" className="linea-brillo hidden min-w-6 flex-1 sm:block" />
       {href && enlace && (
         <Link href={href} className="etiqueta shrink-0 text-marino hover:text-cobalto">
           {enlace}
