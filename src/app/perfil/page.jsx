@@ -81,7 +81,7 @@ export default async function PerfilPage() {
       <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3">
         <Link
           href="/configuracion"
-          className="cartel inline-block !rounded-full px-7 py-2.5 font-titular text-sm lowercase transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
+          className="cartel inline-block px-7 py-2.5 font-titular text-sm transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
         >
           Editar datos
         </Link>

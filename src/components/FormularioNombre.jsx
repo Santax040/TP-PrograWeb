@@ -26,7 +26,7 @@ export default function FormularioNombre({ nombreActual }) {
           maxLength={60}
           autoComplete="nickname"
           defaultValue={estado.nombre ?? nombreActual}
-          className="rounded-lg border border-white bg-white/70 px-3 py-2.5 text-marino outline-none transition-shadow focus:shadow-[0_0_0_1px_#1f45d6,0_0_16px_#7ff4ffb3]"
+          className=" border border-white bg-white/70 px-3 py-2.5 text-marino outline-none transition-shadow focus:shadow-[0_0_0_1px_#1f45d6,0_0_16px_#7ff4ffb3]"
         />
         <span className="text-xs text-humo">
           Es el que aparece en el header. Hasta 60 caracteres.
@@ -34,12 +34,12 @@ export default function FormularioNombre({ nombreActual }) {
       </label>
 
       {estado.error && (
-        <p role="alert" className="rounded-lg border-l-2 border-cobalto bg-white/70 px-3 py-2 text-sm text-marino">
+        <p role="alert" className=" border-l-2 border-cobalto bg-white/70 px-3 py-2 text-sm text-marino">
           {estado.error}
         </p>
       )}
       {estado.ok && (
-        <p role="status" className="rounded-lg border-l-2 border-lavanda bg-white/70 px-3 py-2 text-sm text-marino">
+        <p role="status" className=" border-l-2 border-lavanda bg-white/70 px-3 py-2 text-sm text-marino">
           {estado.ok}
         </p>
       )}
@@ -47,7 +47,7 @@ export default function FormularioNombre({ nombreActual }) {
       <button
         type="submit"
         disabled={pendiente}
-        className="cartel self-start !rounded-full px-7 py-2.5 font-titular text-sm lowercase transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3] disabled:opacity-60"
+        className="cartel self-start px-7 py-2.5 font-titular text-sm transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3] disabled:opacity-60"
       >
         {pendiente ? "Guardando…" : "Guardar"}
       </button>

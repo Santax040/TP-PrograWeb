@@ -61,7 +61,7 @@ export default async function NotaPage({ params }) {
             )}
           </div>
 
-          <h1 className="titular-apretado mt-7 font-titular text-4xl font-extralight lowercase text-marino sm:text-6xl">
+          <h1 className="titular-apretado mt-7 font-titular text-4xl font-light text-marino sm:text-6xl">
             {articulo.titulo}
           </h1>
 
@@ -76,7 +76,7 @@ export default async function NotaPage({ params }) {
             avisa y se ofrece el camino para suscribirse. */}
         {articulo.premium && !pagosActivos && (
           <aside className="cartel mt-12 px-6 py-5">
-            <p className="font-titular text-lg font-light lowercase">
+            <p className="font-titular text-lg font-light">
               Nota exclusiva, abierta por ahora
             </p>
             <p className="mt-2 text-sm leading-relaxed text-white/80">
@@ -104,7 +104,7 @@ export default async function NotaPage({ params }) {
             <div className="grid gap-4 sm:grid-cols-2">
               {artistas.map((a) => (
                 <Link key={a.slug} href={`/artistas/${a.slug}`} className="tarjeta block px-5 py-4">
-                  <p className="font-titular text-xl font-light lowercase text-marino">{a.nombre}</p>
+                  <p className="font-titular text-xl font-light text-marino">{a.nombre}</p>
                   <p className="mt-1 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalto">
                     {a.genero}
                   </p>

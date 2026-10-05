@@ -22,7 +22,7 @@ export default function SuscribitePage() {
 
       {!pagosActivos && (
         <div className="tarjeta mb-16 max-w-2xl border-l-4 !border-l-cobalto px-6 py-5">
-          <p className="font-titular text-lg font-light lowercase text-marino">
+          <p className="font-titular text-lg font-light text-marino">
             Todavía no se puede pagar
           </p>
           <p className="mt-2 text-sm leading-relaxed text-humo">
@@ -44,17 +44,17 @@ export default function SuscribitePage() {
               <span className="etiqueta absolute right-6 top-6 text-cobalto">Conviene</span>
             )}
 
-            <h2 className="font-titular text-3xl font-extralight lowercase text-marino">
+            <h2 className="font-titular text-3xl font-light text-marino">
               {plan.nombre}
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-humo">{plan.bajada}</p>
 
             <p className="mt-8 border-y border-white/80 py-6">
               {plan.precio === 0 ? (
-                <span className="font-titular text-4xl font-extralight lowercase text-cobalto">Gratis</span>
+                <span className="font-titular text-4xl font-light text-cobalto">Gratis</span>
               ) : (
                 <>
-                  <span className="font-titular text-4xl font-extralight text-cobalto">
+                  <span className="font-titular text-4xl font-light text-cobalto">
                     {formatearPrecio(plan.precio)}
                   </span>
                   <span className="ml-2 font-mono text-xs uppercase tracking-[0.18em] text-humo">
@@ -79,12 +79,12 @@ export default function SuscribitePage() {
               {plan.precio === 0 ? (
                 <Link
                   href="/notas"
-                  className="cartel block !rounded-full px-4 py-3 text-center font-titular text-sm lowercase transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
+                  className="cartel block px-4 py-3 text-center font-titular text-sm transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
                 >
                   Empezar a leer
                 </Link>
               ) : (
-                <p className="rounded-full border border-white px-4 py-3 text-center font-titular text-sm lowercase text-humo">
+                <p className=" border border-white px-4 py-3 text-center font-titular text-sm text-humo">
                   Próximamente
                 </p>
               )}

@@ -1,26 +1,24 @@
 import Link from "next/link";
 
 /**
- * Encabezado de sección: título en minúscula fina, con una línea de vidrio
- * que lo separa del contenido y un enlace en píldora a la derecha.
+ * Encabezado de sección: el título en la letra techno y una línea del HUD
+ * que sale de él y cruza hasta el enlace.
  *
  * @param {Object} props
  * @param {string} props.titulo
- * @param {string} [props.href] - Destino del enlace opcional de la derecha.
- * @param {string} [props.enlace] - Texto de ese enlace.
+ * @param {string} [props.href]
+ * @param {string} [props.enlace]
  */
 export default function TituloSeccion({ titulo, href, enlace }) {
   return (
-    <div className="mb-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-white/70 pb-4">
-      <h2 className="titular-apretado font-titular text-3xl font-extralight lowercase text-marino sm:text-4xl">
+    <div className="mb-10 flex flex-wrap items-center gap-x-5 gap-y-2">
+      <h2 className="shrink-0 font-ancha text-xl uppercase text-white [text-shadow:0_0_16px_#ffffffb3] sm:text-3xl">
         {titulo}
       </h2>
+      <span aria-hidden="true" className="linea-brillo hidden min-w-6 flex-1 sm:block" />
       {href && enlace && (
-        <Link
-          href={href}
-          className="etiqueta text-cobalto transition-colors hover:bg-cobalto hover:text-white"
-        >
-          {enlace} →
+        <Link href={href} className="etiqueta shrink-0 text-marino hover:text-cobalto">
+          {enlace}
         </Link>
       )}
     </div>

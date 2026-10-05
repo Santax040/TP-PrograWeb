@@ -1,24 +1,24 @@
 /**
- * Titular de página, en la letra del flyer: minúscula, fina y grande, con
- * una volanta en versalita ancha encima y una línea de brillo debajo.
+ * Titular de página como el "GEN X" de la referencia: letra techno llena de
+ * blanco y, debajo, la volanta repetida en contorno, inclinada como
+ * "contemporary soft club".
  *
  * @param {Object} props
  * @param {string} props.texto
- * @param {string} [props.volanta] - Línea chica encima, en letra ancha.
+ * @param {string} [props.volanta]
  * @param {string} [props.className]
  */
 export default function Titular({ texto, volanta, className = "" }) {
   return (
     <span className={`block ${className}`}>
+      <span className="titular-apretado block font-ancha uppercase text-white [text-shadow:0_0_24px_#ffffffb3]">
+        {texto}
+      </span>
       {volanta && (
-        <span className="mb-4 block font-ancha text-[0.65rem] uppercase tracking-[0.08em] text-cobalto">
+        <span className="contorno-oscuro mt-3 block -skew-x-12 font-ancha text-lg uppercase sm:text-2xl">
           {volanta}
         </span>
       )}
-      <span className="titular-apretado block font-titular font-extralight lowercase text-marino">
-        {texto}
-      </span>
-      <span aria-hidden="true" className="linea-brillo mt-6 block w-20" />
     </span>
   );
 }

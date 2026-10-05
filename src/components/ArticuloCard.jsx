@@ -3,9 +3,12 @@ import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
 /**
+ * Nota como una capa de vidrio del collage: foto menta arriba, datos abajo.
+ * Al pasar por encima aparece el marco corrido del HUD.
+ *
  * @param {Object} props
  * @param {import("@/lib/data").Articulo} props.articulo
- * @param {boolean} [props.destacado] - Variante de portada: más aire y tipografía grande.
+ * @param {boolean} [props.destacado]
  */
 export default function ArticuloCard({ articulo, destacado = false }) {
   const categoria = categorias.find((c) => c.slug === articulo.categoria);
@@ -15,31 +18,28 @@ export default function ArticuloCard({ articulo, destacado = false }) {
       <Link href={`/notas/${articulo.slug}`} className="group flex h-full flex-col">
         <div className={`bruma relative ${destacado ? "h-72 sm:h-96" : "h-44"}`}>
           <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
-          <span className="absolute left-4 top-4 z-[2] rounded-full border border-white/60 bg-white/25 px-3 py-1 font-ancha text-[0.6rem] uppercase text-white backdrop-blur-md">
-            {categoria?.nombre}
-          </span>
+          <span className="etiqueta absolute left-3 top-3 z-[2] text-white">{categoria?.nombre}</span>
           {articulo.premium && (
-            <span className="etiqueta absolute bottom-4 right-4 z-[2] bg-marino/60 text-cian backdrop-blur-md">
+            <span className="cartel absolute bottom-3 right-3 z-[2] px-2 py-0.5 font-mono text-xs uppercase">
               Suscriptores
             </span>
           )}
         </div>
 
-        <div className={`flex flex-1 flex-col gap-3 ${destacado ? "p-7 sm:p-9" : "p-6"}`}>
+        <div className={`flex flex-1 flex-col gap-3 ${destacado ? "p-7 sm:p-9" : "p-5"}`}>
           <h3
-            className={`titular-apretado font-titular font-light lowercase text-marino ${
-              destacado ? "text-3xl sm:text-5xl" : "text-2xl"
+            className={`titular-apretado font-medium text-marino ${
+              destacado ? "text-3xl sm:text-4xl" : "text-xl"
             }`}
           >
             <span className="subrayado group-hover:subrayado-activo">{articulo.titulo}</span>
           </h3>
-
           <p className={`leading-relaxed text-humo ${destacado ? "text-base" : "text-sm"}`}>
             {articulo.bajada}
           </p>
-
-          <p className="mt-auto border-t border-white/70 pt-4 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalto">
-            {formatearFecha(articulo.fecha)} · {articulo.minutosLectura} min
+          <p className="mt-auto flex justify-between gap-4 pt-3 font-mono text-xs uppercase text-humo">
+            <span>{formatearFecha(articulo.fecha)}</span>
+            <span>{articulo.minutosLectura} min</span>
           </p>
         </div>
       </Link>

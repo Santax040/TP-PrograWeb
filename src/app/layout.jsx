@@ -1,40 +1,35 @@
-import { IBM_Plex_Mono, Lexend, Lexend_Zetta, Mulish } from "next/font/google";
+import { Albert_Sans, Audiowide, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Marquesina from "@/components/Marquesina";
+import Codigo from "@/components/Codigo";
 import { site } from "@/lib/site";
 
 /*
- * Cuatro tipografías, cada una con un rol fijo:
- * - Lexend: titulares, en minúscula y finos, como el título del flyer.
- * - Lexend Zetta: la versión extra ancha, para el logo, la navegación y las
- *   etiquetas chicas en versalita.
- * - Mulish: texto corrido, humanista y redonda, de la familia de Frutiger.
- * - IBM Plex Mono: fechas, horarios y datos, como un cartel de salidas.
+ * Tres tipografías, cada una con un rol:
+ * - Audiowide: la letra techno ancha de "GEN X", en mayúscula y a veces en
+ *   contorno.
+ * - Share Tech Mono: los datos de la pantalla, las columnas de código y los
+ *   rótulos del HUD.
+ * - Albert Sans: texto corrido y títulos de notas.
  */
-const lexend = Lexend({
-  variable: "--font-lexend",
-  weight: ["200", "300", "400", "500"],
+const audiowide = Audiowide({
+  variable: "--fuente-ancha",
+  weight: "400",
   subsets: ["latin"],
 });
 
-const lexendZetta = Lexend_Zetta({
-  variable: "--font-lexend-zetta",
-  weight: ["300", "400", "500"],
+const shareTech = Share_Tech_Mono({
+  variable: "--fuente-mono",
+  weight: "400",
   subsets: ["latin"],
 });
 
-const mulish = Mulish({
-  variable: "--font-mulish",
-  weight: ["300", "400", "600", "700"],
+const albert = Albert_Sans({
+  variable: "--fuente-texto",
+  weight: ["300", "400", "500", "700"],
   style: ["normal", "italic"],
-  subsets: ["latin"],
-});
-
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  weight: ["400", "500"],
   subsets: ["latin"],
 });
 
@@ -44,7 +39,7 @@ const plexMono = IBM_Plex_Mono({
  */
 export const metadata = {
   title: {
-    default: `${site.nombre} — ${site.tagline}`,
+    default: site.nombre,
     template: `%s — ${site.nombre}`,
   },
   description: site.descripcion,
@@ -54,12 +49,13 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="es"
-      className={`${lexend.variable} ${lexendZetta.variable} ${mulish.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${audiowide.variable} ${shareTech.variable} ${albert.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <Codigo />
         <Header />
         <Marquesina />
-        <main className="flex-1">{children}</main>
+        <main className="relative z-10 flex-1">{children}</main>
         <Footer />
       </body>
     </html>

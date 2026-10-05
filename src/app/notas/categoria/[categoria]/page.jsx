@@ -37,7 +37,7 @@ export default async function CategoriaPage({ params }) {
       </header>
 
       {articulos.length === 0 ? (
-        <p className="tarjeta max-w-md p-8 text-center font-titular font-light lowercase leading-relaxed text-humo">
+        <p className="tarjeta max-w-md p-8 text-center font-titular font-light leading-relaxed text-humo">
           Todavía no hay notas acá. Volvé pronto.
         </p>
       ) : (

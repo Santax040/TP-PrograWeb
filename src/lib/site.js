@@ -1,12 +1,12 @@
 /**
  * Configuración global del sitio.
  *
- * El nombre todavía no está decidido: cambiándolo acá se actualiza en toda
- * la aplicación (header, footer, título de las pestañas, metadatos).
+ * El nombre de la revista: cambiándolo acá se actualiza en toda la
+ * aplicación (header, footer, título de las pestañas, metadatos). Se escribe
+ * en caja normal; donde el diseño lo pide, se muestra en mayúscula con CSS.
  */
 export const site = {
-  nombre: "SUBSUELO",
-  tagline: "Noche, música y quilombo",
+  nombre: "Artificial",
   descripcion:
     "Revista digital sobre la noche: crónicas de fiestas, música nueva y la agenda de lo que se viene.",
 };
