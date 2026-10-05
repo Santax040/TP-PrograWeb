@@ -20,6 +20,38 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-05 (11) — El evento "Subsuelo Presenta" pasa a "Artificial presenta: octubre"
+
+### Qué se pidió
+Renombrar el evento a "Artificial presenta: octubre".
+
+### Qué se hizo
+- Migración nueva `20261005230000_renombrar_evento_artificial.sql`: un
+  `update` del campo `nombre` del evento con slug `subsuelo-presenta-octubre`.
+- Se aplicó con `supabase db push` sobre el único proyecto, que es el de
+  producción. Antes, `supabase migration list` confirmó que las cuatro
+  migraciones anteriores ya estaban aplicadas, y `--dry-run` mostró que solo
+  se iba a aplicar esta.
+- Se hizo como migración, y no editando la base a mano, para que el repo siga
+  diciendo exactamente qué contenido tiene la base.
+
+### Verificado en producción
+Después del minuto de regeneración de las páginas, el nombre nuevo aparece y
+el viejo ya no en la portada (collage y marquesina), `/agenda`, la página del
+evento y las de sus dos artistas (Nena Tornado y DJ Perejil).
+
+### ⚑ Para charlar
+- **[a decidir]** El slug sigue siendo `subsuelo-presenta-octubre`, así que
+  la dirección de la página dice "subsuelo", y el slug también aparece en las
+  columnas de código del costado. Se dejó así para no romper el enlace.
+  Cambiarlo es otra migración: los line-ups apuntan por id, así que no se
+  rompe nada adentro del sitio.
+- **[rareza]** El nombre va como lo escribió el usuario, en minúscula
+  ("presenta: octubre"). Los otros eventos usan mayúsculas variadas ("Ruido
+  Blanco vol. 4", "Cierre de Temporada").
+
+---
+
 ## 2026-10-05 (10) — Limpieza: se borran las propuestas descartadas
 
 ### Qué se pidió
