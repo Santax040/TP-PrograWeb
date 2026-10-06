@@ -4,7 +4,8 @@ import { startTransition, useActionState, useState } from "react";
 import Link from "next/link";
 import { borrarNota, guardarNota } from "@/app/redaccion/acciones";
 import CampoArtistas from "@/components/CampoArtistas";
-import { largos, portadas } from "@/lib/redaccion";
+import CampoPortada from "@/components/CampoPortada";
+import { largos } from "@/lib/redaccion";
 import { categorias } from "@/lib/site";
 
 /**
@@ -26,7 +27,6 @@ import { categorias } from "@/lib/site";
  */
 export default function EditorNota({ nota, artistas, esAdmin, aviso }) {
   const [estado, accion, pendiente] = useActionState(guardarNota, {});
-  const [portada, setPortada] = useState(nota.portada ?? portadas[0].clases);
   const estadoActual = estado.estado ?? nota.estado ?? "borrador";
   const publicada = estadoActual === "publicada";
   const slug = estado.slug ?? nota.slug;
@@ -202,34 +202,7 @@ export default function EditorNota({ nota, artistas, esAdmin, aviso }) {
           )}
         </div>
 
-        <fieldset className="tarjeta p-6">
-          <legend className="sr-only">Portada</legend>
-          <p className="rotulo mb-3 text-sm text-cobalto" aria-hidden="true">
-            Portada
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {portadas.map((p) => (
-              <label
-                key={p.clases}
-                title={p.nombre}
-                className={`bruma relative block h-14 cursor-pointer border-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-cobalto ${
-                  portada === p.clases ? "border-cobalto" : "border-transparent"
-                }`}
-              >
-                <span className={`block h-full w-full bg-gradient-to-br ${p.clases}`} />
-                <input
-                  type="radio"
-                  name="portada"
-                  value={p.clases}
-                  checked={portada === p.clases}
-                  onChange={() => setPortada(p.clases)}
-                  className="sr-only"
-                />
-                <span className="sr-only">{p.nombre}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        <CampoPortada gradienteInicial={nota.portada} fotoInicial={nota.portada_url} />
 
         <div className="tarjeta p-6">
           <CampoArtistas iniciales={nota.artistas ?? []} sugerencias={artistas.map((a) => a.nombre)} />

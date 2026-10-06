@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FondoPortada from "@/components/FondoPortada";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
@@ -44,7 +45,7 @@ export default async function Home() {
               className="group relative z-10 block md:col-span-6 md:col-start-7 md:row-span-6 md:row-start-2"
             >
               <div className="bruma h-64 border border-white md:h-full">
-                <div className={`h-full w-full bg-gradient-to-br ${principal.portada}`} />
+                <FondoPortada articulo={principal} sizes="(min-width: 768px) 50vw, 100vw" prioridad />
               </div>
               <span className="absolute inset-x-0 bottom-0 z-[2] bg-marino/55 p-4 backdrop-blur-sm">
                 <span className="etiqueta text-white">Nota principal</span>
@@ -71,7 +72,7 @@ export default async function Home() {
             className="group relative z-20 block md:col-span-4 md:col-start-1 md:row-span-4 md:row-start-6"
           >
             <div className="bruma h-48 border border-white md:h-full">
-              <div className={`h-full w-full bg-gradient-to-br ${secundaria.portada}`} />
+              <FondoPortada articulo={secundaria} sizes="(min-width: 768px) 33vw, 100vw" />
             </div>
             <span className="absolute inset-x-0 bottom-0 z-[2] p-3 text-base font-medium text-white [text-shadow:0_1px_8px_#11303a] group-hover:underline">
               {secundaria.titulo}

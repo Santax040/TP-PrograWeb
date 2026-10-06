@@ -20,6 +20,87 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-06 (17) — Fotos de portada con recorte 16:9
+
+### Qué se pidió
+Poder subir una foto propia como portada de la nota y que se ajuste al
+formato del sitio. Se eligió recortar en **16:9**.
+
+### Qué se hizo
+
+**En Redacción** (bloque "Portada" del editor, `CampoPortada.jsx`):
+- **Subir foto** abre una ventana para encuadrar (`RecorteFoto.jsx`): la foto
+  se arrastra con mouse o dedo, el zoom va con una barra (hasta 4×) y, con el
+  marco enfocado, las flechas la mueven (Shift, más rápido) y + / − cambian el
+  zoom. La foto siempre cubre el marco: no se puede dejar espacio vacío. Tiene
+  líneas de tercios y la opción "Ver original" para encuadrar sin el tinte.
+- Al confirmar, el navegador dibuja el recorte a **1600×900** y lo comprime en
+  **WebP** (o JPEG en Safari, que no genera WebP). Se sube a Supabase Storage y
+  se ve una vista previa con el tratamiento del sitio. Después se puede cambiar
+  o quitar.
+- El gradiente se sigue eligiendo: es la portada si no hay foto.
+
+**En la base** (migración `20261006180000_fotos_de_portada.sql`):
+- Bucket `portadas`: público para ver; hasta 1 MB; solo WebP o JPEG.
+- Solo **admins y publicadores** suben, y siempre en una carpeta con su id
+  (`<usuario>/<archivo>`). Cada uno borra las suyas; el admin, cualquiera.
+- Columna `articulos.portada_url`, que solo acepta direcciones del bucket.
+
+**En la revista** (`FondoPortada.jsx`): la tarjeta, la nota principal y la
+secundaria de la home, y la cabecera de la nota muestran la foto si la hay, o
+si no el gradiente. Las fotos pasan por `next/image`, que sirve el tamaño justo
+para cada lugar.
+
+### Decisiones
+- **El tinte menta no se "quema" en la foto.** Se guarda limpia y `.bruma` lo
+  aplica en pantalla, igual que a los gradientes. Si cambia la estética, las
+  fotos se adaptan sin volver a subirlas.
+- **Se recorta y comprime en el navegador**, antes de subir: una foto de 8 MB
+  del celular llega como unos 200 KB, siempre del mismo tamaño. El servidor
+  no procesa imágenes.
+- **Recortador propio, sin librería.** Son unas 200 líneas con eventos de
+  puntero (sirve para mouse y dedo) y un `<canvas>`.
+- **Una sola proporción (16:9)** para los tres lugares donde se ve la portada;
+  cada uno muestra la parte central.
+
+### Verificación
+- Prueba de permisos ampliada: **34/34 OK**. Suma: una publicadora sube en su
+  carpeta, pero no en la de otro; un usuario común no sube; una nota no acepta
+  fotos de otro sitio. No quedaron fotos de prueba.
+- ESLint sin errores; build OK.
+- Navegador (build local, página temporal borrada), con imágenes generadas de
+  3000×2000 y una vertical de 1200×1600: el marco es 16:9 exacto (838×471 en
+  escritorio, 301×169 en celular); 10 pulsaciones de "+" llevan el zoom a 2.0;
+  con la foto en una esquina y el zoom al mínimo sigue cubriendo el marco; el
+  resultado es WebP de 1600×900; el recorrido completo desde "Subir foto"
+  llega hasta la subida (sin sesión, avisa). La home sigue con sus 7 portadas.
+- **No se probó** subir una foto real a Storage ni verla publicada: hace falta
+  entrar con Google.
+
+### ⚑ Para charlar
+- **[error]** El zoom con teclado sumaba sobre un valor viejo: 10 "+" seguidos
+  dejaban el zoom en 1.1 en vez de 2.0. Manteniendo la tecla apretada casi no
+  avanzaba. Se corrigió sumando sobre el último valor.
+- **[error]** Un chequeo de la prueba ("la foto cubre el marco") dio bien por
+  casualidad: el panel del navegador estaba oculto, el marco medía 1×1 y
+  cualquier cosa lo cubría. Se repitió con la ventana a tamaño fijo, y ahí sí
+  valió.
+- **[rareza]** Con el panel del navegador oculto, el recortador se queda en
+  "cargando": se entera del tamaño del marco con `ResizeObserver`, que solo
+  avisa cuando la página se dibuja. Para una persona usándolo no pasa (la
+  página está a la vista), pero en pruebas automáticas hay que traer el panel
+  al frente.
+- **[rareza]** La herramienta de pruebas del navegador manda las teclas "+" y
+  "=" vacías, así que el zoom con teclado se probó mandando el evento desde la
+  página.
+- **[atajo]** Las fotos reemplazadas o quitadas no se borran del bucket: quedan
+  huérfanas. Con 1 GB gratis entran miles, pero a la larga convendría una
+  limpieza.
+- **[a decidir]** Si en alguna portada se corta algo importante, se podría
+  sumar un "punto de foco" para elegir qué parte se ve en cada lugar.
+
+---
+
 ## 2026-10-06 (16) — Retoques de Redacción: una sola sección y artistas escritos a mano
 
 ### Qué se pidió

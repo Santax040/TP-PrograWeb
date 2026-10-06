@@ -191,6 +191,38 @@ where autor_id = '00000000-0000-0000-0000-00000000000b';
 with u as (update public.envios set estado = 'aceptado' where titulo = 'Mi nota sobre el under' returning 1)
 insert into resultados (prueba, resultado) select 'Admin acepta una propuesta', case when count(*) = 1 then 'OK' else 'FALLA' end from u;
 
+-- ===== Fotos de portada (Storage) =====
+-- Ana, publicadora, sube en su carpeta.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated"}', true);
+with s as (
+  insert into storage.objects (bucket_id, name, owner_id)
+  values ('portadas', '00000000-0000-0000-0000-00000000000a/foto.webp', '00000000-0000-0000-0000-00000000000a')
+  returning 1)
+insert into resultados (prueba, resultado) select 'Ana sube una portada en su carpeta', case when count(*) = 1 then 'OK' else 'FALLA' end from s;
+
+do $$ begin
+  insert into storage.objects (bucket_id, name) values ('portadas', '00000000-0000-0000-0000-00000000000b/ajena.webp');
+  insert into resultados (prueba, resultado) values ('Ana sube en la carpeta de Beto', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Ana sube en la carpeta de Beto', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  update public.articulos set portada_url = 'https://otro-sitio.com/foto.jpg' where slug = 'nota-de-ana';
+  insert into resultados (prueba, resultado) values ('Nota con foto de otro sitio', 'FALLA: lo permitió');
+exception when check_violation then
+  insert into resultados (prueba, resultado) values ('Nota con foto de otro sitio', 'OK: rechazado');
+end $$;
+
+-- Beto, usuario común, no sube.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+do $$ begin
+  insert into storage.objects (bucket_id, name) values ('portadas', '00000000-0000-0000-0000-00000000000b/mia.webp');
+  insert into resultados (prueba, resultado) values ('Beto (usuario) sube una portada', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto (usuario) sube una portada', 'OK: rechazado');
+end $$;
+
 reset role;
 select prueba, resultado from resultados order by n;
 

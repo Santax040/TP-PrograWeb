@@ -28,6 +28,7 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
  * @property {boolean} destacado
  * @property {boolean} premium
  * @property {string} portada - Clases de Tailwind del gradiente que hace de portada.
+ * @property {string | null} [portadaUrl] - Foto subida en Redacción; si está, va en lugar del gradiente.
  * @property {string[]} artistas - Slugs de los artistas mencionados que tienen ficha.
  * @property {string[]} artistasMencionados - Nombres de artistas sin ficha (se muestran sin link).
  *
@@ -55,7 +56,7 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
 
 const COLUMNAS_ARTICULO = `
   slug, titulo, bajada, cuerpo, categoria, firma, fecha, minutos_lectura,
-  destacado, premium, portada, artistas_mencionados,
+  destacado, premium, portada, portada_url, artistas_mencionados,
   articulo_artistas ( artistas ( slug ) )
 `;
 
@@ -80,6 +81,7 @@ function aArticulo(fila) {
     destacado: fila.destacado,
     premium: fila.premium,
     portada: fila.portada,
+    portadaUrl: fila.portada_url,
     artistas: fila.articulo_artistas.map((r) => r.artistas.slug),
     artistasMencionados: fila.artistas_mencionados ?? [],
   };

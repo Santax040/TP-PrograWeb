@@ -37,6 +37,7 @@ export async function guardarNota(_estado, formData) {
   const firma = texto("firma") || perfil.nombre;
   const fecha = texto("fecha");
   const portada = texto("portada");
+  const portadaUrl = texto("portada_url");
   const cuerpo = textoAParrafos(formData.get("cuerpo"));
   const nombresArtistas = [
     ...new Set(formData.getAll("artistas").map((n) => String(n).trim().slice(0, 80)).filter(Boolean)),
@@ -50,6 +51,9 @@ export async function guardarNota(_estado, formData) {
   if (!categorias.some((c) => c.slug === categoria)) return { error: "Elegí una sección." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return { error: "La fecha no es válida." };
   if (!portadas.some((p) => p.clases === portada)) return { error: "Elegí una portada." };
+  // La foto solo puede venir de nuestro bucket (la base también lo exige).
+  const baseFotos = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portadas/`;
+  if (portadaUrl && !portadaUrl.startsWith(baseFotos)) return { error: "La foto de portada no es válida." };
   if (cuerpo.join("").length > largos.cuerpo) return { error: "La nota es demasiado larga." };
   if (nombresArtistas.length > 20) return { error: "Hasta 20 artistas por nota." };
   // Un borrador puede estar a medias; una nota publicada, no.
@@ -77,6 +81,7 @@ export async function guardarNota(_estado, formData) {
     firma,
     fecha,
     portada,
+    portada_url: portadaUrl || null,
     cuerpo,
     minutos_lectura: minutosDeLectura(cuerpo),
     premium: formData.get("premium") === "on",

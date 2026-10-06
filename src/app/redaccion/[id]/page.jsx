@@ -21,7 +21,7 @@ export default async function EditarNotaPage({ params, searchParams }) {
   const { data: nota } = await supabase
     .from("articulos")
     .select(
-      "id, slug, titulo, bajada, cuerpo, categoria, firma, fecha, portada, premium, destacado, estado, autor_id, artistas_mencionados, articulo_artistas ( artistas ( nombre ) )",
+      "id, slug, titulo, bajada, cuerpo, categoria, firma, fecha, portada, portada_url, premium, destacado, estado, autor_id, artistas_mencionados, articulo_artistas ( artistas ( nombre ) )",
     )
     .eq("id", Number(id) || 0)
     .maybeSingle();

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FondoPortada from "@/components/FondoPortada";
 import { notFound } from "next/navigation";
 import { getArticulo, getArticulos, getArtistas } from "@/lib/data";
 import { categorias, pagosActivos } from "@/lib/site";
@@ -39,7 +40,7 @@ export default async function NotaPage({ params }) {
   return (
     <article className="pb-12">
       <div className="bruma h-64 sm:h-[28rem]">
-        <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
+        <FondoPortada articulo={articulo} sizes="100vw" prioridad />
       </div>
 
       <div className="mx-auto max-w-3xl px-4">

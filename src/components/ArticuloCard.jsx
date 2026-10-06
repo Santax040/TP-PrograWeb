@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FondoPortada from "@/components/FondoPortada";
 import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
@@ -17,7 +18,10 @@ export default function ArticuloCard({ articulo, destacado = false }) {
     <article className="tarjeta h-full">
       <Link href={`/notas/${articulo.slug}`} className="group flex h-full flex-col">
         <div className={`bruma relative ${destacado ? "h-72 sm:h-96" : "h-44"}`}>
-          <div className={`h-full w-full bg-gradient-to-br ${articulo.portada}`} />
+          <FondoPortada
+            articulo={articulo}
+            sizes={destacado ? "(min-width: 768px) 66vw, 100vw" : "(min-width: 768px) 33vw, 100vw"}
+          />
           <span className="etiqueta absolute left-3 top-3 z-[2] text-white">{categoria?.nombre}</span>
           {articulo.premium && (
             <span className="cartel absolute bottom-3 right-3 z-[2] px-2 py-0.5 rotulo text-xs uppercase">
