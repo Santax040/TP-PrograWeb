@@ -90,10 +90,16 @@ export default function MenuUsuario() {
             {perfil.nombre}
           </span>
           {perfil.rol === "admin" && <span className="etiqueta text-cian">Admin</span>}
+          {perfil.rol === "publicador" && <span className="etiqueta text-cian">Publicador</span>}
         </>
       }
     >
       <Opcion href="/perfil">Perfil</Opcion>
+      {perfil.rol === "admin" || perfil.rol === "publicador" ? (
+        <Opcion href="/redaccion">Redacción</Opcion>
+      ) : (
+        <Opcion href="/colabora">Mandar una nota</Opcion>
+      )}
       <Opcion href="/configuracion">Configuración</Opcion>
       <Opcion onClick={salir}>Cerrar sesión</Opcion>
     </Desplegable>

@@ -4,7 +4,7 @@ import Avatar from "@/components/Avatar";
 import Titular from "@/components/Titular";
 import { formatearFecha } from "@/lib/formato";
 import { planes } from "@/lib/site";
-import { crearClienteServidor } from "@/lib/supabase/servidor";
+import { obtenerSesion, puedeEscribir } from "@/lib/sesion";
 
 export const metadata = {
   title: "Perfil",
@@ -20,18 +20,8 @@ export const metadata = {
  * migración del esquema).
  */
 export default async function PerfilPage() {
-  const supabase = await crearClienteServidor();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { user, perfil } = await obtenerSesion();
   if (!user) redirect("/login?siguiente=/perfil");
-
-  const { data: perfil } = await supabase
-    .from("perfiles")
-    .select("nombre, rol, plan, suscripcion_hasta, creado_en, avatar_url")
-    .eq("id", user.id)
-    .maybeSingle();
 
   const plan = planes.find((p) => p.slug === perfil?.plan);
 
@@ -56,10 +46,13 @@ export default async function PerfilPage() {
           <Titular texto="Perfil" volanta="Tu cuenta" />
         </h1>
 
-        {(perfil?.avatar_url || perfil?.rol === "admin") && (
+        {(perfil?.avatar_url || puedeEscribir(perfil)) && (
           <div className="mt-10 flex items-center gap-5">
             {perfil?.avatar_url && <Avatar url={perfil.avatar_url} tamano={72} />}
             {perfil?.rol === "admin" && <span className="etiqueta text-lavanda">Admin</span>}
+            {perfil?.rol === "publicador" && (
+              <span className="etiqueta text-lavanda">Publicador</span>
+            )}
           </div>
         )}
       </header>
@@ -78,6 +71,25 @@ export default async function PerfilPage() {
         ))}
       </dl>
 
+      {/* Lo que cada cuenta puede hacer con la revista: los que publican van
+          a Redacción; el resto manda propuestas, que le llegan al equipo por
+          mail. */}
+      {puedeEscribir(perfil) ? (
+        <AccesoCuenta
+          titulo="Redacción"
+          texto="Escribí, editá y publicá notas de la revista."
+          href="/redaccion"
+          boton="Ir a Redacción"
+        />
+      ) : (
+        <AccesoCuenta
+          titulo="¿Escribiste algo?"
+          texto="Mandanos tu nota, una fecha o un artista. Le llega al equipo y, si entra, te escribimos."
+          href="/colabora"
+          boton="Mandar una nota"
+        />
+      )}
+
       <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3">
         <Link
           href="/configuracion"
@@ -93,5 +105,22 @@ export default async function PerfilPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function AccesoCuenta({ titulo, texto, href, boton }) {
+  return (
+    <section className="cartel mt-10 flex flex-col gap-4 px-7 py-6 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 className="font-titular text-xl">{titulo}</h2>
+        <p className="mt-1 text-sm leading-relaxed text-white/85">{texto}</p>
+      </div>
+      <Link
+        href={href}
+        className="shrink-0 self-start border border-white px-6 py-2.5 font-titular text-sm transition-colors hover:bg-white hover:text-cobalto sm:self-auto"
+      >
+        {boton}
+      </Link>
+    </section>
   );
 }

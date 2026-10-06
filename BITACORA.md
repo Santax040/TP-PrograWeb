@@ -20,6 +20,219 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-06 (15) — Redacción para publicar, y "mandar una nota" desde la cuenta
+
+### Qué se pidió
+- Para los admins, una sección para escribir y publicar que quede
+  profesional.
+- Para las cuentas que no son admin, una opción en su cuenta para mandar
+  notas, usando el aviso por mail de la entrada anterior.
+
+### Qué se hizo
+
+**Redacción** (`/redaccion`), para admins **y publicadores**:
+
+| Página | Qué hace |
+|---|---|
+| `/redaccion` | Lista de notas, separada en Borradores y Publicadas. El admin ve todas; un publicador, las suyas. Al admin le avisa si hay propuestas de lectores sin revisar. |
+| `/redaccion/nueva` | Nota nueva. Arranca como borrador, con tu nombre de firma y la fecha de hoy. |
+| `/redaccion/[id]` | Editar una nota existente. |
+
+**Editor** (`EditorNota.jsx`), en dos columnas que en celular se apilan:
+- Izquierda, lo que se lee: título (grande, como se ve publicado), bajada y
+  texto. Los párrafos se separan con un renglón en blanco.
+- Derecha, los datos de publicación: estado, botones, sección, fecha, firma,
+  "exclusiva para suscriptores", "destacar en la portada" (solo admin),
+  portada y artistas que aparecen.
+- Botones según el estado: **Publicar** / **Guardar borrador**, o, si ya está
+  publicada, **Guardar cambios** / **Pasar a borrador**, más un link para ver
+  la nota publicada.
+- **Borrar** pide un segundo clic de confirmación.
+- La dirección de la nota (`slug`) sale del título al crearla y no cambia
+  después, para no romper links. Si ya existe, se le agrega un sufijo.
+- Los minutos de lectura se calculan solos (200 palabras por minuto).
+- Al guardar se regeneran las páginas públicas (`revalidatePath`), así la nota
+  aparece sin esperar el minuto de revalidación.
+
+**Cuenta** (`/perfil`): un bloque azul que cambia según el rol:
+- Admin y publicador: "Redacción" → **Ir a Redacción**.
+- Usuario: "¿Escribiste algo?" → **Mandar una nota** (lleva a `/colabora`,
+  que guarda la propuesta y le manda el mail al admin).
+
+El menú del usuario también cambia: "Redacción" o "Mandar una nota". Además,
+`/perfil` muestra la etiqueta "Publicador".
+
+**Mail:** `RESEND_API_KEY` y `AVISO_ENVIOS_PARA` cargadas en Vercel (production,
+preview y development). El usuario las había puesto en `.env.local`.
+
+**Helper nuevo** `src/lib/sesion.js`: `obtenerSesion()` (usuario y perfil),
+`puedeEscribir(perfil)` y `exigirRedaccion(ruta)`, que manda al login o a
+`/colabora` según corresponda. `/perfil` pasó a usarlo.
+
+### Decisiones
+- **"Redacción" y no "Panel" o "Admin":** es como se llama en una revista el
+  lugar donde se escribe, y también la usan los publicadores, no solo el admin.
+- **Portadas de una lista fija** (`src/lib/redaccion.js`). Tailwind solo genera
+  las clases que encuentra escritas en el código: un gradiente inventado en el
+  momento no tendría estilos.
+- **Un borrador puede estar a medias; una nota publicada, no:** para publicar
+  se exige bajada y texto.
+- **Un publicador no puede editar notas ajenas, aunque las vea publicadas:** la
+  página de edición da 404, y la base lo rechazaría igual.
+
+### Verificación
+- ESLint sin errores; build OK (36 páginas, las de Redacción dinámicas).
+- Editor revisado en una página temporal sin login (se borró): se conservan
+  los valores y la portada al guardar, borrar pide confirmación, 1440px y
+  375px sin scroll horizontal, y en celular la columna de datos pasa abajo.
+- Sin sesión, `/redaccion`, `/redaccion/nueva`, `/redaccion/[id]` y `/perfil`
+  redirigen al login y vuelven a donde se quería ir.
+- En Vercel, production y preview guardan las variables como "Secret": `vercel
+  env pull` no las devuelve. Se comparó con development, que se cargó igual y
+  coincide exacto.
+- **No se probó** publicar una nota real ni el mail con una propuesta real:
+  hace falta entrar con Google, y eso lo hace el usuario.
+
+### ⚑ Para charlar
+- **[error]** La primera versión del botón "Sí, borrar" era un `submit` con
+  `formAction`: lo habría atrapado el `onSubmit` del editor y la nota se habría
+  *guardado* en vez de borrarse. Se vio al revisar el código, antes de probar,
+  y se cambió por un botón que llama a la acción directo.
+- **[error]** Un script para editar `/perfil` falló porque el archivo tiene
+  saltos de línea de Windows (CRLF). Como cortaba antes de escribir, no rompió
+  nada; se hizo con el editor.
+- **[rareza]** Vercel guarda las variables nuevas de production y preview como
+  "Secret": no se pueden volver a bajar ni ver.
+- **[atajo]** Los artistas de una nota se reemplazan borrando y volviendo a
+  insertar la lista. No es una sola operación: si falla a la mitad, la nota
+  puede quedar sin artistas.
+- **[atajo]** Todavía no hay pantalla para revisar las propuestas de los
+  lectores: Redacción solo avisa cuántas hay sin revisar.
+- **[a decidir]** Las portadas son seis gradientes fijos. Más adelante se
+  podrían subir fotos (Supabase Storage).
+
+---
+
+## 2026-10-06 (14) — Publicadores oficiales y propuestas de los lectores
+
+### Qué se pidió
+Tener 3 o 4 publicadores oficiales, y que el resto de los usuarios pueda
+mandar notas o datos desde la página **sin que se publiquen**: que les
+lleguen por mail a los admins, "estilo CV". Se acordó:
+- Se pueden mandar **una nota, una fecha (evento) o un artista**.
+- **Mail automático** con Resend, además de guardar la propuesta en la base.
+- **Solo texto y links**, sin archivos adjuntos.
+
+### Qué se hizo
+
+**Roles** (migraciones `20261006120000_rol_publicador.sql` y
+`20261006120100_publicadores_y_envios.sql`):
+
+| Rol | Antes | Ahora |
+|---|---|---|
+| `usuario` | Leía y escribía sus notas | Lee y **manda propuestas**. Ya no escribe notas. |
+| `publicador` | — | Escribe, edita y borra **sus** notas. |
+| `admin` | Todo | Todo, y recibe las propuestas. |
+
+- Si un publicador vuelve a ser usuario, pierde el acceso a sus notas viejas:
+  quedan en manos del admin.
+- Función nueva `privado.es_publicador()` (cuenta también al admin).
+
+**Tabla `envios`** (las propuestas):
+- `tipo` (nota/evento/artista), `titulo`, `datos` (jsonb con el resto de los
+  campos), `estado` (nuevo, leído, aceptado, descartado) y `autor_id`.
+- Permisos: el usuario manda **a su nombre** y solo elige el contenido; no
+  puede poner el estado ni la fecha (permisos por columna). Ve solo las suyas.
+  El admin ve todas y cambia el estado. Los visitantes sin sesión no ven ni
+  mandan nada.
+- **Freno anti-spam:** un trigger corta en 5 propuestas por persona cada 24
+  horas.
+
+**Página `/colabora`:**
+- Elegís qué mandar (tres tarjetas) y aparecen los campos de ese tipo.
+- Sin sesión, pide entrar con Google (`/login?siguiente=/colabora`).
+- Abajo, "Lo que ya mandaste", con el estado de cada propuesta.
+- Accesos: "Mandar una propuesta" en el menú del usuario, y "¿Tenés una nota,
+  una fecha o un artista? Mandánoslo" en el footer. El header no se tocó,
+  porque tiene sus cuatro opciones fijas (CLAUDE.md).
+- El menú muestra la etiqueta "Publicador" igual que "Admin".
+
+**Mail al admin** (`src/lib/aviso-envio.js`): se manda con la API de Resend
+desde la Server Action. Lleva todos los campos y el `reply_to` es el mail del
+lector, así que alcanza con responder el mail para contestarle. Todo lo que
+escribe el lector se escapa: en el mail va como texto, nunca como HTML. Si el
+mail falla, la propuesta ya quedó guardada.
+
+**Una sola definición de campos** (`src/lib/envios.js`): el formulario, la
+validación del servidor y el mail salen de la misma lista.
+
+### Decisiones
+- **Guardar además de mandar el mail.** Si el mail cae en spam o Resend falla,
+  la propuesta no se pierde: está en la tabla `envios` del panel de Supabase.
+- **Hace falta entrar con Google para mandar.** Así hay un mail real al que
+  responder, y el límite de 5 por día se puede aplicar por persona.
+- **Links solo `http(s)`.** Se rechazan los demás (por ejemplo `javascript:`)
+  antes de guardarlos o ponerlos en el mail.
+- **Descartado: adjuntar archivos.** Pedía Supabase Storage, límites de tamaño y
+  cuidar qué se sube. Con links (Drive, Instagram, Spotify) alcanza.
+
+### Verificación
+- Prueba de permisos ampliada: **30/30 OK**. Suma casos de publicador, de
+  usuario que ya no puede escribir notas, y de propuestas (mandar a nombre de
+  otro, autoaprobarse, límite diario, visitante, admin).
+- `supabase db advisors`: sin avisos nuevos.
+- ESLint sin errores; build OK (34 páginas, `/colabora` dinámica).
+- El formulario se revisó en una página temporal sin login (se borró): cambio
+  de tipo, validación de links, mensajes de error, 1440px y 375px sin scroll
+  horizontal.
+- **No se probó** mandar una propuesta real ni el mail: hace falta sesión con
+  Google y la clave de Resend.
+
+### ⚑ Para charlar
+- **[error]** La primera versión del formulario volvía solo a "Una nota"
+  después de un error. React 19 vacía los formularios con `action` después de
+  cada envío, y eso reseteaba la opción elegida aunque en pantalla siguieran
+  los campos de otro tipo; el segundo envío mandaba el tipo equivocado. Se
+  detectó en la prueba y se corrigió mandando el formulario a mano
+  (`onSubmit` + `startTransition`).
+- **[error]** La prueba de permisos tenía dos errores propios: esperaba un
+  error donde la base simplemente no cambia nada (un `update` sin permiso
+  afecta 0 filas), y el caso del límite diario se deshacía entero al fallar.
+  Se corrigió la prueba; los permisos estaban bien.
+- **[rareza]** Resend, sin dominio propio, solo manda mails a la dirección con
+  la que se creó la cuenta. Para que les llegue a varios admins hay que
+  comprar y verificar un dominio.
+- **[rareza]** Había otro servidor de desarrollo corriendo en esta carpeta
+  (otra conversación), así que se verificó con el build en otro puerto. Se
+  agregó la configuración `tp-build-local` en
+  `Programacion Web/.claude/launch.json`.
+- **[atajo]** No hay pantalla de admin para ver y aceptar propuestas: por ahora
+  se ven en el mail y en el panel de Supabase (tabla `envios`). El estado se
+  cambia desde ahí.
+- **[a decidir]** Quiénes son los publicadores. Se asignan con
+  `update perfiles set rol = 'publicador' ...` cuando hayan entrado con
+  Google.
+- **[a decidir]** Todavía no hay forma de que un publicador escriba desde la
+  página: la base lo permite, pero falta el panel de edición.
+
+---
+
+## 2026-10-05 (13) — Primer admin
+
+### Qué se hizo
+- La cuenta de Santiago (`santiagoj2004@gmail.com`, entra con Google) pasó de
+  `usuario` a `admin`. Se hizo con un `update` directo en la base:
+  ```
+  supabase db query --linked "update perfiles set rol = 'admin' where id = (select id from auth.users where email = '...')"
+  ```
+- Es un cambio de datos, no de esquema: no lleva migración.
+
+### ⚑ Para charlar
+- **[a decidir]** Por ahora los roles solo se cambian por SQL. Cuando exista el
+  panel de admin, convendría poder hacerlo desde la página.
+
+---
+
 ## 2026-10-05 (12) — La revista primero: notas antes que eventos, y eventos sin precio
 
 ### Qué se pidió
