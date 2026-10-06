@@ -40,7 +40,18 @@ opciones de prueba con las mismas clases: con las clases viejas, el botón
 quedaba en `none` ("Cerrar sesión"); con las nuevas, enlace y botón salen en
 `uppercase` ("PERFIL", "CERRAR SESIÓN"). `eslint` sin errores.
 
+### Publicado
+- Push `f05aa12..5608770` a `main`. Vercel marcó el deploy de producción como
+  `success`, y el código que sirve revista-digital-musica.vercel.app ya trae las
+  clases nuevas del menú y no las viejas.
+
 ### ⚑ Para charlar
+- **[error]** Para verificar la publicación se buscaron las clases en los
+  scripts con la ruta `/_next/static/chunks/`, y durante cinco minutos no
+  apareció nada. Next 16 los sirve en `/_next/static/immutable/chunks/`: el
+  método encontraba cero archivos y daba "no está" sin estar mirando. Es el
+  mismo tipo de error que con Exo 2 en la entrada (9). Para la próxima: antes
+  de esperar un resultado, comprobar que el método encuentra lo viejo.
 - **[rareza]** No se vio el menú abierto de verdad, porque hace falta entrar
   con Google. Conviene que el usuario lo mire con su sesión.
 - **[a decidir]** El nombre del usuario en el botón sigue en caja normal (es
