@@ -20,6 +20,34 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-06 (18) — Menú de la cuenta todo en mayúscula
+
+### Qué se pidió
+Que la lista que se abre desde la cuenta esté toda en mayúscula o toda en
+minúscula. Se eligió mayúscula, como el resto del menú del header.
+
+### Qué se hizo
+- `MenuUsuario.jsx` → `Opcion`: las opciones llevan `uppercase` y `rotulo`
+  explícitos, el mismo estilo que MÚSICA, EVENTOS, SUSCRIBETE.
+- **Por qué estaba mezclada:** los enlaces (Perfil, Configuración, Redacción)
+  heredaban la mayúscula del `<nav>`, pero "Cerrar sesión" es un `<button>`, y
+  los botones no heredan `text-transform` (el reset de Tailwind lo pone en
+  `none`).
+
+### Verificado en `localhost:3000`
+Sin sesión no se puede abrir el menú real. Se insertaron en el header
+opciones de prueba con las mismas clases: con las clases viejas, el botón
+quedaba en `none` ("Cerrar sesión"); con las nuevas, enlace y botón salen en
+`uppercase` ("PERFIL", "CERRAR SESIÓN"). `eslint` sin errores.
+
+### ⚑ Para charlar
+- **[rareza]** No se vio el menú abierto de verdad, porque hace falta entrar
+  con Google. Conviene que el usuario lo mire con su sesión.
+- **[a decidir]** El nombre del usuario en el botón sigue en caja normal (es
+  un nombre propio) y las etiquetas Admin/Publicador van en mayúscula.
+
+---
+
 ## 2026-10-06 (17) — Fotos de portada con recorte 16:9
 
 ### Qué se pidió

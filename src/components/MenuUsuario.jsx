@@ -173,9 +173,14 @@ function Desplegable({ etiqueta, etiquetaAccesible, clasesBoton, children }) {
   );
 }
 
+/**
+ * Opción del panel. La mayúscula va explícita: los enlaces la heredaban del
+ * menú del header, pero los botones (como "Cerrar sesión") no heredan
+ * `text-transform`, y la lista quedaba mezclada.
+ */
 function Opcion({ href, onClick, children }) {
   const clases =
-    "block w-full px-3 py-2 text-left font-titular text-sm text-marino transition-colors hover:bg-cobalto hover:text-white";
+    "block w-full px-3 py-2 text-left rotulo text-sm uppercase text-marino transition-colors hover:bg-cobalto hover:text-white";
 
   return (
     <li>
