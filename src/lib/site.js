@@ -11,12 +11,13 @@ export const site = {
     "Revista digital sobre la noche: crónicas de fiestas, música nueva y la agenda de lo que se viene.",
 };
 
-export const categorias = [
-  { slug: "fiestas", nombre: "Fiestas" },
-  { slug: "musica", nombre: "Música" },
-  { slug: "quilombo", nombre: "Quilombo" },
-  { slug: "entrevistas", nombre: "Entrevistas" },
-];
+/**
+ * Secciones de la revista. Desde el 2026-10-06 hay una sola: las notas de
+ * Fiestas, Quilombo y Entrevistas pasaron a Música (ver la migración
+ * `una_seccion_y_artistas_libres`), y sus URLs redirigen acá
+ * (`next.config.mjs`). Tiene que coincidir con la tabla `categorias`.
+ */
+export const categorias = [{ slug: "musica", nombre: "Música" }];
 
 /**
  * Pagos habilitados o no. Mientras sea `false`, la página de suscripción

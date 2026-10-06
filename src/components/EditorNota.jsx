@@ -3,6 +3,7 @@
 import { startTransition, useActionState, useState } from "react";
 import Link from "next/link";
 import { borrarNota, guardarNota } from "@/app/redaccion/acciones";
+import CampoArtistas from "@/components/CampoArtistas";
 import { largos, portadas } from "@/lib/redaccion";
 import { categorias } from "@/lib/site";
 
@@ -18,8 +19,8 @@ import { categorias } from "@/lib/site";
  * de guardar, y acá se tienen que quedar como están.
  *
  * @param {Object} props
- * @param {Object} props.nota - Valores iniciales (vacíos si es nueva).
- * @param {{ slug: string, nombre: string }[]} props.artistas - Todos, para elegir.
+ * @param {Object} props.nota - Valores iniciales (vacíos si es nueva). `artistas` son nombres.
+ * @param {{ slug: string, nombre: string }[]} props.artistas - Los que tienen ficha, para sugerir.
  * @param {boolean} props.esAdmin
  * @param {string} [props.aviso] - Mensaje al llegar (por ejemplo, recién creada).
  */
@@ -137,19 +138,29 @@ export default function EditorNota({ nota, artistas, esAdmin, aviso }) {
         </div>
 
         <div className="tarjeta flex flex-col gap-5 p-6">
-          <label className="flex flex-col gap-1.5">
-            <span className="rotulo text-sm text-cobalto">Sección</span>
-            <select name="categoria" required defaultValue={nota.categoria ?? ""} className={claseEntrada}>
-              <option value="" disabled>
-                Elegí una
-              </option>
-              {categorias.map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.nombre}
+          {/* Con una sola sección, un desplegable de una opción no tiene
+              sentido: se muestra fija. Si vuelven a ser varias, aparece. */}
+          {categorias.length === 1 ? (
+            <p className="flex items-center justify-between gap-3">
+              <span className="rotulo text-sm text-cobalto">Sección</span>
+              <span className="text-marino">{categorias[0].nombre}</span>
+              <input type="hidden" name="categoria" value={categorias[0].slug} />
+            </p>
+          ) : (
+            <label className="flex flex-col gap-1.5">
+              <span className="rotulo text-sm text-cobalto">Sección</span>
+              <select name="categoria" required defaultValue={nota.categoria ?? ""} className={claseEntrada}>
+                <option value="" disabled>
+                  Elegí una
                 </option>
-              ))}
-            </select>
-          </label>
+                {categorias.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
 
           <label className="flex flex-col gap-1.5">
             <span className="rotulo text-sm text-cobalto">Fecha</span>
@@ -220,28 +231,9 @@ export default function EditorNota({ nota, artistas, esAdmin, aviso }) {
           </div>
         </fieldset>
 
-        {artistas.length > 0 && (
-          <fieldset className="tarjeta p-6">
-            <legend className="sr-only">Artistas que aparecen</legend>
-            <p className="rotulo mb-3 text-sm text-cobalto" aria-hidden="true">
-              Artistas que aparecen
-            </p>
-            <div className="flex flex-col gap-2">
-              {artistas.map((a) => (
-                <label key={a.slug} className="flex items-center gap-3 text-sm text-marino">
-                  <input
-                    type="checkbox"
-                    name="artistas"
-                    value={a.slug}
-                    defaultChecked={nota.artistas?.includes(a.slug)}
-                    className="accent-cobalto"
-                  />
-                  {a.nombre}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-        )}
+        <div className="tarjeta p-6">
+          <CampoArtistas iniciales={nota.artistas ?? []} sugerencias={artistas.map((a) => a.nombre)} />
+        </div>
 
         {nota.id && <BorrarNota id={nota.id} />}
       </aside>

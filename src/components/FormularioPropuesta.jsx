@@ -117,6 +117,11 @@ const claseEntrada =
   "w-full border border-white bg-white/70 px-3 py-2.5 text-marino outline-none transition-shadow focus:shadow-[0_0_0_1px_#1f45d6,0_0_16px_#7ff4ffb3]";
 
 function Campo({ campo }) {
+  // Con una sola sección no hay nada que elegir: va fija y no se muestra.
+  if (campo.tipo === "categoria" && categorias.length === 1) {
+    return <input type="hidden" name={campo.nombre} value={categorias[0].slug} />;
+  }
+
   const comunes = {
     name: campo.nombre,
     required: campo.obligatorio,

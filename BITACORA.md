@@ -20,6 +20,70 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-06 (16) — Retoques de Redacción: una sola sección y artistas escritos a mano
+
+### Qué se pidió
+- Que en la lista de secciones no aparezcan opciones que ya no están en la
+  página.
+- Que los artistas de una nota se puedan escribir, y que no sea obligatorio.
+
+### Qué se hizo
+
+**Una sola sección: Música.** En el menú ya solo estaba Música, pero en la
+base seguían las cuatro, con notas. El usuario eligió pasar todo a Música
+(migración `20261006150000_una_seccion_y_artistas_libres.sql`):
+- Las 4 notas de Fiestas, Quilombo y Entrevistas pasan a Música (quedan 7).
+  También se corrigió la sección guardada en las propuestas de lectores.
+- Se borran esas tres secciones de la tabla `categorias` y de `site.js`.
+- Las URLs viejas (`/notas/categoria/fiestas`, `/quilombo`, `/entrevistas`)
+  redirigen a Música con un 308 (`next.config.mjs`), así no quedan links
+  rotos.
+- En el editor y en el formulario de propuestas, con una sola sección no se
+  muestra un desplegable de una opción: va fija. Si algún día vuelven a ser
+  varias, el desplegable reaparece solo.
+
+**Artistas escritos a mano** (`CampoArtistas.jsx`):
+- Se escribe el nombre y se agrega con Enter o coma; el navegador sugiere los
+  artistas que ya tienen ficha. Cada uno queda como etiqueta con ✕; Borrar con
+  el campo vacío saca el último. Es opcional.
+- Se ignoran mayúsculas, tildes y espacios de más: "nena tornado" se reconoce
+  como "Nena Tornado" y no se repite.
+- Al guardar: si el nombre coincide con un artista de la base, se vincula a su
+  ficha como antes. Si no, se guarda en la columna nueva
+  `articulos.artistas_mencionados` (hasta 20).
+- En la nota, "Aparecen en esta nota" muestra los dos: los que tienen ficha,
+  con link, y los otros sin link.
+
+### Decisiones
+- **Los artistas sin ficha no crean una ficha nueva.** Habría páginas de
+  artista vacías, sin bio ni género. Se guardan como texto; si después se les
+  arma la ficha, conviene vincularlos.
+- **Sugerencias con `<datalist>` del navegador** en lugar de un desplegable
+  propio: es accesible y funciona con teclado sin escribir código extra.
+
+### Verificación
+- ESLint sin errores; build OK (34 páginas, solo `/notas/categoria/musica`).
+- En la base: una sola categoría y 7 notas en Música.
+- Navegador (build local, página temporal sin login, borrada): los artistas se
+  agregan con Enter y con coma, el repetido se ignora, Enter no manda la nota,
+  Borrar y ✕ los sacan, y la sección aparece fija. Las tres URLs viejas
+  terminan en `/notas/categoria/musica`.
+- **No se probó** guardar una nota real con artistas sin ficha: hace falta
+  entrar con Google.
+
+### ⚑ Para charlar
+- **[rareza]** Al pedirlo, el usuario contaba con que solo existía Música
+  porque es lo único del menú, pero en la base seguían las cuatro secciones con
+  notas publicadas. Se preguntó antes de borrar.
+- **[atajo]** Si un artista sin ficha recibe una ficha después, las notas
+  viejas lo siguen teniendo como texto, sin link. Habría que vincularlas a
+  mano o con un script.
+- **[a decidir]** Con una sola sección, la etiqueta "Música" en cada tarjeta y
+  la página `/notas/categoria/musica` repiten lo mismo que `/notas`. Se podrían
+  simplificar.
+
+---
+
 ## 2026-10-06 (15) — Redacción para publicar, y "mandar una nota" desde la cuenta
 
 ### Qué se pidió

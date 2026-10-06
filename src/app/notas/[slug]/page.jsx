@@ -96,7 +96,7 @@ export default async function NotaPage({ params }) {
           ))}
         </div>
 
-        {artistas.length > 0 && (
+        {(artistas.length > 0 || articulo.artistasMencionados.length > 0) && (
           <section className="mt-20 border-t border-white/80 pt-10">
             <h2 className="mb-6 rotulo text-xs uppercase text-cobalto">
               Aparecen en esta nota
@@ -109,6 +109,12 @@ export default async function NotaPage({ params }) {
                     {a.genero}
                   </p>
                 </Link>
+              ))}
+              {/* Escritos a mano en Redacción: no tienen ficha, van sin link. */}
+              {articulo.artistasMencionados.map((nombre) => (
+                <div key={nombre} className="tarjeta px-5 py-4">
+                  <p className="font-titular text-xl font-light text-marino">{nombre}</p>
+                </div>
               ))}
             </div>
           </section>

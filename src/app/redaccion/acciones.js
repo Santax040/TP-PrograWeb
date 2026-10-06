@@ -15,6 +15,7 @@ import {
   armarSlug,
   largos,
   minutosDeLectura,
+  normalizarNombre,
   portadas,
   textoAParrafos,
 } from "@/lib/redaccion";
@@ -37,7 +38,9 @@ export async function guardarNota(_estado, formData) {
   const fecha = texto("fecha");
   const portada = texto("portada");
   const cuerpo = textoAParrafos(formData.get("cuerpo"));
-  const slugsArtistas = formData.getAll("artistas").map(String);
+  const nombresArtistas = [
+    ...new Set(formData.getAll("artistas").map((n) => String(n).trim().slice(0, 80)).filter(Boolean)),
+  ];
 
   // --- Validación -----------------------------------------------------------
   if (!titulo) return { error: "La nota necesita un título." };
@@ -48,13 +51,26 @@ export async function guardarNota(_estado, formData) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return { error: "La fecha no es válida." };
   if (!portadas.some((p) => p.clases === portada)) return { error: "Elegí una portada." };
   if (cuerpo.join("").length > largos.cuerpo) return { error: "La nota es demasiado larga." };
+  if (nombresArtistas.length > 20) return { error: "Hasta 20 artistas por nota." };
   // Un borrador puede estar a medias; una nota publicada, no.
   if (estado === "publicada") {
     if (!bajada) return { error: "Para publicar, escribí la bajada." };
     if (cuerpo.length === 0) return { error: "Para publicar, la nota necesita texto." };
   }
 
+  // Artistas: los que coinciden con una ficha se vinculan (articulo_artistas);
+  // el resto se guarda como texto en la nota.
+  const { data: conFicha } = await supabase.from("artistas").select("id, nombre");
+  const idsArtistas = [];
+  const sinFicha = [];
+  for (const nombre of nombresArtistas) {
+    const ficha = conFicha?.find((a) => normalizarNombre(a.nombre) === normalizarNombre(nombre));
+    if (ficha) idsArtistas.push(ficha.id);
+    else sinFicha.push(nombre);
+  }
+
   const fila = {
+    artistas_mencionados: sinFicha,
     titulo,
     bajada,
     categoria,
@@ -103,18 +119,12 @@ export async function guardarNota(_estado, formData) {
     if (!articuloId) return { error: "Ya hay una nota con ese título. Cambialo un poco." };
   }
 
-  // --- Artistas mencionados: se reemplaza la lista completa ------------------
+  // --- Artistas con ficha: se reemplaza la lista completa --------------------
   await supabase.from("articulo_artistas").delete().eq("articulo_id", articuloId);
-  if (slugsArtistas.length > 0) {
-    const { data: artistas } = await supabase
-      .from("artistas")
-      .select("id")
-      .in("slug", slugsArtistas);
-    if (artistas?.length) {
-      await supabase
-        .from("articulo_artistas")
-        .insert(artistas.map((a) => ({ articulo_id: articuloId, artista_id: a.id })));
-    }
+  if (idsArtistas.length > 0) {
+    await supabase
+      .from("articulo_artistas")
+      .insert(idsArtistas.map((artista_id) => ({ articulo_id: articuloId, artista_id })));
   }
 
   // Las páginas públicas se regeneran con el cambio en la próxima visita.

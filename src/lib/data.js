@@ -21,14 +21,15 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
  * @property {string} titulo
  * @property {string} bajada
  * @property {string[]} cuerpo - Un string por párrafo.
- * @property {"fiestas" | "musica" | "quilombo" | "entrevistas"} categoria
+ * @property {"musica"} categoria - Hoy hay una sola sección (ver `categorias` en site.js).
  * @property {string} autor - Firma que se muestra.
  * @property {string} fecha - Formato AAAA-MM-DD.
  * @property {number} minutosLectura
  * @property {boolean} destacado
  * @property {boolean} premium
  * @property {string} portada - Clases de Tailwind del gradiente que hace de portada.
- * @property {string[]} artistas - Slugs de los artistas mencionados.
+ * @property {string[]} artistas - Slugs de los artistas mencionados que tienen ficha.
+ * @property {string[]} artistasMencionados - Nombres de artistas sin ficha (se muestran sin link).
  *
  * @typedef {Object} Artista
  * @property {string} slug
@@ -54,7 +55,7 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
 
 const COLUMNAS_ARTICULO = `
   slug, titulo, bajada, cuerpo, categoria, firma, fecha, minutos_lectura,
-  destacado, premium, portada,
+  destacado, premium, portada, artistas_mencionados,
   articulo_artistas ( artistas ( slug ) )
 `;
 
@@ -80,6 +81,7 @@ function aArticulo(fila) {
     premium: fila.premium,
     portada: fila.portada,
     artistas: fila.articulo_artistas.map((r) => r.artistas.slug),
+    artistasMencionados: fila.artistas_mencionados ?? [],
   };
 }
 

@@ -21,7 +21,7 @@ export default async function EditarNotaPage({ params, searchParams }) {
   const { data: nota } = await supabase
     .from("articulos")
     .select(
-      "id, slug, titulo, bajada, cuerpo, categoria, firma, fecha, portada, premium, destacado, estado, autor_id, articulo_artistas ( artistas ( slug ) )",
+      "id, slug, titulo, bajada, cuerpo, categoria, firma, fecha, portada, premium, destacado, estado, autor_id, artistas_mencionados, articulo_artistas ( artistas ( nombre ) )",
     )
     .eq("id", Number(id) || 0)
     .maybeSingle();
@@ -46,7 +46,11 @@ export default async function EditarNotaPage({ params, searchParams }) {
         nota={{
           ...nota,
           cuerpo: parrafosATexto(nota.cuerpo),
-          artistas: nota.articulo_artistas.map((r) => r.artistas.slug),
+          // Los con ficha y los escritos a mano, todos como nombres.
+          artistas: [
+            ...nota.articulo_artistas.map((r) => r.artistas.nombre),
+            ...nota.artistas_mencionados,
+          ],
         }}
         artistas={artistas ?? []}
         esAdmin={esAdmin}

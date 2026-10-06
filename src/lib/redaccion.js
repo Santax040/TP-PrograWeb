@@ -55,6 +55,19 @@ export function parrafosATexto(parrafos) {
   return (parrafos ?? []).join("\n\n");
 }
 
+/**
+ * Para comparar nombres de artistas sin que importen mayúsculas, tildes ni
+ * espacios de más: "Nena  Tornado" y "nena tornado" son el mismo.
+ */
+export function normalizarNombre(nombre) {
+  return String(nombre ?? "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** A unas 200 palabras por minuto, como mínimo 1. */
 export function minutosDeLectura(parrafos) {
   const palabras = parrafos.join(" ").split(/\s+/).filter(Boolean).length;
