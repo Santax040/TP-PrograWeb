@@ -201,8 +201,52 @@ body {
   animation: marquesina 45s linear infinite;
 }
 
+/*
+ * Vinilo translúcido, como los discos de color: menta y lavanda que dejan ver
+ * el fondo, con surcos finos y un borde más oscuro. Lo gira `Tocadiscos.jsx`.
+ */
+.vinilo {
+  background:
+    repeating-radial-gradient(circle at 50% 50%, #11303a1f 0 1px, transparent 1px 3px),
+    radial-gradient(circle at 50% 50%, transparent 30%, #ffffff26 31%, transparent 33%, transparent 96%, #11303a59 98%),
+    conic-gradient(from 200deg, #9ed9cbd9, #a9aaeed9, #5fb8b0d9, #a9aaeed9, #9ed9cbd9);
+  /* La sombra de afuera la pone el contenedor redondo, que recorta. */
+  box-shadow: inset 0 0 0 1px #ffffff80;
+  backdrop-filter: blur(4px);
+}
+
+/*
+ * El reflejo de la luz sobre el disco. No gira: queda quieto mientras el disco
+ * pasa por debajo, que es lo que hace que el giro se vea.
+ */
+.vinilo-brillo {
+  background: conic-gradient(
+    from 20deg,
+    transparent 0deg,
+    #ffffff73 18deg,
+    transparent 40deg,
+    transparent 180deg,
+    #ffffff4d 198deg,
+    transparent 220deg
+  );
+  mask-image: radial-gradient(circle, transparent 30%, #000 31%);
+  mix-blend-mode: screen;
+}
+
+/* Cuando se elige otro descubrimiento, la etiqueta nueva entra girando. */
+.etiqueta-disco {
+  animation: etiqueta-entra 500ms ease-out;
+}
+@keyframes etiqueta-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-40deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .marquesina {
+  .marquesina,
+  .etiqueta-disco {
     animation: none;
   }
   *,

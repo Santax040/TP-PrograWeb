@@ -20,6 +20,65 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 — Muestra: tocadiscos de "Descubrimientos" en la portada
+
+### Qué se pidió
+En lugar de la nota principal, un vinilo girando e interactivo. A futuro, los
+artistas van a poder subir música y el disco la va a tocar; por ahora no hay
+música. El lugar del disco pasa a ser **Descubrimientos**: lo que suena en
+este momento, como una nota principal. Se hizo primero como muestra local
+(DESENCUENTROS.md #3).
+
+### Qué se hizo (rama `muestra-disco`, carpeta `../muestra-disco`)
+- **`Tocadiscos.jsx`** (componente de cliente):
+  - Vinilo translúcido menta y lavanda, con surcos y un reflejo que no gira,
+    que es lo que hace que se note el giro.
+  - Gira solo a 33⅓. Se puede agarrar y girar con el mouse o el dedo; al
+    soltarlo vuelve de a poco a su velocidad.
+  - Botón "Pausar el disco" / "Girar el disco". El brazo se apoya cuando gira
+    y se levanta en pausa. Con "reducir movimiento" arranca quieto.
+  - La etiqueta del centro es la portada de la nota elegida, con "Artificial"
+    y "Lado A n". Gira con el disco.
+  - A la izquierda va la lista **Descubrimientos** (A1 a A4), con título y
+    artistas. Al elegir otro, la etiqueta cambia entrando con un giro, y abajo
+    se actualizan "Sonando ahora" y "Leer la nota".
+- **Portada:** el disco y la lista reemplazan a la foto grande y a la nota
+  chica del collage. La próxima fecha queda en la esquina del disco, o arriba
+  de él en celular. "Últimas notas" ya no repite las que están en el disco.
+- **Sin botón de play:** un play que no reproduce nada sería una promesa sin
+  cumplir (DESENCUENTROS.md #1).
+- Los descubrimientos salen de las notas destacadas y las más nuevas, hasta
+  cuatro. No se tocó la base.
+
+### Verificado en `localhost:3007`
+- El giro, midiendo el ángulo del disco: avanza solo; arrastrado un cuarto de
+  vuelta hacia atrás, retrocedió unos 100°.
+- Elegir A2 cambia la etiqueta a "Lado A 2" y el enlace a esa nota; la pausa
+  levanta el brazo y cambia el botón.
+- En 1440px y 375px, sin scroll horizontal en portada, notas, agenda y nota.
+  `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[error]** En celular el disco empujaba la página hacia el costado: es un
+  cuadrado que gira, y su diagonal ocupa hasta un 41% más que el lado. Se
+  envolvió en un contenedor redondo que recorta, y la sombra pasó a ese
+  contenedor porque el recorte la cortaba.
+- **[error]** Al principio el brazo apoyaba la púa en el borde del disco, y
+  una línea del HUD cruzaba por encima de la lista. Se corrigieron mirando la
+  página.
+- **[rareza]** En el panel del navegador las animaciones solo avanzan cuando
+  se saca una captura: la ventana estaba tapada y no dibujaba cuadros. Por
+  eso el giro se verificó midiendo el ángulo entre capturas.
+- **[rareza]** No se pudo probar "reducir movimiento" de verdad: el panel no
+  deja simularlo. El código lo lee del sistema.
+- **[a decidir]** Que Descubrimientos tenga sus propios datos (tema, artista,
+  disco, una nota opcional) en vez de salir de las notas. Es el paso previo
+  a que los artistas suban música.
+- **[a decidir]** El nombre ARTIFICIAL sigue apareciendo dos veces arriba
+  (header y título grande).
+
+---
+
 ## 2026-10-07 (19) — Roles definitivos: un solo admin y cuentas de artista
 
 ### Qué se pidió
