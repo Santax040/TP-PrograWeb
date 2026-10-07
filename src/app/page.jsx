@@ -13,7 +13,8 @@ export const revalidate = 60;
  * Portada en collage, como la imagen de referencia. Desde tablet, las piezas
  * se ubican en una grilla de 12 columnas y se superponen a propósito: el
  * título, la foto grande con su marco corrido, la foto chica abajo a la
- * izquierda y el panel azul con la próxima fecha. En celular se apilan.
+ * izquierda. En celular se apilan. La próxima fecha no va acá: ya pasa en la
+ * marquesina de arriba.
  *
  * Artificial es una revista: las notas van antes que la agenda. Los eventos se
  * anuncian, no se venden, así que no se muestran precios.
@@ -25,9 +26,11 @@ export default async function Home() {
     getEventos(),
   ]);
 
-  const [principal, secundaria, ...otrasDestacadas] = destacados;
-  const proximo = eventos[0];
-  const restantes = [...otrasDestacadas, ...todos.filter((a) => !a.destacado)];
+  const [principal, secundaria] = destacados;
+  // El resto de las notas, de la más nueva a la más vieja (así vienen de la
+  // base): la primera va en grande.
+  const enCollage = new Set([principal?.slug, secundaria?.slug]);
+  const [masNueva, ...siguientes] = todos.filter((a) => !enCollage.has(a.slug));
 
   return (
     <div className="relative z-10 mx-auto max-w-6xl px-4 py-12">
@@ -80,20 +83,6 @@ export default async function Home() {
           </Link>
         )}
 
-        {proximo && (
-          <Link
-            href={`/agenda/${proximo.slug}`}
-            className="cartel relative z-30 flex flex-col justify-between p-4 transition-colors hover:bg-marino md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1"
-          >
-            <span className="rotulo text-xs uppercase text-white/80">
-              Próxima fecha {proximo.fecha.replaceAll("-", ".")}
-            </span>
-            <span className="text-lg font-medium leading-tight">{proximo.nombre}</span>
-            <span className="rotulo text-xs uppercase text-white/80">
-              {proximo.lugar}, {proximo.ciudad}
-            </span>
-          </Link>
-        )}
 
         {/* Líneas del HUD que cruzan la composición. */}
         <span
@@ -109,7 +98,12 @@ export default async function Home() {
       <section className="mb-28">
         <TituloSeccion titulo="Últimas notas" href="/notas" enlace="Todas las notas" />
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {restantes.map((a) => (
+          {masNueva && (
+            <div className="sm:col-span-2 lg:col-span-2">
+              <ArticuloCard articulo={masNueva} destacado />
+            </div>
+          )}
+          {siguientes.map((a) => (
             <ArticuloCard key={a.slug} articulo={a} />
           ))}
         </div>

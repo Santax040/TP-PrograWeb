@@ -20,6 +20,38 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 (21) — Portada sin cartel de próxima fecha, y la nota más nueva en grande
+
+### Qué se pidió
+Pasar a `main` el cambio de la rama `muestra-disco` que no depende de la
+música: sacar el cartel de la próxima fecha ("ya en la barra que recorre
+aparece") y darle prioridad a la nota más nueva.
+
+### Qué se hizo (`src/app/page.jsx`)
+- Se sacó el panel azul "Próxima fecha" del collage. Las fechas siguen en la
+  marquesina y en "Lo que se viene".
+- "Últimas notas" ahora sale de la más nueva a la más vieja. Antes ponía
+  primero las destacadas, aunque fueran viejas. La primera ocupa dos columnas.
+  Las dos que ya están en el collage no se repiten.
+- El collage no cambió: la foto grande sigue siendo la primera destacada,
+  que hoy también es la más nueva ("Top 3 álbumes japoneses de deep house").
+
+### Verificado en `localhost:3000`
+En la portada no queda "Próxima fecha"; la marquesina sigue con las fechas;
+"Últimas notas" arranca con "La Máquina de Humo" (18/9), que ocupa dos
+columnas. Sin scroll horizontal en 375px. `eslint` y `npm run build` sin
+errores.
+
+### ⚑ Para charlar
+- **[rareza]** La rama `muestra-disco` también tiene estos dos cambios, hechos
+  de otra forma. Cuando se retome, al traer `main` va a haber un conflicto en
+  `page.jsx`: hay que quedarse con la versión de la rama.
+- **[a decidir]** Si una nota vieja queda marcada como destacada, sigue
+  apareciendo en el collage antes que una más nueva. Se puede cambiar para que
+  el collage muestre siempre las dos más nuevas.
+
+---
+
 ## 2026-10-07 (19) — Roles definitivos: un solo admin y cuentas de artista
 
 ### Qué se pidió
