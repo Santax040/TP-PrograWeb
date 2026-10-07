@@ -52,6 +52,42 @@ errores.
 
 ---
 
+## 2026-10-07 (20) — Rama `muestra-disco`: tocadiscos y Descubrimientos (no está en `main`)
+
+### Qué se decidió
+El usuario probó una portada con un tocadiscos y una lista de canciones
+("Descubrimientos"), pensada para que más adelante los artistas suban su
+música. Le gustó, pero **no va a `main` por ahora**: incorporar la música de
+verdad es mucho trabajo y puede no llegar para la entrega final. Queda en su
+rama para retomarla después.
+
+### Dónde está
+- **Rama:** `muestra-disco` (local, sin subir a GitHub), con su copia de
+  trabajo en `../muestra-disco` y su configuración `muestra-disco` (puerto
+  3007) en el `launch.json` de la carpeta padre.
+- **El detalle completo** está en la bitácora de esa rama, entradas
+  2026-10-07 y 2026-10-07 (2): qué hace el disco, cómo se verificó y qué
+  falta.
+- **Lo que tiene:** `src/components/Tocadiscos.jsx` (vinilo que gira y se
+  arrastra, con brazo, pausa y "reducir movimiento"), `src/lib/descubrimientos.js`
+  (cinco canciones ficticias), la portada con el disco arriba y las notas
+  debajo (la más nueva en grande), y los estilos `.vinilo` y `.vinilo-brillo`.
+
+### Para retomarla
+1. Traer los cambios de `main` a la rama, porque `main` sigue avanzando.
+2. Llevar las canciones a una tabla con su archivo de audio y sumar la subida
+   para cuentas de artista.
+3. Recién ahí, agregar el botón de play y unir a `main`.
+
+### ⚑ Para charlar
+- **[a decidir]** Subir la rama a GitHub como respaldo. Hoy existe solo en
+  esta compu: si se borra la carpeta, se pierde.
+- **[rareza]** Algunos cambios de la muestra no dependen de la música y
+  podrían ir a `main` antes: sacar el cartel de fecha de la portada y poner
+  la nota más nueva en grande.
+
+---
+
 ## 2026-10-07 (19) — Roles definitivos: un solo admin y cuentas de artista
 
 ### Qué se pidió
