@@ -20,6 +20,88 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 (21) — Portada sin cartel de próxima fecha, y la nota más nueva en grande
+
+### Qué se pidió
+Pasar a `main` el cambio de la rama `muestra-disco` que no depende de la
+música: sacar el cartel de la próxima fecha ("ya en la barra que recorre
+aparece") y darle prioridad a la nota más nueva.
+
+### Qué se hizo (`src/app/page.jsx`)
+- Se sacó el panel azul "Próxima fecha" del collage. Las fechas siguen en la
+  marquesina y en "Lo que se viene".
+- "Últimas notas" ahora sale de la más nueva a la más vieja. Antes ponía
+  primero las destacadas, aunque fueran viejas. La primera ocupa dos columnas.
+  Las dos que ya están en el collage no se repiten.
+- El collage no cambió: la foto grande sigue siendo la primera destacada,
+  que hoy también es la más nueva ("Top 3 álbumes japoneses de deep house").
+
+### Verificado en `localhost:3000`
+En la portada no queda "Próxima fecha"; la marquesina sigue con las fechas;
+"Últimas notas" arranca con "La Máquina de Humo" (18/9), que ocupa dos
+columnas. Sin scroll horizontal en 375px. `eslint` y `npm run build` sin
+errores.
+
+### Publicado
+- El usuario pidió subir **solo este cambio**, sin la entrada (20). Como la
+  (20) estaba commiteada antes, se armó en una carpeta temporal un commit con
+  solo este cambio encima de lo publicado (cherry-pick), y se subió a `main`
+  (`3667425..431c06c`). El código es idéntico al que se probó.
+- Después, el `main` local se puso igual a lo publicado y se le volvió a sumar
+  la entrada (20) encima, que sigue sin subir.
+- Vercel marcó el deploy como `success`. En la página oficial no aparece
+  "Próxima fecha", la marquesina sigue con las fechas y, en 1440px, "La
+  Máquina de Humo" va primera en "Últimas notas" ocupando dos columnas.
+
+### ⚑ Para charlar
+- **[rareza]** La entrada (20), que explica la rama `muestra-disco`, está
+  solo en esta compu. En GitHub, esta entrada (21) nombra la rama sin que esté
+  explicada. Se sube con el próximo cambio que se publique.
+- **[rareza]** La rama `muestra-disco` también tiene estos dos cambios, hechos
+  de otra forma. Cuando se retome, al traer `main` va a haber un conflicto en
+  `page.jsx`: hay que quedarse con la versión de la rama.
+- **[a decidir]** Si una nota vieja queda marcada como destacada, sigue
+  apareciendo en el collage antes que una más nueva. Se puede cambiar para que
+  el collage muestre siempre las dos más nuevas.
+
+---
+
+## 2026-10-07 (20) — Rama `muestra-disco`: tocadiscos y Descubrimientos (no está en `main`)
+
+### Qué se decidió
+El usuario probó una portada con un tocadiscos y una lista de canciones
+("Descubrimientos"), pensada para que más adelante los artistas suban su
+música. Le gustó, pero **no va a `main` por ahora**: incorporar la música de
+verdad es mucho trabajo y puede no llegar para la entrega final. Queda en su
+rama para retomarla después.
+
+### Dónde está
+- **Rama:** `muestra-disco` (local, sin subir a GitHub), con su copia de
+  trabajo en `../muestra-disco` y su configuración `muestra-disco` (puerto
+  3007) en el `launch.json` de la carpeta padre.
+- **El detalle completo** está en la bitácora de esa rama, entradas
+  2026-10-07 y 2026-10-07 (2): qué hace el disco, cómo se verificó y qué
+  falta.
+- **Lo que tiene:** `src/components/Tocadiscos.jsx` (vinilo que gira y se
+  arrastra, con brazo, pausa y "reducir movimiento"), `src/lib/descubrimientos.js`
+  (cinco canciones ficticias), la portada con el disco arriba y las notas
+  debajo (la más nueva en grande), y los estilos `.vinilo` y `.vinilo-brillo`.
+
+### Para retomarla
+1. Traer los cambios de `main` a la rama, porque `main` sigue avanzando.
+2. Llevar las canciones a una tabla con su archivo de audio y sumar la subida
+   para cuentas de artista.
+3. Recién ahí, agregar el botón de play y unir a `main`.
+
+### ⚑ Para charlar
+- **[a decidir]** Subir la rama a GitHub como respaldo. Hoy existe solo en
+  esta compu: si se borra la carpeta, se pierde.
+- **[rareza]** Algunos cambios de la muestra no dependen de la música y
+  podrían ir a `main` antes: sacar el cartel de fecha de la portada y poner
+  la nota más nueva en grande.
+
+---
+
 ## 2026-10-07 (2) — Muestra: el disco toca canciones, y las notas van debajo
 
 ### Qué se pidió
