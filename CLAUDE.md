@@ -1,5 +1,26 @@
 @AGENTS.md
 
+## Dos versiones del sitio
+
+Desde el 2026-10-07 hay dos versiones vivas, y **todo cambio (de formato o de
+lo que sea) se hace en las dos, siempre que aplique**:
+
+| Versión | Rama | Qué es |
+|---|---|---|
+| Oficial | `main` | Lo que se publica en Vercel. |
+| Con tocadiscos | `muestra-disco` | Portada con el disco y Descubrimientos, para cuando haya música. Respaldo en GitHub; no se publica ni se une a `main` hasta que el usuario lo pida. |
+
+- **Cómo:** el cambio se hace y se commitea en `main`, y después se trae a
+  la rama con `git merge main` desde su copia de trabajo (`../muestra-disco`).
+  Se verifica también ahí.
+- **Conflictos en la portada (`src/app/page.jsx`):** la rama manda. Su portada
+  es distinta a propósito (el disco reemplaza a la foto de la nota principal).
+- **Cuándo no aplica:** lo que solo existe en una de las dos. Por ejemplo, el
+  collage de la portada de `main` o el tocadiscos de la rama. Si no está
+  claro, preguntar.
+- Subir `main` publica el sitio; subir `muestra-disco` solo actualiza el
+  respaldo. Cada una se sube cuando el usuario lo pide.
+
 ## Diseño
 
 Revista **Artificial**. Estética **Gen X Soft Club, propuesta E · Collage**:
