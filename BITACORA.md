@@ -42,7 +42,21 @@ En la portada no queda "Próxima fecha"; la marquesina sigue con las fechas;
 columnas. Sin scroll horizontal en 375px. `eslint` y `npm run build` sin
 errores.
 
+### Publicado
+- El usuario pidió subir **solo este cambio**, sin la entrada (20). Como la
+  (20) estaba commiteada antes, se armó en una carpeta temporal un commit con
+  solo este cambio encima de lo publicado (cherry-pick), y se subió a `main`
+  (`3667425..431c06c`). El código es idéntico al que se probó.
+- Después, el `main` local se puso igual a lo publicado y se le volvió a sumar
+  la entrada (20) encima, que sigue sin subir.
+- Vercel marcó el deploy como `success`. En la página oficial no aparece
+  "Próxima fecha", la marquesina sigue con las fechas y, en 1440px, "La
+  Máquina de Humo" va primera en "Últimas notas" ocupando dos columnas.
+
 ### ⚑ Para charlar
+- **[rareza]** La entrada (20), que explica la rama `muestra-disco`, está
+  solo en esta compu. En GitHub, esta entrada (21) nombra la rama sin que esté
+  explicada. Se sube con el próximo cambio que se publique.
 - **[rareza]** La rama `muestra-disco` también tiene estos dos cambios, hechos
   de otra forma. Cuando se retome, al traer `main` va a haber un conflicto en
   `page.jsx`: hay que quedarse con la versión de la rama.
