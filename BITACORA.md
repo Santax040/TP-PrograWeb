@@ -20,6 +20,46 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 (2) — Muestra: el disco toca canciones, y las notas van debajo
+
+### Qué se pidió
+- Sacar el cartel de la próxima fecha que estaba en la esquina del disco.
+- Que Descubrimientos sea música, no notas.
+- Que "Sonando ahora" muestre la canción que suena en ese momento.
+- Debajo del disco, las notas, con prioridad para las más nuevas.
+
+### Qué se hizo (rama `muestra-disco`)
+- **`src/lib/descubrimientos.js`** (nuevo): cinco canciones ficticias, una
+  por cada artista de la base: tema, artista (slug), duración y color de
+  etiqueta. El nombre y el género del artista salen de la base; si un artista
+  no existe, su canción no aparece.
+- **`Tocadiscos.jsx`:** trabaja con canciones. La lista A1–A5 muestra tema,
+  artista y duración. "Sonando ahora" muestra el tema, la duración, el género
+  y un enlace a la ficha del artista. Se sacó la prop `esquina`.
+- **Portada:** sin cartel de fecha. Debajo del disco, "Últimas notas" con
+  todas las notas de la más nueva a la más vieja; la primera va en grande
+  (ocupa dos columnas). Al final, "Lo que se viene".
+
+### Verificado en `localhost:3007`
+- Secciones en este orden: Descubrimientos, Últimas notas, Lo que se viene. No
+  queda ningún "Próxima fecha".
+- Elegir A3 cambia "Sonando ahora" a "Persiana baja", de DJ Perejil, con su
+  enlace, y la etiqueta a "Lado A 3".
+- La nota más nueva, "Top 3 álbumes japoneses de deep house", va primera y
+  ocupa dos columnas.
+- Sin scroll horizontal en 375px. `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[atajo]** Las canciones están escritas en el código, no en la base, porque
+  todavía no se puede subir música. Cuando se arme la subida de artistas, se
+  pasan a una tabla con su archivo de audio, y este archivo se borra.
+- **[rareza]** "Sonando ahora" dice que algo suena, pero no hay audio. Se dejó
+  así a pedido del usuario; sin botón de play no promete nada que no pase.
+- **[a decidir]** Las canciones y sus nombres son inventados. Se pueden
+  cambiar por los que el usuario quiera.
+
+---
+
 ## 2026-10-07 — Muestra: tocadiscos de "Descubrimientos" en la portada
 
 ### Qué se pidió

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
 import Tocadiscos from "@/components/Tocadiscos";
-import { getArticulos, getArticulosDestacados, getEventos, getTodosLosArtistas } from "@/lib/data";
+import { getArticulos, getEventos, getTodosLosArtistas } from "@/lib/data";
+import { descubrimientos } from "@/lib/descubrimientos";
 import { site } from "@/lib/site";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
@@ -11,37 +11,37 @@ export const revalidate = 60;
 
 /**
  * Portada: el nombre grande y, debajo, Descubrimientos: un tocadiscos con la
- * lista de lo que suena ahora. El disco ocupa el lugar que tenía la foto de la
- * nota principal y es la señal de que esto es una revista de música.
+ * lista de canciones. Es la señal de que esto es una revista de música.
+ * Después, las notas, con la más nueva primero y más grande; al final, la
+ * agenda.
  *
  * Artificial es una revista: las notas van antes que la agenda. Los eventos se
  * anuncian, no se venden, así que no se muestran precios.
  */
 export default async function Home() {
-  const [destacados, todos, eventos, artistas] = await Promise.all([
-    getArticulosDestacados(),
+  const [notas, eventos, artistas] = await Promise.all([
     getArticulos(),
     getEventos(),
     getTodosLosArtistas(),
   ]);
 
-  // Descubrimientos: las destacadas primero y después las más nuevas, hasta
-  // cuatro. Hoy son notas; cuando haya música, cada una va a ser un tema.
-  const nombreDe = new Map(artistas.map((a) => [a.slug, a.nombre]));
-  const elegidas = [...destacados, ...todos.filter((a) => !a.destacado)].slice(0, 4);
-  const descubrimientos = elegidas.map((a) => ({
-    slug: a.slug,
-    titulo: a.titulo,
-    bajada: a.bajada,
-    portada: a.portada,
-    portadaUrl: a.portadaUrl,
-    minutosLectura: a.minutosLectura,
-    artistas: [...a.artistas.map((s) => nombreDe.get(s)).filter(Boolean), ...a.artistasMencionados],
-  }));
+  // Las canciones del disco. El nombre y el género del artista salen de la
+  // base; si un artista no existe, su canción no se muestra.
+  const porSlug = new Map(artistas.map((a) => [a.slug, a]));
+  const canciones = descubrimientos
+    .filter((c) => porSlug.has(c.artista))
+    .map((c) => ({
+      slug: c.slug,
+      tema: c.tema,
+      artista: porSlug.get(c.artista).nombre,
+      artistaSlug: c.artista,
+      duracion: c.duracion,
+      genero: porSlug.get(c.artista).genero,
+      portada: c.portada,
+    }));
 
-  const proximo = eventos[0];
-  const enDisco = new Set(elegidas.map((a) => a.slug));
-  const restantes = todos.filter((a) => !enDisco.has(a.slug));
+  // Las notas ya vienen de la más nueva a la más vieja: la primera va grande.
+  const [masNueva, ...siguientes] = notas;
 
   return (
     <div className="relative z-10 mx-auto max-w-6xl px-4 py-12">
@@ -52,22 +52,9 @@ export default async function Home() {
 
         <div className="mt-10">
           <Tocadiscos
-            items={descubrimientos}
+            canciones={canciones}
             intro={
               <p className="max-w-sm text-lg leading-relaxed text-marino">{site.descripcion}</p>
-            }
-            esquina={
-              proximo && (
-                <Link
-                  href={`/agenda/${proximo.slug}`}
-                  className="cartel flex flex-col gap-1 p-3 transition-colors hover:bg-marino"
-                >
-                  <span className="rotulo text-xs uppercase text-white/80">
-                    Próxima fecha {proximo.fecha.replaceAll("-", ".")}
-                  </span>
-                  <span className="font-medium leading-tight">{proximo.nombre}</span>
-                </Link>
-              )
             }
           />
         </div>
@@ -77,7 +64,12 @@ export default async function Home() {
       <section className="mb-28">
         <TituloSeccion titulo="Últimas notas" href="/notas" enlace="Todas las notas" />
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {restantes.map((a) => (
+          {masNueva && (
+            <div className="sm:col-span-2 lg:col-span-2">
+              <ArticuloCard articulo={masNueva} destacado />
+            </div>
+          )}
+          {siguientes.map((a) => (
             <ArticuloCard key={a.slug} articulo={a} />
           ))}
         </div>

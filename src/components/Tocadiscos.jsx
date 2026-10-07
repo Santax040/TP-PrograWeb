@@ -33,24 +33,22 @@ function anguloDesdeCentro(evento, elemento) {
 }
 
 /**
- * Descubrimientos: el tocadiscos de la portada y la lista de lo que suena.
+ * Descubrimientos: el tocadiscos de la portada y la lista de canciones.
  *
- * Hoy cada descubrimiento es una nota; cuando los artistas puedan subir
- * música, cada uno va a ser un tema, y este mismo disco lo va a tocar. Por eso
- * no hay botón de play: un play que no reproduce nada sería una promesa sin
- * cumplir (DESENCUENTROS.md #1).
+ * Todavía no hay audio: cuando los artistas puedan subir sus temas, este mismo
+ * disco los va a tocar. Por eso no hay botón de play: un play que no reproduce
+ * nada sería una promesa sin cumplir (DESENCUENTROS.md #1).
  *
  * El disco gira solo a 33⅓, se puede agarrar y girar con el mouse o el dedo
  * (frena de a poco al soltarlo), y se pausa con un botón. Con "reducir
  * movimiento" arranca quieto.
  *
  * @param {Object} props
- * @param {Array<{slug: string, titulo: string, bajada: string, portada: string,
- *   portadaUrl?: string | null, minutosLectura: number, artistas: string[]}>} props.items
+ * @param {Array<{slug: string, tema: string, artista: string, artistaSlug: string,
+ *   duracion: string, genero: string, portada: string}>} props.canciones
  * @param {import("react").ReactNode} [props.intro] - Lo que va arriba de la lista.
- * @param {import("react").ReactNode} [props.esquina] - Lo que va en la esquina del disco.
  */
-export default function Tocadiscos({ items, intro, esquina }) {
+export default function Tocadiscos({ canciones, intro }) {
   const [elegido, setElegido] = useState(0);
   // null = la persona todavía no tocó el botón: manda la preferencia del sistema.
   const [preferencia, setPreferencia] = useState(null);
@@ -113,7 +111,7 @@ export default function Tocadiscos({ items, intro, esquina }) {
     fisica.current.arrastre = null;
   }
 
-  const actual = items[elegido];
+  const actual = canciones[elegido];
   if (!actual) return null;
 
   return (
@@ -126,8 +124,8 @@ export default function Tocadiscos({ items, intro, esquina }) {
             Descubrimientos
           </h2>
           <ol className="mt-4 border-t border-white/70">
-            {items.map((item, i) => (
-              <li key={item.slug} className="border-b border-white/70">
+            {canciones.map((cancion, i) => (
+              <li key={cancion.slug} className="border-b border-white/70">
                 <button
                   type="button"
                   aria-pressed={i === elegido}
@@ -137,13 +135,14 @@ export default function Tocadiscos({ items, intro, esquina }) {
                   }`}
                 >
                   <span className="rotulo text-sm text-humo">A{i + 1}</span>
-                  <span className="min-w-0">
-                    <span className="block font-medium leading-snug text-marino">{item.titulo}</span>
-                    {item.artistas.length > 0 && (
+                  <span className="flex min-w-0 items-baseline justify-between gap-3">
+                    <span className="min-w-0">
+                      <span className="block font-medium leading-snug text-marino">{cancion.tema}</span>
                       <span className="mt-0.5 block truncate rotulo text-xs uppercase text-humo">
-                        {item.artistas.join(", ")}
+                        {cancion.artista}
                       </span>
-                    )}
+                    </span>
+                    <span className="shrink-0 rotulo text-xs text-humo">{cancion.duracion}</span>
                   </span>
                 </button>
               </li>
@@ -159,16 +158,13 @@ export default function Tocadiscos({ items, intro, esquina }) {
           className="pointer-events-none absolute -left-4 top-6 hidden aspect-square w-[88%] border border-white md:block"
         />
 
-        {/* En celular, lo de la esquina va arriba del disco para no taparlo. */}
-        {esquina && <div className="mb-4 md:hidden">{esquina}</div>}
-
         <div className="relative mx-auto aspect-square w-full max-w-[34rem]">
           {/* Contenedor redondo que recorta: el disco de adentro es un cuadrado
               que gira, y sin el recorte su diagonal empujaba la página hacia
               el costado en celular. */}
           <div
             role="img"
-            aria-label={`Disco girando con la nota ${actual.titulo}. Se puede girar con el mouse o el dedo.`}
+            aria-label={`Disco girando: ${actual.tema}, de ${actual.artista}. Se puede girar con el mouse o el dedo.`}
             onPointerDown={alApretar}
             onPointerMove={alMover}
             onPointerUp={alSoltar}
@@ -176,7 +172,7 @@ export default function Tocadiscos({ items, intro, esquina }) {
             className="absolute inset-[4%] cursor-grab touch-none select-none overflow-hidden rounded-full shadow-[0_30px_60px_-30px_#11303a99] active:cursor-grabbing"
           >
             <div ref={disco} className="vinilo absolute inset-0 rounded-full">
-              {/* Etiqueta: la portada de la nota elegida. Gira con el disco. */}
+              {/* Etiqueta del disco: el color de la canción elegida. Gira con el disco. */}
               <div
                 key={actual.slug}
                 className="bruma etiqueta-disco absolute inset-[31%] overflow-hidden rounded-full border border-white/80"
@@ -213,22 +209,23 @@ export default function Tocadiscos({ items, intro, esquina }) {
             <rect x="58" y="84" width="12" height="7" rx="1.5" transform="rotate(-50 64 88)" fill="#2347c6" />
           </svg>
 
-          {esquina && (
-            <div className="absolute -top-2 left-0 z-30 hidden w-56 max-w-[60%] md:block">{esquina}</div>
-          )}
         </div>
 
         <div className="mx-auto mt-6 flex max-w-[34rem] flex-wrap items-end justify-between gap-4">
           <div className="min-w-0">
             <p className="rotulo text-xs uppercase text-humo">Sonando ahora</p>
             <p className="mt-1 text-xl font-medium leading-tight text-marino sm:text-2xl">
-              {actual.titulo}
+              {actual.tema}
+            </p>
+            <p className="mt-1 flex flex-wrap gap-x-4 rotulo text-xs uppercase text-humo">
+              <span>{actual.duracion}</span>
+              <span>{actual.genero}</span>
             </p>
             <Link
-              href={`/notas/${actual.slug}`}
+              href={`/artistas/${actual.artistaSlug}`}
               className="etiqueta mt-3 text-cobalto hover:text-marino"
             >
-              Leer la nota · {actual.minutosLectura} min
+              {actual.artista}
             </Link>
           </div>
           <button
