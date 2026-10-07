@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import { nombresDeRol } from "@/lib/roles";
 import { crearClienteNavegador } from "@/lib/supabase/navegador";
 
 /**
@@ -89,8 +90,9 @@ export default function MenuUsuario() {
           >
             {perfil.nombre}
           </span>
-          {perfil.rol === "admin" && <span className="etiqueta text-cian">Admin</span>}
-          {perfil.rol === "publicador" && <span className="etiqueta text-cian">Publicador</span>}
+          {perfil.rol !== "usuario" && nombresDeRol[perfil.rol] && (
+            <span className="etiqueta text-cian">{nombresDeRol[perfil.rol]}</span>
+          )}
         </>
       }
     >

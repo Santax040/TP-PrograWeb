@@ -16,8 +16,20 @@ insert into auth.users (id, email, raw_user_meta_data, aud, role)
 values
   ('00000000-0000-0000-0000-00000000000a', 'ana@prueba.test', '{"nombre":"Ana"}', 'authenticated', 'authenticated'),
   ('00000000-0000-0000-0000-00000000000b', 'beto@prueba.test', '{}', 'authenticated', 'authenticated'),
-  ('00000000-0000-0000-0000-00000000000c', 'admin@prueba.test', '{"nombre":"Admin"}', 'authenticated', 'authenticated');
+  ('00000000-0000-0000-0000-00000000000c', 'admin@prueba.test', '{"nombre":"Admin"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-00000000000d', 'dani@prueba.test', '{"nombre":"Dani"}', 'authenticated', 'authenticated');
+
+-- Solo puede haber un admin. Para la prueba, el admin real pasa a usuario
+-- (el rollback del final lo devuelve) y el de prueba toma su lugar.
+update public.perfiles set rol = 'usuario' where rol = 'admin';
 update public.perfiles set rol = 'admin' where id = '00000000-0000-0000-0000-00000000000c';
+
+do $$ begin
+  update public.perfiles set rol = 'admin' where id = '00000000-0000-0000-0000-00000000000a';
+  insert into resultados (prueba, resultado) values ('Segundo admin', 'FALLA: lo permitió');
+exception when unique_violation then
+  insert into resultados (prueba, resultado) values ('Segundo admin', 'OK: rechazado');
+end $$;
 update public.perfiles set rol = 'publicador' where id = '00000000-0000-0000-0000-00000000000a';
 
 insert into resultados (prueba, resultado)
@@ -145,6 +157,41 @@ exception when raise_exception then
   insert into resultados (prueba, resultado) values ('Beto manda la 6ª propuesta del día', 'OK: rechazado por el límite');
 end $$;
 
+-- ===== Como Dani (usuaria que se hace artista) =====
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+
+insert into resultados (prueba, resultado)
+select 'Dani elige ser artista', case when public.elegir_ser_artista(true) = 'artista' then 'OK' else 'FALLA' end;
+
+do $$ begin
+  insert into public.articulos (slug, titulo, categoria) values ('nota-de-dani', 'Nota de Dani', 'musica');
+  insert into resultados (prueba, resultado) values ('Dani (artista) escribe una nota', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani (artista) escribe una nota', 'OK: rechazado');
+end $$;
+
+with e as (insert into public.envios (tipo, titulo) values ('artista', 'Mi proyecto') returning 1)
+insert into resultados (prueba, resultado) select 'Dani (artista) manda una propuesta', case when count(*) = 1 then 'OK' else 'FALLA' end from e;
+
+do $$ begin
+  update public.perfiles set rol = 'publicador' where id = '00000000-0000-0000-0000-00000000000d';
+  insert into resultados (prueba, resultado) values ('Dani se pone publicador', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani se pone publicador', 'OK: rechazado');
+end $$;
+
+insert into resultados (prueba, resultado)
+select 'Dani deja de ser artista', case when public.elegir_ser_artista(false) = 'usuario' then 'OK' else 'FALLA' end;
+
+-- Ana (publicadora) no puede usar el botón de artista: perdería su rol.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated"}', true);
+do $$ begin
+  perform public.elegir_ser_artista(true);
+  insert into resultados (prueba, resultado) values ('Ana (publicadora) se pasa a artista', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Ana (publicadora) se pasa a artista', 'OK: rechazado');
+end $$;
+
 -- Ana (publicadora) no ve propuestas ajenas.
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated"}', true);
 insert into resultados (prueba, resultado)
@@ -165,6 +212,13 @@ do $$ begin
   insert into resultados (prueba, resultado) values ('Visitante manda propuesta', 'FALLA: lo permitió');
 exception when insufficient_privilege then
   insert into resultados (prueba, resultado) values ('Visitante manda propuesta', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  perform public.elegir_ser_artista(true);
+  insert into resultados (prueba, resultado) values ('Visitante usa "ser artista"', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante usa "ser artista"', 'OK: rechazado');
 end $$;
 
 -- ===== Como admin =====

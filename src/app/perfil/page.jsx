@@ -4,6 +4,7 @@ import Avatar from "@/components/Avatar";
 import Titular from "@/components/Titular";
 import { formatearFecha } from "@/lib/formato";
 import { planes } from "@/lib/site";
+import { esSuscriptor, nombresDeRol } from "@/lib/roles";
 import { obtenerSesion, puedeEscribir } from "@/lib/sesion";
 
 export const metadata = {
@@ -28,10 +29,12 @@ export default async function PerfilPage() {
   const datos = [
     { etiqueta: "Nombre", valor: perfil?.nombre ?? "—" },
     { etiqueta: "Mail", valor: user.email },
-    { etiqueta: "Plan", valor: plan?.nombre ?? perfil?.plan ?? "—" },
+    { etiqueta: "Tipo de cuenta", valor: nombresDeRol[perfil?.rol] ?? "—" },
     {
-      etiqueta: "Suscripción hasta",
-      valor: perfil?.suscripcion_hasta ? formatearFecha(perfil.suscripcion_hasta) : "—",
+      etiqueta: "Suscripción",
+      valor: esSuscriptor(perfil)
+        ? `${plan?.nombre ?? perfil.plan}, hasta el ${formatearFecha(perfil.suscripcion_hasta)}`
+        : "Sin suscripción",
     },
     {
       etiqueta: "Cuenta creada",
@@ -46,12 +49,12 @@ export default async function PerfilPage() {
           <Titular texto="Perfil" volanta="Tu cuenta" />
         </h1>
 
-        {(perfil?.avatar_url || puedeEscribir(perfil)) && (
+        {(perfil?.avatar_url || perfil?.rol !== "usuario") && (
           <div className="mt-10 flex items-center gap-5">
             {perfil?.avatar_url && <Avatar url={perfil.avatar_url} tamano={72} />}
-            {perfil?.rol === "admin" && <span className="etiqueta text-lavanda">Admin</span>}
-            {perfil?.rol === "publicador" && (
-              <span className="etiqueta text-lavanda">Publicador</span>
+            {/* La cuenta común no lleva etiqueta: es lo esperable. */}
+            {perfil?.rol && perfil.rol !== "usuario" && (
+              <span className="etiqueta text-lavanda">{nombresDeRol[perfil.rol]}</span>
             )}
           </div>
         )}

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import FormularioArtista from "@/components/FormularioArtista";
 import FormularioNombre from "@/components/FormularioNombre";
 import Titular from "@/components/Titular";
-import { crearClienteServidor } from "@/lib/supabase/servidor";
+import { puedeElegirArtista } from "@/lib/roles";
+import { obtenerSesion } from "@/lib/sesion";
 
 export const metadata = {
   title: "Configuración",
@@ -10,23 +12,14 @@ export const metadata = {
 };
 
 /**
- * Por ahora lo único editable es el nombre, porque es lo único que la base
- * deja cambiar al usuario. El mail y la contraseña los maneja Supabase Auth
- * y necesitan confirmación por mail: quedan para más adelante.
+ * Lo que cada uno puede cambiar de su cuenta: el nombre y, si es usuario o
+ * artista, el tipo de cuenta. El resto del perfil (rol de publicador o admin,
+ * plan) no lo puede tocar el usuario: lo protege la base. El mail y la foto
+ * vienen de Google.
  */
 export default async function ConfiguracionPage() {
-  const supabase = await crearClienteServidor();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { user, perfil } = await obtenerSesion();
   if (!user) redirect("/login?siguiente=/configuracion");
-
-  const { data: perfil } = await supabase
-    .from("perfiles")
-    .select("nombre")
-    .eq("id", user.id)
-    .maybeSingle();
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
@@ -37,6 +30,14 @@ export default async function ConfiguracionPage() {
       </header>
 
       <FormularioNombre nombreActual={perfil?.nombre ?? ""} />
+
+      {/* Publicadores y el admin no lo ven: pasarse a artista les sacaría
+          sus permisos (y la base tampoco se los deja). */}
+      {puedeElegirArtista(perfil) && (
+        <div className="mt-8">
+          <FormularioArtista esArtista={perfil.rol === "artista"} />
+        </div>
+      )}
 
       <p className="mt-10 text-sm leading-relaxed text-humo">
         El mail y la foto los maneja Google: se actualizan solos al volver a entrar.

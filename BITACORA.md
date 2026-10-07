@@ -20,6 +20,80 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 (19) — Roles definitivos: un solo admin y cuentas de artista
+
+### Qué se pidió
+Definir los roles:
+- **Admin:** uno solo (el dueño), puede todo.
+- **Publicador:** publica notas y borra solo las suyas.
+- **Usuario:** lee y manda propuestas, con o sin suscripción.
+- **Artista:** a futuro sube música; un usuario tiene que elegir serlo.
+
+Se decidió que **artista lo elige cada usuario, al instante**, y que la
+herramienta para manejar roles desde la página **queda para más adelante**:
+los cambios de rol se siguen haciendo desde Supabase.
+
+### Qué se hizo
+
+**Base** (migraciones `20261007120000_rol_artista.sql` y
+`20261007120100_un_admin_y_ser_artista.sql`):
+- Rol nuevo `artista`. Por ahora tiene los mismos permisos que un usuario.
+- **Un solo admin:** índice único parcial sobre `perfiles` para las filas
+  admin. La base rechaza que haya dos.
+- Función `public.elegir_ser_artista(quiero)`: es lo único que deja a alguien
+  tocar su propio rol, y solo mueve entre `usuario` y `artista`. Un publicador
+  o el admin no la pueden usar, y por ahí nadie se sube a publicador o admin.
+  Los visitantes sin sesión no la pueden llamar.
+
+**Suscriptor no es un rol:** sigue siendo el plan (`perfiles.plan` y
+`suscripcion_hasta`), que vale para cualquier tipo de cuenta.
+
+**Página:**
+- **Configuración:** bloque "Tipo de cuenta" con **Soy artista** / **Dejar de
+  ser artista**. Solo lo ven usuarios y artistas.
+- **Perfil:** dos filas nuevas, "Tipo de cuenta" (Admin, Publicador, Usuario,
+  Artista) y "Suscripción" ("Sin suscripción" o "Mensual, hasta el ..."), que
+  reemplazan a "Plan" y "Suscripción hasta". La etiqueta junto a la foto
+  aparece para cualquier rol que no sea usuario.
+- **Menú:** misma etiqueta (Admin, Publicador o Artista).
+- `src/lib/roles.js`: nombres de los roles, `puedeElegirArtista()` y
+  `esSuscriptor()`.
+
+### Datos que cambiaron
+- Al activar el bloqueo de un solo admin, la base lo rechazó: había **dos
+  admins**. Además de Santiago, Antonia Maciel (`antoniamacielbe@gmail.com`,
+  alta del 2026-10-06) tenía rol admin, puesto a mano desde Supabase. A pedido
+  del usuario, **pasó a publicadora** y recién ahí se aplicó la migración.
+- Hoy: 1 admin, 1 publicadora, 9 usuarios.
+
+### Verificación
+- Prueba de permisos: **42/42 OK**. Suma: un segundo admin se rechaza; una
+  usuaria se hace artista y vuelve; siendo artista no puede escribir notas
+  pero sí mandar propuestas, y no puede subirse a publicador; una publicadora
+  no puede pasarse a artista; un visitante no puede usar la función. La prueba
+  pasa al admin real a usuario solo dentro de su transacción, que se deshace.
+- ESLint sin errores; build OK.
+- Bloque "Soy artista" revisado en una página temporal sin login (se borró):
+  los dos estados, el mensaje de error sin sesión, y 375px sin scroll
+  horizontal.
+- **No se probó** pasar una cuenta real a artista: hace falta entrar con
+  Google.
+
+### ⚑ Para charlar
+- **[rareza]** Había una segunda admin que nadie había registrado. El bloqueo
+  nuevo lo detectó; sin él, habría seguido así sin que se note.
+- **[atajo]** `elegir_ser_artista` está en el esquema público, así se puede
+  llamar desde la página, y es "security definer" (se ejecuta con permisos
+  propios, por encima de los del usuario). Por eso valida todo adentro. El
+  chequeo de seguridad de Supabase no la marcó.
+- **[a decidir]** Mientras no haya pagos, la suscripción se activa a mano en
+  Supabase: `plan` (mensual o anual) y `suscripcion_hasta` (una fecha). Y las
+  notas exclusivas se siguen leyendo gratis (`pagosActivos = false`).
+- **[a decidir]** La herramienta de roles y propuestas desde la página quedó
+  para más adelante. Hoy se hace todo desde el Table Editor de Supabase.
+
+---
+
 ## 2026-10-06 (18) — Menú de la cuenta todo en mayúscula
 
 ### Qué se pidió
