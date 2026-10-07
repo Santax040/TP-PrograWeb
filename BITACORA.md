@@ -20,6 +20,35 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-07 (22) — Dos versiones: todo cambio va a `main` y a `muestra-disco`
+
+### Qué se pidió
+Subir la rama `muestra-disco` a GitHub como respaldo, y que a partir de
+ahora todos los cambios, de formato o de lo que sea, vayan a las dos
+versiones, siempre que aplique.
+
+### Qué se hizo
+- **Regla nueva en `CLAUDE.md`** (sección "Dos versiones del sitio"): qué es
+  cada versión, cómo se pasa un cambio de una a la otra (se hace en `main` y
+  se trae a la rama con `git merge main`), que en conflictos de la portada
+  manda la rama, y cuándo no aplica.
+- **La rama se puso al día:** se le unió `main` (el cambio de portada (21) y
+  las entradas (20) y (21) de la bitácora). En `page.jsx` quedó la versión de
+  la rama, que ya tenía el disco y la nota más nueva en grande. La bitácora de
+  la rama tiene ahora las entradas de las dos.
+- **`muestra-disco` subida a GitHub** como respaldo. No es `main`, así que no
+  cambia la página publicada.
+
+### ⚑ Para charlar
+- **[rareza]** Al subir la rama, Vercel arma una vista previa con login, que
+  el usuario no puede ver (ya pasó con otras ramas). Es normal y no afecta al
+  sitio oficial.
+- **[rareza]** Al traer `main`, la rama también se llevó las entradas de la
+  bitácora que en `main` todavía no están subidas: (20) y la nota de cómo se
+  publicó la (21). En GitHub, hoy están en la rama y no en `main`.
+
+---
+
 ## 2026-10-07 (21) — Portada sin cartel de próxima fecha, y la nota más nueva en grande
 
 ### Qué se pidió
