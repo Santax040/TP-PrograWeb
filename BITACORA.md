@@ -20,6 +20,57 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-08 (23) — Filtros en Notas y en Agenda
+
+### Qué se pidió
+Agregar en notas y en eventos un "sorter": ordenar por fecha y mostrar solo
+lo de cierta categoría, publicador o artista.
+
+### Qué se hizo
+Arriba de cada lista hay una barra con selectores, un contador ("3 de 9
+notas") y un botón "Limpiar filtros". Si nada coincide, aparece un aviso con
+un botón para ver todo.
+
+| Página | Filtros |
+|---|---|
+| `/notas` | Ordenar (nuevas o viejas primero), Autor (la firma), Artista (los que tienen ficha y los escritos a mano) |
+| `/agenda` | Ordenar (próximas o lejanas primero), Género, Artista del line-up, Ciudad |
+
+- **Componentes nuevos:** `Filtros.jsx` (`Selector`, `BarraFiltros`,
+  `opcionesDe`), `NotasFiltrables.jsx` y `AgendaFiltrable.jsx` (de cliente).
+  La agenda se sigue agrupando por mes, en el orden elegido.
+- **Las opciones salen de los datos:** si aparece un autor, un género o una
+  ciudad nueva, se suma sola al selector.
+- **Filtra en el navegador:** son pocas notas y fechas, ya vienen todas en la
+  página, y así la página sigue siendo estática. A la lista de notas no se le
+  pasa el cuerpo de cada nota, solo lo que muestra la tarjeta.
+- **En celular** los selectores van de a dos por renglón, y los textos del
+  orden se acortaron ("Próximas primero") para que entren.
+
+### Verificado en `localhost:3000`
+- Notas: autor "Santiago" muestra 3 de 9; Santiago más "La Máquina de Humo"
+  muestra 0 y el aviso; "Viejas primero" invierte la lista.
+- Agenda: "Electrónica" muestra 2 de 6, en octubre y noviembre; "Lejanas
+  primero" invierte también los meses; "Rosario" muestra 1 (Festival Vecinos);
+  "Nena Tornado" muestra 3.
+- Sin scroll horizontal en 375px. `eslint` y `npm run build` sin errores.
+- Pasado también a `muestra-disco` (regla de dos versiones).
+
+### ⚑ Para charlar
+- **[a decidir]** No hay filtro por sección en notas, porque hoy hay una sola
+  (Música). Tampoco hay filtro por productora en eventos, porque ese dato no
+  existe en la base. Se puede agregar el campo.
+- **[atajo]** Los filtros no quedan en la dirección de la página: si se
+  recarga o se comparte el enlace, vuelve a mostrar todo. Se puede sumar más
+  adelante.
+- **[error]** El primer intento en celular apilaba los cuatro selectores de
+  a uno y empujaba la agenda muy abajo, y "Más próximas primero" no entraba.
+  Se vio mirando la página y se corrigió.
+- **[rareza]** La agenda sigue mostrando fechas que ya pasaron (la del 3 de
+  octubre) como "Próximas fechas". Es anterior a este cambio.
+
+---
+
 ## 2026-10-07 (22) — Dos versiones: todo cambio va a `main` y a `muestra-disco`
 
 ### Qué se pidió
