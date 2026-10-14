@@ -177,8 +177,18 @@ automático): más real, pero bastante más difícil de probar para un TP.
 - **[error]** Al principio el asistente no se dio cuenta de que el plugin de
   Supabase no cargaba en esta sesión y le pidió al usuario que aplicara la
   migración a mano (DESENCUENTROS #5).
-- **[a decidir]** Falta `SUPABASE_SECRET_KEY` en `.env.local` y en Vercel
-  (y `MP_ACCESS_TOKEN`, `APP_URL` en Vercel). Sin eso, acreditar falla.
+- **Publicado el 2026-10-14** (`main` 1be7857). En Vercel se cargaron, solo
+  en *Production*, `MP_ACCESS_TOKEN` (del vendedor de prueba),
+  `SUPABASE_SECRET_KEY` y `APP_URL = https://revista-digital-musica.vercel.app`,
+  y se hizo un redeploy. Comprobado en producción: aparece el botón y, sin
+  sesión, lleva al login.
+- **[atajo]** Las variables de *Preview* no se cargaron: el control de
+  permisos de Claude Code frenó el comando. En las vistas previas de ramas el
+  pago va a fallar hasta que se carguen (`MP_ACCESS_TOKEN` y
+  `SUPABASE_SECRET_KEY`, sin `APP_URL`).
+- **[a decidir]** El sitio publicado cobra con el **vendedor de prueba**: nadie
+  paga plata real. Pasar a cobrar de verdad requiere credenciales de
+  producción de la cuenta real y la revisión de Mercado Pago (`/mp-review`).
 - **[a decidir]** Con `pagosActivos = true` desaparece el aviso "Nota
   exclusiva, abierta por ahora", pero las notas premium **siguen sin
   bloquearse**. Falta decidir si se cierran para quien no está suscripto.
