@@ -62,10 +62,13 @@ página, con mail y contraseña, y entrar con ella. Las dos opciones.
   `siguiente` pasa de una página a la otra.
 - **No se probó** entrar ni crear una cuenta real: manda datos a Supabase, y
   queda para el usuario.
-- **Pendiente:** aplicar la configuración en Supabase. La sesión de la CLI
-  venció (`supabase config diff` dio "access token is invalid or has
-  expired"); hasta que se aplique, crear cuenta con mail da "Por ahora no se
-  pueden crear cuentas con mail".
+- **Publicación (2026-10-14):** se subieron `main` (que incluía 4 commits
+  anteriores sin subir, entre ellos los filtros de Notas y Agenda) y
+  `muestra-disco`. El deploy quedó Ready y `/login` y `/registro` responden.
+- **Configuración aplicada** con `supabase config push`, después de volver a
+  entrar a la CLI con un token nuevo: "2 properties pushed"
+  (`auth.email.enable_signup` y `auth.minimum_password_length`). La
+  configuración pública del proyecto muestra mail y Google activos.
 
 ### ⚑ Para charlar
 - **[error]** Al editar `config.toml` con `sed` por número de línea se cambió
