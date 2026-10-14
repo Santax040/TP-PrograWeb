@@ -20,6 +20,72 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-14 (25) — Entrar con Google o con mail y contraseña
+
+### Qué se pidió
+Que se pueda entrar con Google y también crear una cuenta directo en la
+página, con mail y contraseña, y entrar con ella. Las dos opciones.
+
+### Qué se hizo
+- **`/login`**: botón de Google arriba, "o con tu mail" y el formulario de mail
+  y contraseña. Abajo, "¿No tenés cuenta? Creá una" y qué hacer si se olvida
+  la contraseña.
+- **`/registro`** volvió a ser una página (desde la entrada del login con Google
+  redirigía a `/login`): Google, o nombre, mail y contraseña (mínimo 8).
+- Las dos pasan el `siguiente` entre sí: si alguien llegó desde `/colabora`,
+  vuelve ahí después de entrar o crear la cuenta.
+- `FormularioCuenta.jsx` (modo entrar o crear), `Separador.jsx` y las Server
+  Actions `entrarConMail` y `crearCuenta` en `src/app/auth/acciones.js`.
+  Los errores de Supabase se muestran en castellano.
+- La cuenta creada con mail queda como **usuario**, igual que la de Google: el
+  trigger `crear_perfil` toma el nombre del formulario.
+- `supabase/config.toml`: `[auth.email] enable_signup = true` (estaba apagado
+  desde el cambio a Google) y `minimum_password_length = 8` (era 6).
+  `src/lib/cuenta.js` tiene el mismo 8 para el formulario.
+- Configuración: se ajustó el texto que decía que el mail y la foto los maneja
+  Google, porque ya no vale para todas las cuentas.
+
+### Decisiones
+- **Sin confirmar el mail al crear la cuenta.** El servicio de mails de Supabase
+  sin configuración propia solo le manda a los miembros del equipo del
+  proyecto: a un lector común no le llegaría. Para mandar a cualquiera hace
+  falta un servicio de mails con dominio propio (Resend tiene la misma traba
+  sin dominio).
+- **Sin "recuperar contraseña" por mail**, por la misma razón. En su lugar,
+  `/login` explica que, si el mail es de Google, se puede entrar con el botón
+  de Google: Supabase une las dos formas de entrar en la misma cuenta.
+
+### Verificación
+- ESLint sin errores; build OK (`/login` y `/registro` dinámicas).
+- Navegador (build local): `/login` en 1440px y `/registro` en 375px, sin
+  scroll horizontal; campos obligatorios, contraseña con mínimo 8, el
+  `siguiente` pasa de una página a la otra.
+- **No se probó** entrar ni crear una cuenta real: manda datos a Supabase, y
+  queda para el usuario.
+- **Pendiente:** aplicar la configuración en Supabase. La sesión de la CLI
+  venció (`supabase config diff` dio "access token is invalid or has
+  expired"); hasta que se aplique, crear cuenta con mail da "Por ahora no se
+  pueden crear cuentas con mail".
+
+### ⚑ Para charlar
+- **[error]** Al editar `config.toml` con `sed` por número de línea se cambió
+  el renglón equivocado (un comentario en vez de `enable_signup`). Se vio en
+  el diff antes de aplicar nada y se corrigió con el editor.
+- **[error]** La primera versión exportaba una constante desde el archivo de
+  Server Actions (`"use server"`), que solo admite funciones, y un componente
+  desde un archivo de página. Se corrigió antes del build: la constante pasó a
+  `src/lib/cuenta.js` y el separador a `src/components/Separador.jsx`.
+- **[rareza]** La sesión de la CLI de Supabase venció sola. Hay que volver a
+  entrar con `supabase login --token` (o con el código).
+- **[a decidir] Riesgo de seguridad:** como no se confirma el mail, alguien
+  podría crear una cuenta con contraseña usando el mail de otra persona. Si
+  después esa persona entra con Google con ese mail, Supabase une las cuentas
+  y el que la creó sabría la contraseña. Para el TP es aceptable; para un
+  sitio real habría que confirmar los mails (servicio de mails con dominio
+  propio).
+
+---
+
 ## 2026-10-08 (23) — Filtros en Notas y en Agenda
 
 ### Qué se pidió

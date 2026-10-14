@@ -40,7 +40,8 @@ export default async function ConfiguracionPage() {
       )}
 
       <p className="mt-10 text-sm leading-relaxed text-humo">
-        El mail y la foto los maneja Google: se actualizan solos al volver a entrar.
+        Si entrás con Google, el mail y la foto salen de tu cuenta de Google y se actualizan
+        solos. Por ahora el mail no se puede cambiar desde acá.
       </p>
 
       <p className="mt-8">
