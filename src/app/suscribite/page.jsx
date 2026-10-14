@@ -83,6 +83,18 @@ export default function SuscribitePage() {
                 >
                   Empezar a leer
                 </Link>
+              ) : pagosActivos ? (
+                // Sin sesión, la ruta manda al login y de vuelta acá.
+                <form action="/api/mercadopago/preferencia" method="POST">
+                  <input type="hidden" name="plan" value={plan.slug} />
+                  <button
+                    type="submit"
+                    data-mp-checkout-cta="checkout-pro"
+                    className="cartel block w-full px-4 py-3 text-center font-titular text-sm transition-shadow hover:shadow-[0_0_24px_#7ff4ffb3]"
+                  >
+                    Pagar con Mercado Pago
+                  </button>
+                </form>
               ) : (
                 <p className=" border border-white px-4 py-3 text-center font-titular text-sm text-humo">
                   Próximamente
@@ -94,7 +106,8 @@ export default function SuscribitePage() {
       </div>
 
       <p className="mt-16 max-w-xl text-sm text-humo">
-        Precios ficticios. Este sitio es un trabajo práctico y no procesa pagos.
+        Precios ficticios. Este sitio es un trabajo práctico: los pagos usan el modo
+        de prueba de Mercado Pago y no cobran dinero real.
       </p>
     </div>
   );

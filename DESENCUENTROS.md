@@ -11,6 +11,117 @@ Entrada más reciente arriba.
 
 ---
 
+## #7 — "¿Por qué dice que todavía no se puede pagar?"
+**Fecha:** 2026-10-14
+**Tipo:** comunicación (otra vez #0.3 y #2)
+
+**Lo que se pidió**
+> "Subí todo"
+
+**Lo que se hizo**
+Se subieron `main` y `muestra-disco` con lo que estaba commiteado. La tanda
+de Mercado Pago (del 2026-10-08 y del 2026-10-14, hecha en otra conversación)
+estaba sin commitear y se dejó afuera a propósito, para no mezclarla. En la
+entrega se avisó con una línea: "Mercado Pago sigue a medio hacer, sin
+commitear. No la toqué".
+
+**Dónde estuvo la diferencia**
+El usuario entró a `/suscribite` en la página publicada y vio "Todavía no se
+puede pagar". Para él, los pagos ya estaban hechos.
+
+**Por qué pasó**
+- "Subí todo" se interpretó como "todo lo commiteado", sin preguntar.
+- El aviso decía *qué* quedaba afuera, pero no *qué iba a ver* el usuario:
+  que en la página publicada los pagos seguían apagados.
+- Es el mismo patrón que #0.3 y #2: el cambio existía en la compu pero no en
+  el sitio, y no se dijo con claridad.
+
+**Qué se cambia**
+- Si hay trabajo sin commitear al momento de subir, preguntar antes si entra
+  o no, y decir qué consecuencia visible tiene dejarlo afuera ("los pagos van
+  a seguir apagados en la página").
+- Al cerrar una tanda, si algo queda sin publicar, ponerlo en la primera
+  línea de la respuesta, no al final.
+
+**Cómo se resolvió**
+Se commiteó la tanda de Mercado Pago (pedido del usuario: "Commitea"). Para
+que los pagos funcionen en la página publicada falta subirla y cargar en
+Vercel `MP_ACCESS_TOKEN`, `MP_PUBLIC_KEY`, `SUPABASE_SECRET_KEY` y `APP_URL`.
+
+**Estado:** commiteado; falta publicar.
+
+---
+
+## #6 — "Una de las partes con la que intentás hacer el pago es de prueba"
+**Fecha:** 2026-10-08 al 2026-10-14
+**Tipo:** error del asistente
+
+**Lo que se pidió**
+Probar un pago de Checkout Pro de punta a punta.
+
+**Lo que se hizo**
+El asistente armó la prueba con las credenciales `TEST-` de la cuenta
+**real** del usuario (vendedor) y un comprador **de prueba**. El usuario lo
+intentó varias veces: botón gris, login con Google que lo metía en su cuenta
+real, y al final el error de Mercado Pago. Mercado Pago ni siquiera registró
+los pagos.
+
+**Dónde estuvo la diferencia**
+Mercado Pago no deja mezclar una cuenta real con una de prueba. Para probar,
+las dos puntas tienen que ser de prueba: un vendedor de prueba (cuyo Access
+Token va en `MP_ACCESS_TOKEN`) y un comprador de prueba.
+
+**Por qué pasó**
+El asistente confió en que las credenciales `TEST-` alcanzaban porque
+"crear la preferencia funcionaba", sin probar el pago completo. Además, la
+automatización de Mercado Pago, que debía crear el vendedor de prueba al
+crear la app, había fallado (`MP_API_DOWN`), y no se dimensionó qué
+implicaba.
+
+**Qué se cambia**
+- Para probar Checkout Pro: vendedor de prueba + comprador de prueba desde
+  el principio, y explicarlo antes de mandar al usuario a pagar.
+- En la ventana de prueba, no tener sesión de Google (Mercado Pago entra
+  solo con la cuenta real).
+- Que "se creó la preferencia" no cuenta como "el pago funciona".
+
+**Estado:** en curso (falta el vendedor de prueba).
+
+---
+
+## #5 — "¿Por qué no te metés a Supabase?"
+**Fecha:** 2026-10-08
+**Tipo:** error del asistente
+
+**Lo que se pidió**
+Integrar Mercado Pago. Para eso hacía falta una tabla nueva (`pagos`) en
+Supabase.
+
+**Lo que se hizo**
+El asistente escribió la migración y le pidió al usuario que la aplicara a
+mano, sin explicar por qué no lo hacía él.
+
+**Dónde estuvo la diferencia**
+El usuario esperaba que el asistente usara el plugin de Supabase que había
+instalado para eso.
+
+**Por qué pasó**
+El plugin `supabase` está instalado solo para la carpeta `TP/`, y la sesión se
+abrió en `Programacion Web/`. Así no carga, aunque esté habilitado en los
+`settings.json` de las dos carpetas. Además, el asistente no revisó al empezar
+si las herramientas de Supabase estaban disponibles, y no avisó que faltaban.
+
+**Qué se cambia**
+- Al empezar una sesión del TP, verificar que Supabase esté conectado y avisar
+  enseguida si no lo está.
+- Arreglo propuesto: instalar el plugin a nivel usuario, así carga en
+  cualquier carpeta.
+
+**Estado:** resuelto. El usuario lo instaló a nivel usuario y lo conectó, y
+la migración se aplicó desde el asistente.
+
+---
+
 ## #4 — Pedido de confirmación que no se entendió
 **Fecha:** 2026-10-05
 **Tipo:** comunicación

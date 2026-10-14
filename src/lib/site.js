@@ -20,11 +20,11 @@ export const site = {
 export const categorias = [{ slug: "musica", nombre: "Música" }];
 
 /**
- * Pagos habilitados o no. Mientras sea `false`, la página de suscripción
- * muestra los planes pero avisa que todavía no se puede pagar, y las notas
- * premium se pueden leer completas.
+ * Pagos habilitados o no. Con `true`, los planes pagos de /suscribite muestran
+ * el botón "Pagar con Mercado Pago" (Checkout Pro, ver `lib/mercadopago.js`).
+ * Con `false`, avisan que todavía no se puede pagar.
  */
-export const pagosActivos = false;
+export const pagosActivos = true;
 
 /**
  * Planes de suscripción. Los precios son ficticios.

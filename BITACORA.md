@@ -89,6 +89,84 @@ página, con mail y contraseña, y entrar con ella. Las dos opciones.
 
 ---
 
+## 2026-10-08 (24) — Pagos con Mercado Pago (Checkout Pro)
+
+### Qué se pidió
+Integrar Mercado Pago: recomendar la solución, crear la aplicación y guiar la
+integración (con el plugin `mercadopago`).
+
+### Qué se decidió
+**Checkout Pro**: el usuario paga en la página de Mercado Pago (no tocamos
+datos de tarjeta) un mes o un año, y al aprobarse se extiende
+`perfiles.suscripcion_hasta`. Se descartó *Subscriptions* (débito
+automático): más real, pero bastante más difícil de probar para un TP.
+
+### Qué se hizo
+- **App en Mercado Pago:** "Artificial Revista", ID 8323030492137645,
+  Argentina, creada con el plugin. Credenciales de **prueba** en
+  `.env.local` (nombres en `.env.example`).
+- **SDK:** `mercadopago@3.6.1`.
+- **`/api/mercadopago/preferencia`** (POST): exige sesión, toma el precio del
+  plan de `planes` (nunca del navegador), crea la preferencia en ARS con
+  `external_reference = usuario:plan` y redirige a `init_point`.
+  `auto_return` solo si `APP_URL` es pública con HTTPS.
+- **`/suscribite/resultado`:** la vuelta de Mercado Pago. Vuelve a consultar
+  el pago (no confía en la URL), controla monto y moneda, y si está aprobado
+  lo acredita. Estados: aprobado, pendiente, rechazado, error.
+- **Migración `20261008175326_pagos_mercado_pago`:** tabla `pagos` (un pago
+  por ID de Mercado Pago) y función `acreditar_pago()`, que solo puede
+  ejecutar el servidor. Si el mismo pago llega dos veces, se acredita una.
+  Renovar antes de tiempo suma desde el vencimiento, no desde hoy.
+- **`lib/supabase/admin.js`:** cliente con la clave secreta, solo servidor.
+- **`/suscribite`:** el "Próximamente" de Mensual y Anual pasa a ser
+  "Pagar con Mercado Pago". `pagosActivos = true`.
+
+### Verificado en `localhost:3000`
+- Validadores del plugin (botón y servidor) pasan; `eslint` sin errores.
+- Sin sesión, el botón lleva a `/login?siguiente=/suscribite`.
+- `/suscribite/resultado?payment_id=123&status=approved` no acredita nada:
+  el pago no existe en Mercado Pago.
+
+### ⚑ Para charlar
+- La migración **se aplicó** en el Supabase de producción con el ok del
+  usuario (versión 20261008175326). Comprobado: `acreditar_pago` la puede
+  ejecutar solo `service_role` (ni `anon` ni `authenticated`), y el chequeo de
+  seguridad de Supabase no marca nada nuevo. Si el pago ya estaba acreditado,
+  la función devuelve la fecha vigente (para que recargar el resultado la
+  siga mostrando).
+- **[error]** Al principio el asistente no se dio cuenta de que el plugin de
+  Supabase no cargaba en esta sesión y le pidió al usuario que aplicara la
+  migración a mano (DESENCUENTROS #5).
+- **[a decidir]** Falta `SUPABASE_SECRET_KEY` en `.env.local` y en Vercel
+  (y `MP_ACCESS_TOKEN`, `APP_URL` en Vercel). Sin eso, acreditar falla.
+- **[a decidir]** Con `pagosActivos = true` desaparece el aviso "Nota
+  exclusiva, abierta por ahora", pero las notas premium **siguen sin
+  bloquearse**. Falta decidir si se cierran para quien no está suscripto.
+- **[atajo]** Todavía no hay webhook: si alguien paga y no vuelve al sitio
+  (o el pago queda pendiente), no se acredita. Es el próximo paso.
+- **[rareza]** Al crear la app, Mercado Pago avisó que no pudo generar los
+  usuarios de prueba (`MP_API_DOWN`), pero el comprador sí se creó:
+  `TESTUSER5905867670426605620` (ID 3750619720), colgado de una app 1577283580649887
+  que no aparece en la cuenta. La contraseña se ve en el panel de Mercado
+  Pago, en "Cuentas de prueba". `SUPABASE_SECRET_KEY` cargada y probada; una
+  preferencia de prueba se creó bien con las credenciales `TEST-`.
+- **[error]** El vendedor era la cuenta real y el comprador uno de prueba:
+  Mercado Pago lo bloquea ("una de las partes es de prueba") y ni registra
+  el pago (DESENCUENTROS #6). El 2026-10-14 se pasó a un **vendedor de
+  prueba** (`TESTUSER2652217063615175890`, ID 3750697586): `MP_ACCESS_TOKEN`
+  y `MP_PUBLIC_KEY` en `.env.local` son ahora las de su app. Comprobado: los
+  cobros nuevos los recibe esa cuenta.
+- **[error]** La primera versión mandaba `payer.email` con el mail del
+  usuario del sitio. En la prueba, el botón de pagar de Mercado Pago quedó
+  gris. Causa probable: ese mail coincidía con la cuenta vendedora o se
+  mezclaba con la cuenta de prueba. Se sacó; el comprador se identifica por
+  `external_reference`.
+- **[rareza]** El validador del plugin es textual: pide que el chequeo de
+  HTTPS esté a menos de ~1400 caracteres de `auto_return`, por eso quedó
+  escrito dentro de la ruta y no en `lib/mercadopago.js`.
+
+---
+
 ## 2026-10-08 (23) — Filtros en Notas y en Agenda
 
 ### Qué se pidió
