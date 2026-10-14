@@ -1,98 +1,64 @@
-import Link from "next/link";
-import FondoPortada from "@/components/FondoPortada";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
-import { getArticulos, getArticulosDestacados, getEventos } from "@/lib/data";
+import Tocadiscos from "@/components/Tocadiscos";
+import { getArticulos, getEventos, getTodosLosArtistas } from "@/lib/data";
+import { descubrimientos } from "@/lib/descubrimientos";
 import { site } from "@/lib/site";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
 export const revalidate = 60;
 
 /**
- * Portada en collage, como la imagen de referencia. Desde tablet, las piezas
- * se ubican en una grilla de 12 columnas y se superponen a propósito: el
- * título, la foto grande con su marco corrido, la foto chica abajo a la
- * izquierda. En celular se apilan. La próxima fecha no va acá: ya pasa en la
- * marquesina de arriba.
+ * Portada: el nombre grande y, debajo, Descubrimientos: un tocadiscos con la
+ * lista de canciones. Es la señal de que esto es una revista de música.
+ * Después, las notas, con la más nueva primero y más grande; al final, la
+ * agenda.
  *
  * Artificial es una revista: las notas van antes que la agenda. Los eventos se
  * anuncian, no se venden, así que no se muestran precios.
  */
 export default async function Home() {
-  const [destacados, todos, eventos] = await Promise.all([
-    getArticulosDestacados(),
+  const [notas, eventos, artistas] = await Promise.all([
     getArticulos(),
     getEventos(),
+    getTodosLosArtistas(),
   ]);
 
-  const [principal, secundaria] = destacados;
-  // El resto de las notas, de la más nueva a la más vieja (así vienen de la
-  // base): la primera va en grande.
-  const enCollage = new Set([principal?.slug, secundaria?.slug]);
-  const [masNueva, ...siguientes] = todos.filter((a) => !enCollage.has(a.slug));
+  // Las canciones del disco. El nombre y el género del artista salen de la
+  // base; si un artista no existe, su canción no se muestra.
+  const porSlug = new Map(artistas.map((a) => [a.slug, a]));
+  const canciones = descubrimientos
+    .filter((c) => porSlug.has(c.artista))
+    .map((c) => ({
+      slug: c.slug,
+      tema: c.tema,
+      artista: porSlug.get(c.artista).nombre,
+      artistaSlug: c.artista,
+      duracion: c.duracion,
+      genero: porSlug.get(c.artista).genero,
+      portada: c.portada,
+    }));
+
+  // Las notas ya vienen de la más nueva a la más vieja: la primera va grande.
+  const [masNueva, ...siguientes] = notas;
 
   return (
     <div className="relative z-10 mx-auto max-w-6xl px-4 py-12">
-      <section className="relative mb-28 grid grid-cols-1 gap-6 md:grid-cols-12 md:grid-rows-[repeat(9,3.75rem)] md:gap-0">
-        <div className="relative z-20 md:col-span-8 md:col-start-1 md:row-span-3 md:row-start-1">
-          <h1 className="font-ancha text-5xl uppercase leading-none text-white [text-shadow:0_0_30px_#ffffffcc] sm:text-7xl lg:text-8xl">
-            {site.nombre}
-          </h1>
+      <section className="relative mb-28">
+        <h1 className="relative z-20 font-ancha text-5xl uppercase leading-none text-white [text-shadow:0_0_30px_#ffffffcc] sm:text-7xl lg:text-8xl">
+          {site.nombre}
+        </h1>
+
+        <div className="mt-10">
+          <Tocadiscos
+            canciones={canciones}
+            intro={
+              <p className="max-w-sm text-lg leading-relaxed text-marino">{site.descripcion}</p>
+            }
+          />
         </div>
 
-        {principal && (
-          <>
-            <Link
-              href={`/notas/${principal.slug}`}
-              className="group relative z-10 block md:col-span-6 md:col-start-7 md:row-span-6 md:row-start-2"
-            >
-              <div className="bruma h-64 border border-white md:h-full">
-                <FondoPortada articulo={principal} sizes="(min-width: 768px) 50vw, 100vw" prioridad />
-              </div>
-              <span className="absolute inset-x-0 bottom-0 z-[2] bg-marino/55 p-4 backdrop-blur-sm">
-                <span className="etiqueta text-white">Nota principal</span>
-                <span className="mt-2 block text-xl font-medium text-white group-hover:underline sm:text-2xl">
-                  {principal.titulo}
-                </span>
-              </span>
-            </Link>
-            {/* Marco corrido de la foto grande, como los recuadros del HUD. */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none z-20 hidden border border-white md:col-span-6 md:col-start-6 md:row-span-6 md:row-start-3 md:block"
-            />
-          </>
-        )}
-
-        <p className="relative z-20 max-w-sm text-lg leading-relaxed text-marino md:col-span-5 md:col-start-1 md:row-span-1 md:row-start-4 md:self-center">
-          {site.descripcion}
-        </p>
-
-        {secundaria && (
-          <Link
-            href={`/notas/${secundaria.slug}`}
-            className="group relative z-20 block md:col-span-4 md:col-start-1 md:row-span-4 md:row-start-6"
-          >
-            <div className="bruma h-48 border border-white md:h-full">
-              <FondoPortada articulo={secundaria} sizes="(min-width: 768px) 33vw, 100vw" />
-            </div>
-            <span className="absolute inset-x-0 bottom-0 z-[2] p-3 text-base font-medium text-white [text-shadow:0_1px_8px_#11303a] group-hover:underline">
-              {secundaria.titulo}
-            </span>
-          </Link>
-        )}
-
-
-        {/* Líneas del HUD que cruzan la composición. */}
-        <span
-          aria-hidden="true"
-          className="linea-brillo pointer-events-none absolute -left-16 right-0 top-[47%] z-0 hidden md:block"
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-[-2rem] left-[34%] top-[30%] z-0 hidden w-px bg-white md:block"
-        />
       </section>
 
       <section className="mb-28">

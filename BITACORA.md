@@ -20,6 +20,46 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-14 (26) — La portada con tocadiscos pasa a ser la oficial
+
+### Qué se pidió
+"Quiero que pushees como principal a la página web del disco": la versión de
+la rama `muestra-disco` reemplaza a la de `main` y se publica.
+
+### Qué se hizo
+- La rama ya tenía todo lo de `main`, porque los cambios se le fueron pasando
+  con la regla de dos versiones (el último, el registro con mail y
+  contraseña). Así que publicar fue un avance directo de `main` hasta la
+  rama, sin unir nada a mano.
+- Antes de subir: `eslint` y `npm run build` sin errores en la rama, y la
+  portada revisada en `localhost:3007` (disco, cinco canciones, Últimas notas
+  y Lo que se viene, sin cartel de fecha, sin scroll horizontal).
+- `CLAUDE.md`: la sección "Dos versiones del sitio" pasó a "Una sola versión:
+  la del tocadiscos", y en Layout se describe la portada nueva.
+- Se subió desde la copia de la rama (`git push origin muestra-disco:main`),
+  sin tocar `TP/`.
+
+### Qué cambia en la página publicada
+- La portada ahora es el tocadiscos con Descubrimientos, en lugar del collage
+  con la foto grande de la nota principal.
+- Todo lo demás (notas, agenda con filtros, login con mail o Google,
+  Redacción) ya estaba igual en las dos versiones.
+
+### ⚑ Para charlar
+- **[rareza]** Al publicar, `TP/` tenía cambios sin commitear de la otra
+  sesión (`.env.example`, `.gitignore`, `BITACORA.md`, `DESENCUENTROS.md`).
+  No se tocaron. Cuando esa sesión traiga lo nuevo de `main`, la bitácora va a
+  chocar con esta entrada: hay que conservar las dos.
+- **[rareza]** Esta entrada es la (26). Si la otra sesión estaba escribiendo
+  su propia (26), queda numeración repetida.
+- **[a decidir]** Borrar la rama `muestra-disco` (en la compu y en GitHub) y
+  su carpeta `../muestra-disco`, ahora que es igual a `main`.
+- **[a decidir]** Las canciones siguen siendo ficticias y sin audio, y
+  "Sonando ahora" muestra un tema que no suena. Para la entrega conviene
+  decidir si se explica en algún lado o si se deja así.
+
+---
+
 ## 2026-10-14 (25) — Entrar con Google o con mail y contraseña
 
 ### Qué se pidió
@@ -326,6 +366,105 @@ rama para retomarla después.
 - **[rareza]** Algunos cambios de la muestra no dependen de la música y
   podrían ir a `main` antes: sacar el cartel de fecha de la portada y poner
   la nota más nueva en grande.
+
+---
+
+## 2026-10-07 (2) — Muestra: el disco toca canciones, y las notas van debajo
+
+### Qué se pidió
+- Sacar el cartel de la próxima fecha que estaba en la esquina del disco.
+- Que Descubrimientos sea música, no notas.
+- Que "Sonando ahora" muestre la canción que suena en ese momento.
+- Debajo del disco, las notas, con prioridad para las más nuevas.
+
+### Qué se hizo (rama `muestra-disco`)
+- **`src/lib/descubrimientos.js`** (nuevo): cinco canciones ficticias, una
+  por cada artista de la base: tema, artista (slug), duración y color de
+  etiqueta. El nombre y el género del artista salen de la base; si un artista
+  no existe, su canción no aparece.
+- **`Tocadiscos.jsx`:** trabaja con canciones. La lista A1–A5 muestra tema,
+  artista y duración. "Sonando ahora" muestra el tema, la duración, el género
+  y un enlace a la ficha del artista. Se sacó la prop `esquina`.
+- **Portada:** sin cartel de fecha. Debajo del disco, "Últimas notas" con
+  todas las notas de la más nueva a la más vieja; la primera va en grande
+  (ocupa dos columnas). Al final, "Lo que se viene".
+
+### Verificado en `localhost:3007`
+- Secciones en este orden: Descubrimientos, Últimas notas, Lo que se viene. No
+  queda ningún "Próxima fecha".
+- Elegir A3 cambia "Sonando ahora" a "Persiana baja", de DJ Perejil, con su
+  enlace, y la etiqueta a "Lado A 3".
+- La nota más nueva, "Top 3 álbumes japoneses de deep house", va primera y
+  ocupa dos columnas.
+- Sin scroll horizontal en 375px. `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[atajo]** Las canciones están escritas en el código, no en la base, porque
+  todavía no se puede subir música. Cuando se arme la subida de artistas, se
+  pasan a una tabla con su archivo de audio, y este archivo se borra.
+- **[rareza]** "Sonando ahora" dice que algo suena, pero no hay audio. Se dejó
+  así a pedido del usuario; sin botón de play no promete nada que no pase.
+- **[a decidir]** Las canciones y sus nombres son inventados. Se pueden
+  cambiar por los que el usuario quiera.
+
+---
+
+## 2026-10-07 — Muestra: tocadiscos de "Descubrimientos" en la portada
+
+### Qué se pidió
+En lugar de la nota principal, un vinilo girando e interactivo. A futuro, los
+artistas van a poder subir música y el disco la va a tocar; por ahora no hay
+música. El lugar del disco pasa a ser **Descubrimientos**: lo que suena en
+este momento, como una nota principal. Se hizo primero como muestra local
+(DESENCUENTROS.md #3).
+
+### Qué se hizo (rama `muestra-disco`, carpeta `../muestra-disco`)
+- **`Tocadiscos.jsx`** (componente de cliente):
+  - Vinilo translúcido menta y lavanda, con surcos y un reflejo que no gira,
+    que es lo que hace que se note el giro.
+  - Gira solo a 33⅓. Se puede agarrar y girar con el mouse o el dedo; al
+    soltarlo vuelve de a poco a su velocidad.
+  - Botón "Pausar el disco" / "Girar el disco". El brazo se apoya cuando gira
+    y se levanta en pausa. Con "reducir movimiento" arranca quieto.
+  - La etiqueta del centro es la portada de la nota elegida, con "Artificial"
+    y "Lado A n". Gira con el disco.
+  - A la izquierda va la lista **Descubrimientos** (A1 a A4), con título y
+    artistas. Al elegir otro, la etiqueta cambia entrando con un giro, y abajo
+    se actualizan "Sonando ahora" y "Leer la nota".
+- **Portada:** el disco y la lista reemplazan a la foto grande y a la nota
+  chica del collage. La próxima fecha queda en la esquina del disco, o arriba
+  de él en celular. "Últimas notas" ya no repite las que están en el disco.
+- **Sin botón de play:** un play que no reproduce nada sería una promesa sin
+  cumplir (DESENCUENTROS.md #1).
+- Los descubrimientos salen de las notas destacadas y las más nuevas, hasta
+  cuatro. No se tocó la base.
+
+### Verificado en `localhost:3007`
+- El giro, midiendo el ángulo del disco: avanza solo; arrastrado un cuarto de
+  vuelta hacia atrás, retrocedió unos 100°.
+- Elegir A2 cambia la etiqueta a "Lado A 2" y el enlace a esa nota; la pausa
+  levanta el brazo y cambia el botón.
+- En 1440px y 375px, sin scroll horizontal en portada, notas, agenda y nota.
+  `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[error]** En celular el disco empujaba la página hacia el costado: es un
+  cuadrado que gira, y su diagonal ocupa hasta un 41% más que el lado. Se
+  envolvió en un contenedor redondo que recorta, y la sombra pasó a ese
+  contenedor porque el recorte la cortaba.
+- **[error]** Al principio el brazo apoyaba la púa en el borde del disco, y
+  una línea del HUD cruzaba por encima de la lista. Se corrigieron mirando la
+  página.
+- **[rareza]** En el panel del navegador las animaciones solo avanzan cuando
+  se saca una captura: la ventana estaba tapada y no dibujaba cuadros. Por
+  eso el giro se verificó midiendo el ángulo entre capturas.
+- **[rareza]** No se pudo probar "reducir movimiento" de verdad: el panel no
+  deja simularlo. El código lo lee del sistema.
+- **[a decidir]** Que Descubrimientos tenga sus propios datos (tema, artista,
+  disco, una nota opcional) en vez de salir de las notas. Es el paso previo
+  a que los artistas suban música.
+- **[a decidir]** El nombre ARTIFICIAL sigue apareciendo dos veces arriba
+  (header y título grande).
 
 ---
 
