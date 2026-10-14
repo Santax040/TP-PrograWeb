@@ -20,6 +20,46 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-14 (26) — La portada con tocadiscos pasa a ser la oficial
+
+### Qué se pidió
+"Quiero que pushees como principal a la página web del disco": la versión de
+la rama `muestra-disco` reemplaza a la de `main` y se publica.
+
+### Qué se hizo
+- La rama ya tenía todo lo de `main`, porque los cambios se le fueron pasando
+  con la regla de dos versiones (el último, el registro con mail y
+  contraseña). Así que publicar fue un avance directo de `main` hasta la
+  rama, sin unir nada a mano.
+- Antes de subir: `eslint` y `npm run build` sin errores en la rama, y la
+  portada revisada en `localhost:3007` (disco, cinco canciones, Últimas notas
+  y Lo que se viene, sin cartel de fecha, sin scroll horizontal).
+- `CLAUDE.md`: la sección "Dos versiones del sitio" pasó a "Una sola versión:
+  la del tocadiscos", y en Layout se describe la portada nueva.
+- Se subió desde la copia de la rama (`git push origin muestra-disco:main`),
+  sin tocar `TP/`.
+
+### Qué cambia en la página publicada
+- La portada ahora es el tocadiscos con Descubrimientos, en lugar del collage
+  con la foto grande de la nota principal.
+- Todo lo demás (notas, agenda con filtros, login con mail o Google,
+  Redacción) ya estaba igual en las dos versiones.
+
+### ⚑ Para charlar
+- **[rareza]** Al publicar, `TP/` tenía cambios sin commitear de la otra
+  sesión (`.env.example`, `.gitignore`, `BITACORA.md`, `DESENCUENTROS.md`).
+  No se tocaron. Cuando esa sesión traiga lo nuevo de `main`, la bitácora va a
+  chocar con esta entrada: hay que conservar las dos.
+- **[rareza]** Esta entrada es la (26). Si la otra sesión estaba escribiendo
+  su propia (26), queda numeración repetida.
+- **[a decidir]** Borrar la rama `muestra-disco` (en la compu y en GitHub) y
+  su carpeta `../muestra-disco`, ahora que es igual a `main`.
+- **[a decidir]** Las canciones siguen siendo ficticias y sin audio, y
+  "Sonando ahora" muestra un tema que no suena. Para la entrega conviene
+  decidir si se explica en algún lado o si se deja así.
+
+---
+
 ## 2026-10-14 (25) — Entrar con Google o con mail y contraseña
 
 ### Qué se pidió

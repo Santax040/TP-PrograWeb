@@ -1,25 +1,16 @@
 @AGENTS.md
 
-## Dos versiones del sitio
+## Una sola versión: la del tocadiscos
 
-Desde el 2026-10-07 hay dos versiones vivas, y **todo cambio (de formato o de
-lo que sea) se hace en las dos, siempre que aplique**:
+Del 2026-10-07 al 2026-10-14 hubo dos versiones (`main` con el collage y
+`muestra-disco` con el tocadiscos), y todo cambio se hacía en las dos. **El
+2026-10-14 el usuario eligió la del tocadiscos como la oficial** y se subió
+a `main`. Desde entonces hay una sola versión: los cambios se hacen en `main`.
 
-| Versión | Rama | Qué es |
-|---|---|---|
-| Oficial | `main` | Lo que se publica en Vercel. |
-| Con tocadiscos | `muestra-disco` | Portada con el disco y Descubrimientos, para cuando haya música. Respaldo en GitHub; no se publica ni se une a `main` hasta que el usuario lo pida. |
-
-- **Cómo:** el cambio se hace y se commitea en `main`, y después se trae a
-  la rama con `git merge main` desde su copia de trabajo (`../muestra-disco`).
-  Se verifica también ahí.
-- **Conflictos en la portada (`src/app/page.jsx`):** la rama manda. Su portada
-  es distinta a propósito (el disco reemplaza a la foto de la nota principal).
-- **Cuándo no aplica:** lo que solo existe en una de las dos. Por ejemplo, el
-  collage de la portada de `main` o el tocadiscos de la rama. Si no está
-  claro, preguntar.
-- Subir `main` publica el sitio; subir `muestra-disco` solo actualiza el
-  respaldo. Cada una se sube cuando el usuario lo pide.
+- La rama `muestra-disco` quedó igual a `main` y ya no hace falta pasarle
+  cambios. Se borra cuando el usuario lo pida.
+- La portada con collage de foto grande quedó en el historial; no volver a
+  ella sin preguntar.
 
 ## Diseño
 
@@ -89,7 +80,11 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
   formularios `max-w-md`.
 - Header sin fondo: logo a la izquierda y solo cuatro opciones a la derecha:
   **Música, Eventos, Suscribete, Entrar**. No agregar más sin preguntar.
-- La portada es un collage en una grilla de 12 columnas
+- La portada es el nombre grande y, debajo, **Descubrimientos**: un tocadiscos
+  (`Tocadiscos.jsx`) con la lista de canciones de `src/lib/descubrimientos.js`
+  (ficticias, sin audio; no hay botón de play hasta que haya música). Después
+  van "Últimas notas", con la más nueva en grande, y "Lo que se viene".
+- Antes, la portada era un collage en una grilla de 12 columnas
   (`md:grid-cols-12`) con piezas que se superponen a propósito; en celular se
   apilan.
 - En grillas con texto truncado, usar `grid-cols-1` en celular; si no, la
