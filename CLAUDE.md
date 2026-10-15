@@ -12,6 +12,23 @@ a `main`. Desde entonces hay una sola versión: los cambios se hacen en `main`.
 - La portada con collage de foto grande quedó en el historial; no volver a
   ella sin preguntar.
 
+## Música: archivos de audio
+
+Decidido el 2026-10-15. **Cuando se empiece a cargar música, los archivos van
+en Supabase Storage, en un bucket privado**, y la página los toca con links
+firmados que vencen solos. Rige hasta que el usuario decida otro método.
+
+- **Nunca commitear archivos de audio.** El repo de GitHub es público: un
+  archivo commiteado se puede bajar desde ahí y queda para siempre en el
+  historial, aunque después se borre.
+- Tampoco en `public/`: todo lo de esa carpeta se publica en Vercel.
+- En la base va solo la información del tema (título, artista, duración,
+  ruta en Storage), no el archivo.
+- El sitio publicado está abierto a cualquiera con el link y no tiene
+  `robots.txt`: "nadie lo conoce" no alcanza como protección.
+- Se descartaron por ahora: guardar el audio solo en local (carpeta ignorada
+  por git) y commitearlo en el repo. Detalle en BITACORA.md, entrada (27).
+
 ## Diseño
 
 Revista **Artificial**. Estética **Gen X Soft Club, propuesta E · Collage**:

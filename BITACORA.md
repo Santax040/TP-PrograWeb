@@ -20,6 +20,43 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-15 (27) — Cómo se va a guardar la música (todavía sin cargar nada)
+
+### Qué se pidió
+Dejar escrito que, cuando se empiece a cargar música para el tocadiscos, se va
+a hacer con el "método 2" (Supabase Storage privado) hasta que se decida otro.
+
+### Contexto
+Se charló cómo meter audio real en el tocadiscos. Hoy no hay audio: el disco
+gira como animación, la duración es solo texto y la canción cambia únicamente
+con un clic. Se plantearon tres lugares para los archivos:
+
+1. **Solo en local**, en una carpeta ignorada por git: no sale de la compu,
+   pero no suena en la versión publicada.
+2. **Supabase Storage, bucket privado**, con links firmados que vencen:
+   no pasa por GitHub y suena también en Vercel. **Elegido.**
+3. **Commiteado en el repo:** lo más fácil, descartado.
+
+**Por qué no el 3:** el repo `Santax040/TP-PrograWeb` es público (verificado
+con `gh repo view`) y el sitio responde sin login. Un audio commiteado se
+puede bajar desde GitHub sin pasar por la página, y queda en el historial
+de git aunque después se borre.
+
+### Qué se hizo
+- Nueva sección `## Música: archivos de audio` en `CLAUDE.md` con la regla.
+- No se tocó código ni la base: todavía no se carga música.
+
+### ⚑ Para charlar
+- **[a decidir]** Derechos de la música: el usuario prefirió dejarlo para
+  más adelante. Con el bucket privado el archivo no queda descargable
+  libremente, pero quien tenga el link de la página lo puede escuchar.
+- **[a decidir]** Si conviene agregar un `robots.txt` que pida no indexar el
+  sitio mientras sea un TP.
+- **[rareza]** El usuario pensaba que el sitio publicado no era accesible sin
+  su link. Es accesible para cualquiera que tenga o adivine la dirección.
+
+---
+
 ## 2026-10-14 (26) — La portada con tocadiscos pasa a ser la oficial
 
 ### Qué se pidió
