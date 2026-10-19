@@ -20,6 +20,50 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-19 (28) — Tocadiscos: sin el marco blanco y con un brazo profesional
+
+### Qué se pidió
+- Sacar el rectángulo de líneas blancas que estaba detrás del disco ("no
+  encuadra, arruina todo").
+- Rehacer el brazo del tocadiscos, la "perillita" con la púa que toca el
+  disco, para que se vea profesional.
+
+### Qué se hizo (`src/components/Tocadiscos.jsx`)
+- **Se borró la "funda"**, el marco blanco corrido detrás del disco.
+- **Brazo nuevo, estilo Technics SL-1200**, dibujado en SVG:
+  - placa de montaje translúcida;
+  - base de pivote oscura con anillo metálico y tapa;
+  - contrapeso con estrías, detrás del pivote;
+  - brazo en S de aluminio (contorno oscuro, degradé metálico y un filo de
+    luz);
+  - cabezal angulado 25° hacia el centro, con la pestaña para levantarlo con
+    el dedo, la cápsula en azul cobalto y la aguja;
+  - apoyabrazo al costado, que no gira;
+  - sombra sobre el disco (`drop-shadow`).
+- **Geometría calculada, no a ojo:** el SVG usa las mismas coordenadas que el
+  contenedor (disco con centro en 50, 50 y radio 46; pivote en 93, 10). En
+  pausa el brazo gira −8° y descansa en el apoyabrazo, afuera del disco;
+  cuando gira va a +4° y la aguja cae en los surcos de afuera. El movimiento
+  tiene una curva suave (900 ms), como un brazo que baja.
+
+### Verificado en `localhost:3000`
+- Medido en la página: girando, la aguja queda a 0,86 radios del centro
+  (sobre los surcos; la etiqueta termina en 0,38); en pausa, a 1,13 (afuera
+  del disco).
+- Sin el marco, en 1440px y en 375px. Sin scroll horizontal en celular.
+  `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[rareza]** Las capturas del panel con 1440px emulados salían corridas o
+  ampliadas al hacer scroll, y la transición del brazo no terminaba porque el
+  panel casi no dibuja cuadros. Por eso las posiciones se verificaron midiendo
+  en la página, no solo mirando.
+- **[a decidir]** El giro del brazo es de 12° en total: es lo que hace un
+  brazo real, pero es sutil. Si se quiere más dramático, se puede alargar el
+  recorrido.
+
+---
+
 ## 2026-10-15 (27) — Cómo se va a guardar la música (todavía sin cargar nada)
 
 ### Qué se pidió

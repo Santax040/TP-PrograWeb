@@ -152,12 +152,6 @@ export default function Tocadiscos({ canciones, intro }) {
       </div>
 
       <div className="relative md:col-span-7">
-        {/* La funda: un marco blanco corrido detrás del disco, como el HUD. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -left-4 top-6 hidden aspect-square w-[88%] border border-white md:block"
-        />
-
         <div className="relative mx-auto aspect-square w-full max-w-[34rem]">
           {/* Contenedor redondo que recorta: el disco de adentro es un cuadrado
               que gira, y sin el recorte su diagonal empujaba la página hacia
@@ -195,18 +189,75 @@ export default function Tocadiscos({ canciones, intro }) {
           {/* El reflejo de la luz no gira: es lo que hace que se note el giro. */}
           <span aria-hidden="true" className="vinilo-brillo pointer-events-none absolute inset-[4%] rounded-full" />
 
-          {/* Brazo del tocadiscos: se apoya cuando gira y se levanta en pausa. */}
+          {/*
+            Brazo del tocadiscos, estilo Technics: placa, base de pivote,
+            contrapeso, brazo en S de aluminio, cabezal angulado con cápsula y
+            aguja, y el apoyabrazo al costado.
+
+            El dibujo usa las mismas coordenadas que el contenedor del disco
+            (0 a 100): el disco tiene centro en (50, 50) y radio 46, y el
+            pivote está en (93, 10). En pausa el brazo gira -8° y descansa en
+            el apoyabrazo, afuera del disco; cuando el disco gira, va a +4° y
+            la aguja cae en los surcos de afuera, a radio 40 del centro.
+          */}
           <svg
             aria-hidden="true"
             viewBox="0 0 100 100"
-            className="pointer-events-none absolute -right-[2%] -top-[2%] w-[42%] origin-[82%_14%] transition-transform duration-700 ease-out"
-            style={{ transform: `rotate(${girando ? 31 : 0}deg)` }}
+            className="pointer-events-none absolute inset-0 h-full w-full overflow-visible [filter:drop-shadow(0_5px_5px_#11303a59)]"
           >
-            <circle cx="82" cy="14" r="9" fill="#f4fbfb" stroke="#11303a" strokeOpacity="0.4" />
-            <circle cx="82" cy="14" r="3.5" fill="#11303a" fillOpacity="0.5" />
-            <path d="M82 14 L80 70 L66 88" fill="none" stroke="#f4fbfb" strokeWidth="3.2" strokeLinecap="round" />
-            <path d="M82 14 L80 70 L66 88" fill="none" stroke="#11303a" strokeOpacity="0.25" strokeWidth="1" strokeLinecap="round" />
-            <rect x="58" y="84" width="12" height="7" rx="1.5" transform="rotate(-50 64 88)" fill="#2347c6" />
+            <defs>
+              <linearGradient id="brazo-metal" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stopColor="#8d9ca2" />
+                <stop offset="0.45" stopColor="#f7fbfb" />
+                <stop offset="1" stopColor="#9eacb1" />
+              </linearGradient>
+              <radialGradient id="brazo-base" cx="0.4" cy="0.35" r="0.75">
+                <stop offset="0" stopColor="#4b5c63" />
+                <stop offset="1" stopColor="#152126" />
+              </radialGradient>
+              <linearGradient id="brazo-placa" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
+                <stop offset="1" stopColor="#ffffff" stopOpacity="0.15" />
+              </linearGradient>
+            </defs>
+
+            {/* Placa donde se monta el brazo. */}
+            <rect x="85" y="2" width="16" height="16" rx="2.5" fill="url(#brazo-placa)" stroke="#ffffff" strokeOpacity="0.7" strokeWidth="0.3" />
+
+            {/* Apoyabrazo: no gira; el brazo se apoya ahí en pausa. */}
+            <rect x="97.4" y="51.6" width="3.4" height="5.2" rx="0.9" fill="url(#brazo-base)" />
+            <path d="M97.9 52.4 Q99.1 54 100.3 52.4" fill="none" stroke="#c9d3d6" strokeWidth="0.5" strokeLinecap="round" />
+
+            <g
+              style={{
+                transform: `rotate(${girando ? 4 : -8}deg)`,
+                transformOrigin: "93px 10px",
+                transformBox: "view-box",
+                transition: "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
+              {/* Contrapeso, detrás del pivote, con estrías. */}
+              <rect x="90.4" y="0.6" width="5.2" height="6" rx="1.1" fill="url(#brazo-metal)" stroke="#11303a" strokeOpacity="0.35" strokeWidth="0.25" />
+              <path d="M90.6 2.2 H95.4 M90.6 3.6 H95.4 M90.6 5 H95.4" stroke="#11303a" strokeOpacity="0.25" strokeWidth="0.2" />
+
+              {/* Brazo en S: contorno oscuro, aluminio y un filo de luz. */}
+              <path d="M93 10 C93 27 89.6 35 91 45 S93 57 93 62" fill="none" stroke="#11303a" strokeOpacity="0.45" strokeWidth="2.3" strokeLinecap="round" />
+              <path d="M93 10 C93 27 89.6 35 91 45 S93 57 93 62" fill="none" stroke="url(#brazo-metal)" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M92.7 12 C92.7 27 89.3 35 90.7 45" fill="none" stroke="#ffffff" strokeOpacity="0.8" strokeWidth="0.3" strokeLinecap="round" />
+
+              {/* Cabezal angulado 25° hacia el centro, con la pestaña para levantarlo. */}
+              <polygon points="94.8,62.8 90.7,70.9 87.8,69.5 91.2,61.2" fill="#1b262a" stroke="#c9d3d6" strokeWidth="0.25" />
+              <path d="M90.7 70.9 L93.3 72" stroke="url(#brazo-metal)" strokeWidth="0.8" strokeLinecap="round" />
+
+              {/* Cápsula y aguja. */}
+              <rect x="88.8" y="66" width="3" height="3.6" rx="0.4" transform="rotate(25 90.3 67.9)" fill="#2347c6" />
+              <line x1="89.2" y1="70.2" x2="88.8" y2="71.2" stroke="#e8eef0" strokeWidth="0.35" strokeLinecap="round" />
+
+              {/* Base del pivote, arriba de todo. */}
+              <circle cx="93" cy="10" r="5.4" fill="url(#brazo-base)" />
+              <circle cx="93" cy="10" r="3.6" fill="none" stroke="#c9d3d6" strokeOpacity="0.8" strokeWidth="0.35" />
+              <circle cx="93" cy="10" r="1.5" fill="url(#brazo-metal)" />
+            </g>
           </svg>
 
         </div>
