@@ -53,6 +53,12 @@ Para encontrarlas todas, buscar "⚑".
 - Sin el marco, en 1440px y en 375px. Sin scroll horizontal en celular.
   `eslint` y `npm run build` sin errores.
 
+### Publicado
+Push `921d1f5..dd1af0f` a `main`, junto con la entrada (27) de la otra sesión,
+que estaba sin subir. Antes del deploy, la página oficial todavía tenía el
+marco y no tenía el brazo nuevo; a los 30 segundos ya tenía el brazo
+(`brazo-metal`) y el marco había desaparecido.
+
 ### ⚑ Para charlar
 - **[rareza]** Las capturas del panel con 1440px emulados salían corridas o
   ampliadas al hacer scroll, y la transición del brazo no terminaba porque el
