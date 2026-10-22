@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Marquesina from "@/components/Marquesina";
 import Codigo from "@/components/Codigo";
+import Reproductor from "@/components/Reproductor";
+import BarraReproductor from "@/components/BarraReproductor";
 import { site } from "@/lib/site";
 
 /*
@@ -46,11 +48,15 @@ export default function RootLayout({ children }) {
       className={`${audiowide.variable} ${general.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Codigo />
-        <Header />
-        <Marquesina />
-        <main className="relative z-10 flex-1">{children}</main>
-        <Footer />
+        {/* El reproductor envuelve todo para que la música siga al navegar. */}
+        <Reproductor>
+          <Codigo />
+          <Header />
+          <Marquesina />
+          <main className="relative z-10 flex-1">{children}</main>
+          <Footer />
+          <BarraReproductor />
+        </Reproductor>
       </body>
     </html>
   );

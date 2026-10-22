@@ -20,6 +20,80 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-22 (29) — Música de verdad: artistas que suben temas y un tocadiscos que suena
+
+### Qué se pidió
+- Que las cuentas artista puedan subir música.
+- Que el tocadiscos no sea solo visual: que suene.
+- Usar música de la carpeta del usuario ("XNX TRACK") para arrancar.
+
+Se trabajó en siete partes, una por vez, con el OK del usuario entre cada una.
+
+### Decisiones del usuario
+- De la carpeta van **solo temas de DJs, sin voz**, **con el nombre real**
+  del artista. Nada de rock nacional ni clásicos cantados. Atribuirlos a
+  artistas ficticios se descartó: sería presentar música de alguien como si
+  fuera de otro.
+- Se escucha **el tema entero, para todos** (sin cortes de 30 segundos ni
+  exclusivo para suscriptores).
+- **La música sigue al navegar**, con una barra fija abajo.
+- Descubrimientos muestra **los 10 temas más nuevos**.
+
+### Qué se hizo
+- **Base** (`20261019173858_musica.sql`, aplicada con el conector de
+  Supabase porque el CLI no tenía sesión iniciada): `artistas.perfil_id`,
+  función `guardar_mi_ficha`, tabla `canciones` con permisos (RLS) y trigger,
+  bucket privado `musica` y sus permisos. Detalle en CLAUDE.md, "Música".
+- **Pruebas de permisos** (`supabase/pruebas/permisos.sql`): 14 casos nuevos
+  de música; pasan las 56. La prueba "Visitante ve notas" esperaba 6 notas y
+  hay 9: se cambió por "Visitante ve el borrador de Ana", que no depende de
+  cuántas notas haya.
+- **Ruta de audio** `/api/canciones/[id]/audio`: redirige (302, `no-store`)
+  a un link firmado de 1 hora.
+- **Reproductor global** (`Reproductor.jsx`) en el layout, con barra fija
+  (`BarraReproductor.jsx`) fuera de la portada. Pasa solo al siguiente tema,
+  funciona con las teclas multimedia (Media Session) y, si el link venció
+  con el tema en pausa, pide uno nuevo y sigue desde donde estaba.
+- **Tocadiscos conectado**: el brazo y el giro siguen a la música; "Bajar la
+  púa" / "Levantar la púa"; sostener el disco pausa y soltarlo sigue; línea
+  de tiempo para adelantar. Se borró `src/lib/descubrimientos.js`.
+- **/estudio ("Mi música")**: ficha del artista, subida directa a Storage
+  con barra de progreso (link de subida firmado y `XMLHttpRequest`),
+  ocultar, mostrar y borrar (borra también el archivo). "Mi música" en el
+  menú del usuario; sección "Escuchá" en la ficha pública del artista.
+- **Carga inicial**: `scripts/cargar-musica.mjs` subió 15 temas de 14
+  artistas (Ams tiene dos), 207 MB. La lista quedó fuera del repo.
+- **Footer**: ya no dice que todos los artistas son ficticios.
+- `music-metadata` como dependencia de desarrollo (lee duración y etiquetas).
+
+### Verificado
+- En `localhost:3000`, con tonos de prueba, una cuenta artista de prueba y
+  después con los temas reales: suena, pausa, pasa de tema, sostener el
+  disco pausa, la música sigue al ir a /agenda y volver, adelantar a 5:00
+  funciona, y en 375px no hay scroll horizontal. Sin errores en la consola.
+- Un tema oculto da 404 a un visitante; el bucket sin firma responde 400.
+- Todo lo de prueba (tonos, cuenta, ficha) se borró de la base y del bucket.
+
+### ⚑ Para charlar
+- **[a decidir]** Derechos de la música: son temas comerciales de artistas
+  reales, escuchables enteros por cualquiera que entre al sitio. El bucket
+  privado evita que se bajen sueltos, pero no que se escuchen.
+- **[a decidir]** No se pudo confirmar sin escucharlos que no tengan voz:
+  conviene revisar Nu Guinea – Disco Sole, Yoffi – Rhythm of the Bass y
+  Toman – Seguimos.
+- **[atajo]** El máximo de 10 temas por artista lo controla solo el
+  servidor (`guardarCancion`), no la base: alguien que escriba directo a la
+  API podría pasarse. Hace falta un trigger si importa.
+- **[atajo]** El plan gratis de Supabase tiene 1 GB: los 15 temas ya usan
+  207 MB, y cada tema subido son unos 10-15 MB.
+- **[rareza]** `next dev` no deja levantar dos servidores en la misma
+  carpeta: cuando otra sesión tenía el suyo en el 3000, el panel del
+  navegador no lo alcanzaba y hubo que esperar a que se cerrara.
+- **[rareza]** La migración falló la primera vez: una función `sql` se valida
+  al crearla y usaba una columna que todavía no existía. Se reordenó.
+
+---
+
 ## 2026-10-19 (28) — Tocadiscos: sin el marco blanco y con un brazo profesional
 
 ### Qué se pidió

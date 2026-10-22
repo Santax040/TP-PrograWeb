@@ -5,8 +5,9 @@
  * - admin: uno solo, puede todo.
  * - publicador: publica notas; edita y borra solo las suyas.
  * - usuario: lee y manda propuestas.
- * - artista: como usuario; a futuro, sube música. Lo elige cada uno desde
- *   Configuración (función `elegir_ser_artista` de la base).
+ * - artista: como usuario, y además arma su ficha y sube sus temas en
+ *   /estudio. Lo elige cada uno desde Configuración (función
+ *   `elegir_ser_artista` de la base).
  *
  * Suscriptor no es un rol: es el plan (`perfiles.plan`), y vale para todos.
  */

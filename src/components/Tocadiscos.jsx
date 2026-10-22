@@ -3,6 +3,11 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import FondoPortada from "@/components/FondoPortada";
+import LineaDeTiempo from "@/components/LineaDeTiempo";
+import { useReproductor } from "@/components/Reproductor";
+
+/** La etiqueta del disco cuando todavía no hay ningún tema cargado. */
+const ETIQUETA_VACIA = { portada: "from-sky-500 via-blue-700 to-indigo-900" };
 
 /** Vueltas por minuto de un LP, pasadas a grados por segundo. */
 const GRADOS_POR_SEGUNDO = (100 / 3) * 6;
@@ -24,6 +29,17 @@ function useReducirMovimiento() {
   );
 }
 
+/** Tres barritas, en lugar del número del tema que está sonando. */
+function IconoSonando() {
+  return (
+    <svg aria-label="Sonando" viewBox="0 0 12 12" className="inline size-3 fill-cobalto">
+      <rect x="1" y="4" width="2" height="7" />
+      <rect x="5" y="1" width="2" height="10" />
+      <rect x="9" y="6" width="2" height="5" />
+    </svg>
+  );
+}
+
 /** Ángulo en grados del puntero respecto del centro de un elemento. */
 function anguloDesdeCentro(evento, elemento) {
   const caja = elemento.getBoundingClientRect();
@@ -33,27 +49,51 @@ function anguloDesdeCentro(evento, elemento) {
 }
 
 /**
- * Descubrimientos: el tocadiscos de la portada y la lista de canciones.
+ * Descubrimientos: el tocadiscos de la portada y la lista de canciones, que
+ * salen de la base (los temas que suben los artistas).
  *
- * Todavía no hay audio: cuando los artistas puedan subir sus temas, este mismo
- * disco los va a tocar. Por eso no hay botón de play: un play que no reproduce
- * nada sería una promesa sin cumplir (DESENCUENTROS.md #1).
+ * Es un control del reproductor del sitio (`Reproductor.jsx`), no tiene audio
+ * propio: elegir un tema lo hace sonar, y la música sigue si la persona se va
+ * a otra página. Lo que hace el disco sale de lo que suena:
+ * - Suena → el brazo baja y el disco gira a 33⅓.
+ * - En pausa → el brazo se levanta y el disco frena de a poco.
+ * - Agarrar el disco es apoyar la mano en el vinilo: mientras se sostiene, la
+ *   música para; al soltarlo, sigue. Se puede girar con el mouse o el dedo.
+ * - Con "reducir movimiento" el disco no gira, pero la música suena igual.
  *
- * El disco gira solo a 33⅓, se puede agarrar y girar con el mouse o el dedo
- * (frena de a poco al soltarlo), y se pausa con un botón. Con "reducir
- * movimiento" arranca quieto.
+ * Sin canciones en la base, el disco queda quieto y sin botón de play: un play
+ * que no reproduce nada sería una promesa sin cumplir (DESENCUENTROS.md #1).
  *
  * @param {Object} props
- * @param {Array<{slug: string, tema: string, artista: string, artistaSlug: string,
- *   duracion: string, genero: string, portada: string}>} props.canciones
+ * @param {import("@/lib/musica").Cancion[]} props.canciones
  * @param {import("react").ReactNode} [props.intro] - Lo que va arriba de la lista.
  */
 export default function Tocadiscos({ canciones, intro }) {
-  const [elegido, setElegido] = useState(0);
-  // null = la persona todavía no tocó el botón: manda la preferencia del sistema.
-  const [preferencia, setPreferencia] = useState(null);
+  const reproductor = useReproductor();
   const reducir = useReducirMovimiento();
-  const girando = preferencia ?? !reducir;
+
+  // El tema que muestra el plato: el que suena, si es de esta lista; si no,
+  // el último que se eligió acá (al principio, el primero).
+  const [elegidoAca, setElegidoAca] = useState(0);
+  const indiceSonando = reproductor.actual
+    ? canciones.findIndex((c) => c.id === reproductor.actual.id)
+    : -1;
+  const esDeAca = indiceSonando !== -1;
+  const elegido = esDeAca ? indiceSonando : elegidoAca;
+  const actual = canciones[elegido];
+
+  const sonando = esDeAca && reproductor.sonando;
+  const girando = sonando && !reducir;
+
+  function tocar(i) {
+    setElegidoAca(i);
+    reproductor.tocar(canciones, i);
+  }
+
+  function alternarPua() {
+    if (sonando) reproductor.pausar();
+    else tocar(elegido);
+  }
 
   const disco = useRef(null);
   const fisica = useRef({ angulo: 0, velocidad: 0, arrastre: null });
@@ -89,7 +129,10 @@ export default function Tocadiscos({ canciones, intro }) {
     fisica.current.arrastre = {
       ultimo: anguloDesdeCentro(evento, evento.currentTarget),
       tiempo: performance.now(),
+      // La mano sobre el vinilo frena la música; al soltar, sigue.
+      retomar: sonando,
     };
+    if (sonando) reproductor.pausar();
   }
 
   function alMover(evento) {
@@ -104,15 +147,16 @@ export default function Tocadiscos({ canciones, intro }) {
     const dt = Math.max((ahora - f.arrastre.tiempo) / 1000, 0.001);
     f.angulo += delta;
     f.velocidad = delta / dt;
-    f.arrastre = { ultimo: angulo, tiempo: ahora };
+    f.arrastre = { ...f.arrastre, ultimo: angulo, tiempo: ahora };
   }
 
   function alSoltar() {
+    const retomar = fisica.current.arrastre?.retomar;
     fisica.current.arrastre = null;
+    if (retomar) reproductor.reanudar();
   }
 
-  const actual = canciones[elegido];
-  if (!actual) return null;
+  const etiqueta = actual ?? ETIQUETA_VACIA;
 
   return (
     <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
@@ -123,18 +167,26 @@ export default function Tocadiscos({ canciones, intro }) {
           <h2 className="font-ancha text-xl uppercase text-white [text-shadow:0_0_16px_#ffffffb3] sm:text-2xl">
             Descubrimientos
           </h2>
-          <ol className="mt-4 border-t border-white/70">
+          {canciones.length === 0 && (
+            <p className="mt-4 border-y border-white/70 px-2 py-3 text-humo">
+              Todavía no hay temas en el plato. Pronto, lo que suban los artistas.
+            </p>
+          )}
+          <ol className="mt-4 border-t border-white/70 empty:hidden">
             {canciones.map((cancion, i) => (
-              <li key={cancion.slug} className="border-b border-white/70">
+              <li key={cancion.id} className="border-b border-white/70">
                 <button
                   type="button"
                   aria-pressed={i === elegido}
-                  onClick={() => setElegido(i)}
+                  aria-label={`Escuchar ${cancion.tema}, de ${cancion.artista}`}
+                  onClick={() => tocar(i)}
                   className={`grid w-full grid-cols-[2rem_1fr] items-baseline gap-2 px-2 py-3 text-left transition-colors ${
                     i === elegido ? "bg-white/60" : "hover:bg-white/30"
                   }`}
                 >
-                  <span className="rotulo text-sm text-humo">A{i + 1}</span>
+                  <span className="rotulo text-sm text-humo">
+                    {i === elegido && sonando ? <IconoSonando /> : `A${i + 1}`}
+                  </span>
                   <span className="flex min-w-0 items-baseline justify-between gap-3">
                     <span className="min-w-0">
                       <span className="block font-medium leading-snug text-marino">{cancion.tema}</span>
@@ -158,7 +210,11 @@ export default function Tocadiscos({ canciones, intro }) {
               el costado en celular. */}
           <div
             role="img"
-            aria-label={`Disco girando: ${actual.tema}, de ${actual.artista}. Se puede girar con el mouse o el dedo.`}
+            aria-label={
+              actual
+                ? `Disco ${sonando ? "sonando" : "en pausa"}: ${actual.tema}, de ${actual.artista}. Sostenerlo frena la música.`
+                : "Disco sin tema."
+            }
             onPointerDown={alApretar}
             onPointerMove={alMover}
             onPointerUp={alSoltar}
@@ -168,10 +224,10 @@ export default function Tocadiscos({ canciones, intro }) {
             <div ref={disco} className="vinilo absolute inset-0 rounded-full">
               {/* Etiqueta del disco: el color de la canción elegida. Gira con el disco. */}
               <div
-                key={actual.slug}
+                key={actual?.id ?? "vacio"}
                 className="bruma etiqueta-disco absolute inset-[31%] overflow-hidden rounded-full border border-white/80"
               >
-                <FondoPortada articulo={actual} sizes="12rem" />
+                <FondoPortada articulo={etiqueta} sizes="12rem" />
                 <span className="absolute inset-x-0 top-[14%] z-[2] text-center rotulo text-[0.55rem] uppercase text-white [text-shadow:0_1px_4px_#11303a]">
                   Artificial
                 </span>
@@ -197,8 +253,10 @@ export default function Tocadiscos({ canciones, intro }) {
             El dibujo usa las mismas coordenadas que el contenedor del disco
             (0 a 100): el disco tiene centro en (50, 50) y radio 46, y el
             pivote está en (93, 10). En pausa el brazo gira -8° y descansa en
-            el apoyabrazo, afuera del disco; cuando el disco gira, va a +4° y
-            la aguja cae en los surcos de afuera, a radio 40 del centro.
+            el apoyabrazo, afuera del disco; cuando suena, va a +4° y la aguja
+            cae en los surcos de afuera, a radio 40 del centro. Sigue a la
+            música, no al giro: con "reducir movimiento" el disco no gira pero
+            el brazo igual baja.
           */}
           <svg
             aria-hidden="true"
@@ -230,7 +288,7 @@ export default function Tocadiscos({ canciones, intro }) {
 
             <g
               style={{
-                transform: `rotate(${girando ? 4 : -8}deg)`,
+                transform: `rotate(${sonando ? 4 : -8}deg)`,
                 transformOrigin: "93px 10px",
                 transformBox: "view-box",
                 transition: "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)",
@@ -262,31 +320,40 @@ export default function Tocadiscos({ canciones, intro }) {
 
         </div>
 
-        <div className="mx-auto mt-6 flex max-w-[34rem] flex-wrap items-end justify-between gap-4">
-          <div className="min-w-0">
-            <p className="rotulo text-xs uppercase text-humo">Sonando ahora</p>
-            <p className="mt-1 text-xl font-medium leading-tight text-marino sm:text-2xl">
-              {actual.tema}
-            </p>
-            <p className="mt-1 flex flex-wrap gap-x-4 rotulo text-xs uppercase text-humo">
-              <span>{actual.duracion}</span>
-              <span>{actual.genero}</span>
-            </p>
-            <Link
-              href={`/artistas/${actual.artistaSlug}`}
-              className="etiqueta mt-3 text-cobalto hover:text-marino"
-            >
-              {actual.artista}
-            </Link>
+        {actual && (
+          <div className="mx-auto mt-6 max-w-[34rem]">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div className="min-w-0">
+                <p className="rotulo text-xs uppercase text-humo">
+                  {sonando ? "Sonando ahora" : "En el plato"}
+                </p>
+                <p className="mt-1 text-xl font-medium leading-tight text-marino sm:text-2xl">
+                  {actual.tema}
+                </p>
+                <p className="mt-1 flex flex-wrap gap-x-4 rotulo text-xs uppercase text-humo">
+                  <span>{actual.duracion}</span>
+                  <span>{actual.genero}</span>
+                </p>
+                <Link
+                  href={`/artistas/${actual.artistaSlug}`}
+                  className="etiqueta mt-3 text-cobalto hover:text-marino"
+                >
+                  {actual.artista}
+                </Link>
+              </div>
+              <button
+                type="button"
+                onClick={alternarPua}
+                aria-label={sonando ? `Pausar ${actual.tema}` : `Escuchar ${actual.tema}`}
+                className="cartel flex shrink-0 items-center gap-2 px-3 py-1.5 rotulo text-xs uppercase hover:bg-marino"
+              >
+                {sonando ? "Levantar la púa" : "Bajar la púa"}
+              </button>
+            </div>
+            {/* La línea de tiempo aparece cuando este tema ya está cargado. */}
+            {esDeAca && <LineaDeTiempo conTiempos className="mt-5" />}
           </div>
-          <button
-            type="button"
-            onClick={() => setPreferencia(!girando)}
-            className="cartel shrink-0 px-3 py-1.5 rotulo text-xs uppercase hover:bg-marino"
-          >
-            {girando ? "Pausar el disco" : "Girar el disco"}
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

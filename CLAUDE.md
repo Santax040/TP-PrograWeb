@@ -29,6 +29,28 @@ firmados que vencen solos. Rige hasta que el usuario decida otro método.
 - Se descartaron por ahora: guardar el audio solo en local (carpeta ignorada
   por git) y commitearlo en el repo. Detalle en BITACORA.md, entrada (27).
 
+### Cómo está armado (desde el 2026-10-22, BITACORA.md entrada 29)
+- **Bucket `musica`**, privado, hasta 25 MB por archivo, solo audio. Cada
+  artista sube en su carpeta (`<id>/…`); la carga inicial está en `semilla/`.
+  Nadie lo lee directo.
+- **Tabla `canciones`** (título, artista, género, duración, ruta, color de la
+  etiqueta, `publicada`). Las ocultas solo las ve su artista.
+- **Se escucha por `/api/canciones/[id]/audio`**: busca el tema con la sesión
+  de quien escucha (la base decide si puede) y redirige a un link firmado de
+  1 hora. Firma con `SUPABASE_SECRET_KEY`, que tiene que estar en
+  `.env.local` para probar en local. La ruta del audio sale de
+  `src/lib/audio.js` (no de `musica.js`, para no meter el cliente de
+  Supabase en el navegador).
+- **Artistas**: una cuenta con rol `artista` arma su ficha
+  (`guardar_mi_ficha`, `artistas.perfil_id`) y sube temas en **/estudio**
+  ("Mi música" en el menú del usuario). Hasta 10 temas por artista.
+- **Carga inicial**: `scripts/cargar-musica.mjs` con una lista JSON que va
+  fuera del repo. Son temas de DJs reales, sin voz, de la carpeta de música
+  del usuario: se acreditan con su nombre real y la ficha no lleva bio
+  inventada.
+- `.gitignore` ignora `*.mp3`, `*.m4a`, `*.wav` y otros, como red de
+  seguridad.
+
 ## Diseño
 
 Revista **Artificial**. Estética **Gen X Soft Club, propuesta E · Collage**:
@@ -91,6 +113,9 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
 - Componentes: `Titular`, `TituloSeccion`, `ArticuloCard` (`destacado`),
   `EventoCard`, `Avatar` y `Codigo` (las columnas verticales del costado, hechas
   con slugs y fechas reales; solo desde 1280px).
+- Música: `Tocadiscos`, `Reproductor`, `BarraReproductor`, `LineaDeTiempo`
+  (un `range` nativo), `ListaCanciones` (temas con play, en la ficha del
+  artista y en /estudio), `SubirCancion`, `MisCanciones` y `FormularioFicha`.
 
 ### Layout
 - Contenedor `mx-auto max-w-6xl px-4`; lectura `max-w-3xl`/`max-w-4xl`;
@@ -98,9 +123,14 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
 - Header sin fondo: logo a la izquierda y solo cuatro opciones a la derecha:
   **Música, Eventos, Suscribete, Entrar**. No agregar más sin preguntar.
 - La portada es el nombre grande y, debajo, **Descubrimientos**: un tocadiscos
-  (`Tocadiscos.jsx`) con la lista de canciones de `src/lib/descubrimientos.js`
-  (ficticias, sin audio; no hay botón de play hasta que haya música). Después
-  van "Últimas notas", con la más nueva en grande, y "Lo que se viene".
+  (`Tocadiscos.jsx`) que toca los 10 temas más nuevos de la base. Suena de
+  verdad: el brazo baja y el disco gira cuando suena; sostener el disco pausa.
+  Sin temas en la base, queda quieto y sin botón de play. Después van
+  "Últimas notas", con la más nueva en grande, y "Lo que se viene".
+- **La música no se corta al navegar**: hay un solo `<audio>` en el layout
+  (`Reproductor.jsx`, con `useReproductor()`). Fuera de la portada aparece la
+  barra fija de abajo (`BarraReproductor.jsx`); en la portada manda el
+  tocadiscos. Nada suena solo al cargar la página.
 - Antes, la portada era un collage en una grilla de 12 columnas
   (`md:grid-cols-12`) con piezas que se superponen a propósito; en celular se
   apilan.

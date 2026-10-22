@@ -41,5 +41,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Audio: nunca al repo, que es público (CLAUDE.md, "Música: archivos de audio").
+# La música va en Supabase Storage.
+*.mp3
+*.mpeg
+*.m4a
+*.wav
+*.flac
+*.ogg
+
 # Mercado Pago wizard
 .mp-integrate-progress.md

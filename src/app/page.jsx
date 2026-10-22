@@ -2,16 +2,17 @@ import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
 import TituloSeccion from "@/components/TituloSeccion";
 import Tocadiscos from "@/components/Tocadiscos";
-import { getArticulos, getEventos, getTodosLosArtistas } from "@/lib/data";
-import { descubrimientos } from "@/lib/descubrimientos";
+import { getArticulos, getEventos } from "@/lib/data";
+import { getCancionesDescubrimientos } from "@/lib/musica";
 import { site } from "@/lib/site";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
 export const revalidate = 60;
 
 /**
- * Portada: el nombre grande y, debajo, Descubrimientos: un tocadiscos con la
- * lista de canciones. Es la señal de que esto es una revista de música.
+ * Portada: el nombre grande y, debajo, Descubrimientos: un tocadiscos que toca
+ * los últimos temas que subieron los artistas. Es la señal de que esto es una
+ * revista de música.
  * Después, las notas, con la más nueva primero y más grande; al final, la
  * agenda.
  *
@@ -19,26 +20,11 @@ export const revalidate = 60;
  * anuncian, no se venden, así que no se muestran precios.
  */
 export default async function Home() {
-  const [notas, eventos, artistas] = await Promise.all([
+  const [notas, eventos, canciones] = await Promise.all([
     getArticulos(),
     getEventos(),
-    getTodosLosArtistas(),
+    getCancionesDescubrimientos(),
   ]);
-
-  // Las canciones del disco. El nombre y el género del artista salen de la
-  // base; si un artista no existe, su canción no se muestra.
-  const porSlug = new Map(artistas.map((a) => [a.slug, a]));
-  const canciones = descubrimientos
-    .filter((c) => porSlug.has(c.artista))
-    .map((c) => ({
-      slug: c.slug,
-      tema: c.tema,
-      artista: porSlug.get(c.artista).nombre,
-      artistaSlug: c.artista,
-      duracion: c.duracion,
-      genero: porSlug.get(c.artista).genero,
-      portada: c.portada,
-    }));
 
   // Las notas ya vienen de la más nueva a la más vieja: la primera va grande.
   const [masNueva, ...siguientes] = notas;

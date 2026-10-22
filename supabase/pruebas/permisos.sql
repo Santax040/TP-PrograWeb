@@ -201,7 +201,8 @@ select 'Ana ve propuestas de Beto', case when count(*) = 0 then 'OK: no las ve' 
 set local role anon;
 select set_config('request.jwt.claims', '{"role":"anon"}', true);
 insert into resultados (prueba, resultado)
-select 'Visitante ve notas', count(*)::text || ' (deben ser 6 publicadas, sin el borrador)' from public.articulos;
+select 'Visitante ve el borrador de Ana', case when count(*) = 0 then 'OK: no lo ve' else 'FALLA' end
+from public.articulos where slug = 'nota-de-ana';
 insert into resultados (prueba, resultado)
 select 'Visitante ve perfiles', count(*)::text || ' (debe ser 0)' from public.perfiles;
 insert into resultados (prueba, resultado)
@@ -276,6 +277,98 @@ do $$ begin
 exception when insufficient_privilege then
   insert into resultados (prueba, resultado) values ('Beto (usuario) sube una portada', 'OK: rechazado');
 end $$;
+
+-- ===== Música =====
+-- Dani vuelve a ser artista, arma su ficha y sube un tema.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+select public.elegir_ser_artista(true);
+
+insert into resultados (prueba, resultado)
+select 'Dani crea su ficha', case when public.guardar_mi_ficha('Dani Ñandú', 'Minimal', 'Hola') = 'dani-nandu' then 'OK: slug dani-nandu' else 'FALLA' end;
+
+insert into resultados (prueba, resultado)
+select 'Dani edita su ficha (el slug no cambia)',
+  case when public.guardar_mi_ficha('Dani Otra', 'House', '') = 'dani-nandu' then 'OK' else 'FALLA' end;
+
+with s as (
+  insert into storage.objects (bucket_id, name, owner_id)
+  values ('musica', '00000000-0000-0000-0000-00000000000d/tema.mp3', '00000000-0000-0000-0000-00000000000d')
+  returning 1)
+insert into resultados (prueba, resultado) select 'Dani sube un audio en su carpeta', case when count(*) = 1 then 'OK' else 'FALLA' end from s;
+
+do $$ begin
+  insert into storage.objects (bucket_id, name) values ('musica', '00000000-0000-0000-0000-00000000000b/ajeno.mp3');
+  insert into resultados (prueba, resultado) values ('Dani sube audio en la carpeta de Beto', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani sube audio en la carpeta de Beto', 'OK: rechazado');
+end $$;
+
+with c as (
+  insert into public.canciones (slug, titulo, artista_id, duracion_seg, archivo, publicada, subida_por)
+  select 'tema-de-dani', 'Tema de Dani', id, 200, '00000000-0000-0000-0000-00000000000d/tema.mp3', false,
+    '00000000-0000-0000-0000-00000000000b'
+  from public.artistas where slug = 'dani-nandu'
+  returning subida_por)
+insert into resultados (prueba, resultado)
+select 'Dani guarda su tema (intenta firmarlo como Beto)',
+  case when subida_por = '00000000-0000-0000-0000-00000000000d' then 'OK: queda a nombre de Dani' else 'FALLA' end from c;
+
+do $$ begin
+  insert into public.canciones (slug, titulo, artista_id, duracion_seg, archivo)
+  select 'robado', 'Robado', id, 200, 'semilla/otro.mp3' from public.artistas where slug = 'dani-nandu';
+  insert into resultados (prueba, resultado) values ('Dani guarda un tema con archivo ajeno', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani guarda un tema con archivo ajeno', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into public.canciones (slug, titulo, artista_id, duracion_seg, archivo)
+  select 'a-nombre-de-otro', 'A nombre de otro', id, 200, '00000000-0000-0000-0000-00000000000d/x.mp3'
+  from public.artistas where slug = 'dj-perejil';
+  insert into resultados (prueba, resultado) values ('Dani sube un tema a la ficha de DJ Perejil', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani sube un tema a la ficha de DJ Perejil', 'OK: rechazado');
+end $$;
+
+insert into resultados (prueba, resultado)
+select 'Dani ve su tema oculto', case when count(*) = 1 then 'OK' else 'FALLA' end
+from public.canciones where slug = 'tema-de-dani';
+
+-- Beto, usuario común: ni ficha, ni audio, ni tocar el tema de Dani.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+
+do $$ begin
+  perform public.guardar_mi_ficha('Beto', 'Rock', '');
+  insert into resultados (prueba, resultado) values ('Beto (usuario) crea ficha de artista', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto (usuario) crea ficha de artista', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into storage.objects (bucket_id, name) values ('musica', '00000000-0000-0000-0000-00000000000b/mio.mp3');
+  insert into resultados (prueba, resultado) values ('Beto (usuario) sube audio', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto (usuario) sube audio', 'OK: rechazado');
+end $$;
+
+insert into resultados (prueba, resultado)
+select 'Beto ve el tema oculto de Dani', case when count(*) = 0 then 'OK: no lo ve' else 'FALLA' end
+from public.canciones where slug = 'tema-de-dani';
+
+insert into resultados (prueba, resultado)
+select 'Beto ve audios del bucket', count(*)::text || ' (debe ser 0)' from storage.objects where bucket_id = 'musica';
+
+-- Dani publica su tema: ahora lo ve cualquiera, pero el archivo no.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+update public.canciones set publicada = true where slug = 'tema-de-dani';
+
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+insert into resultados (prueba, resultado)
+select 'Visitante ve el tema publicado de Dani', case when count(*) = 1 then 'OK' else 'FALLA' end
+from public.canciones where slug = 'tema-de-dani';
+insert into resultados (prueba, resultado)
+select 'Visitante ve audios del bucket', count(*)::text || ' (debe ser 0)' from storage.objects where bucket_id = 'musica';
 
 reset role;
 select prueba, resultado from resultados order by n;

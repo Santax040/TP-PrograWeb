@@ -23,6 +23,13 @@ export function formatearFechaCorta(iso) {
   });
 }
 
+/** 408 → "6:48". Para la duración de los temas y el tiempo que va sonando. */
+export function formatearDuracion(segundos) {
+  const total = Math.max(0, Math.floor(segundos || 0));
+  const minutos = Math.floor(total / 60);
+  return `${minutos}:${String(total % 60).padStart(2, "0")}`;
+}
+
 export function formatearPrecio(pesos) {
   return pesos.toLocaleString("es-AR", {
     style: "currency",

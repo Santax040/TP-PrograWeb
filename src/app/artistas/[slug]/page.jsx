@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
+import ListaCanciones from "@/components/ListaCanciones";
 import TituloSeccion from "@/components/TituloSeccion";
 import {
   getArticulosDeArtista,
@@ -9,6 +10,7 @@ import {
   getEventosDeArtista,
   getTodosLosArtistas,
 } from "@/lib/data";
+import { getCancionesDeArtista } from "@/lib/musica";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
 export const revalidate = 60;
@@ -33,9 +35,10 @@ export default async function ArtistaPage({ params }) {
 
   if (!artista) notFound();
 
-  const [notas, fechas] = await Promise.all([
+  const [notas, fechas, temas] = await Promise.all([
     getArticulosDeArtista(slug),
     getEventosDeArtista(slug),
+    getCancionesDeArtista(slug),
   ]);
 
   return (
@@ -49,6 +52,13 @@ export default async function ArtistaPage({ params }) {
         </h1>
         <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/85">{artista.bio}</p>
       </header>
+
+      {temas.length > 0 && (
+        <section className="mt-20">
+          <TituloSeccion titulo="Escuchá" />
+          <ListaCanciones canciones={temas} />
+        </section>
+      )}
 
       {fechas.length > 0 && (
         <section className="mt-20">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { elegirArtista } from "@/app/configuracion/acciones";
 
 /**
@@ -21,9 +22,14 @@ export default function FormularioArtista({ esArtista }) {
         <h2 className="rotulo text-sm text-cobalto">Tipo de cuenta</h2>
         <p className="mt-2 leading-relaxed text-marino">
           {artista
-            ? "Tu cuenta es de artista. Cuando la revista tenga carga de música, vas a poder subir la tuya."
-            : "¿Hacés música? Pasá tu cuenta a artista: cuando la revista tenga carga de música, vas a poder subir la tuya."}
+            ? "Tu cuenta es de artista: podés subir tus temas al tocadiscos de la revista."
+            : "¿Hacés música? Pasá tu cuenta a artista y subí tus temas al tocadiscos de la revista."}
         </p>
+        {artista && (
+          <Link href="/estudio" className="etiqueta mt-3 text-cobalto hover:text-marino">
+            Ir a Mi música
+          </Link>
+        )}
       </div>
 
       {estado.error && (

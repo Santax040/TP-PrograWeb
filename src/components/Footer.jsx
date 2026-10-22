@@ -18,8 +18,9 @@ export default function Footer() {
               </Link>
             </p>
             <p className="mt-3 text-sm leading-relaxed text-humo">
-              Trabajo práctico de Programación Web. Todo el contenido, los artistas y los lugares
-              son ficticios.
+              Trabajo práctico de Programación Web. Las notas, los eventos y los lugares son
+              ficticios. La música del tocadiscos es de sus artistas, que figuran con su nombre
+              real, y está acá solo con fines educativos.
             </p>
           </div>
           <p className="etiqueta text-marino">Buenos Aires {new Date().getFullYear()}</p>
