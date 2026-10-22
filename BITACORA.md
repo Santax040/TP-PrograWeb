@@ -74,6 +74,17 @@ Se trabajó en siete partes, una por vez, con el OK del usuario entre cada una.
 - Un tema oculto da 404 a un visitante; el bucket sin firma responde 400.
 - Todo lo de prueba (tonos, cuenta, ficha) se borró de la base y del bucket.
 
+### Publicado
+Push `57933ce..8d63e8d` a `main`. El deploy de Vercel tardó alrededor de un
+minuto. En `revista-digital-musica.vercel.app`: la portada muestra los temas y
+el footer nuevo, la ruta de audio responde 302 a un link firmado (la
+`SUPABASE_SECRET_KEY` de Vercel funciona) y, en el navegador,
+"Afterthoughts" sonó con el brazo abajo.
+
+Esta copia del repo no tenía la identidad de git: se configuró solo en el
+repo (sin `--global`), con la misma de siempre (`Santax040` y el mail
+`noreply` de GitHub).
+
 ### ⚑ Para charlar
 - **[a decidir]** Derechos de la música: son temas comerciales de artistas
   reales, escuchables enteros por cualquiera que entre al sitio. El bucket
