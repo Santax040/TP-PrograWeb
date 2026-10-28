@@ -20,6 +20,64 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-10-28 (30) — Las notas exclusivas se protegen en la base, no en la página
+
+### Qué se pidió
+- Corrección del profesor: las notas para suscriptores se ocultaban solo en
+  la página, pero con la clave pública (que está en el JavaScript del sitio)
+  se leían completas pidiéndolas directo a la API de Supabase. "Lo estás
+  ocultando, no protegiendo." Arreglarlo con RLS: negar por defecto y servir
+  lo pago solo con sesión y suscripción vigente.
+- Revisar lo mismo en `perfiles` y `pagos`.
+
+### Qué se encontró
+- Confirmado en la base real: las 3 notas exclusivas publicadas salían
+  completas sin login. La política "ver notas" deja leer el `cuerpo` de toda
+  nota publicada, y la página lo mostraba entero aunque `pagosActivos` fuera
+  `true`.
+- `perfiles` y `pagos` **no** se leían sin login: RLS activado y sin
+  políticas para `anon` (probado como visitante y como usuario sin
+  suscripción). Pero `anon` tenía permisos de tabla de más (en `pagos`, hasta
+  `insert/update/delete`): lo único que lo frenaba era RLS.
+
+### Qué se hizo
+- **Base** (`20261028120000_notas_premium_y_negar_por_defecto.sql`): tabla
+  `articulos_premium` con el texto completo, que solo leen el suscriptor
+  vigente (si la nota está publicada), el autor y el admin. El trigger de
+  `articulos` deja en las exclusivas solo el primer párrafo (nada si tienen
+  uno solo). Se sacan los permisos de `anon` sobre `perfiles`, `pagos`,
+  `compras` y `envios`, y los de escritura de más de `authenticated`.
+- **Página de la nota**: sigue estática con el adelanto; `CuerpoPremium`
+  pide el texto completo con la sesión de quien mira y, si la base no lo da,
+  muestra el cartel para entrar o suscribirse. `ParrafosNota` arma los
+  párrafos para las dos.
+- **Redacción**: guarda y carga el texto completo de `articulos_premium`.
+- **Pruebas** (`permisos.sql`): 16 casos nuevos; "Visitante ve perfiles" y
+  "Visitante ve propuestas" ahora esperan que la base rechace la consulta.
+- Se commitea también `20261022142347_disqueria.sql`, que ya estaba aplicada
+  en la base y las pruebas la usan. El resto de la disquería (estudio,
+  configuración, `FormularioDerechos`) sigue sin commitear.
+
+### Verificado
+- `permisos.sql` completo (97 casos) más la migración, en la base real
+  dentro de una transacción con rollback: pasan los 97. Después se confirmó
+  que no quedó nada aplicado.
+- `eslint` sin errores. En `localhost:3000` la nota exclusiva carga y muestra
+  el cartel de suscripción.
+
+### ⚑ Para charlar
+- **[a decidir]** La migración no está aplicada todavía: el permiso para
+  aplicar migraciones con el conector de Supabase quedó bloqueado y hay que
+  darlo a mano. Aplicarla **antes** de subir este commit: si el sitio sale
+  primero, Redacción falla al guardar notas exclusivas.
+- **[a decidir]** El adelanto es un párrafo. En una nota de tres, se ve un
+  tercio.
+- **[atajo]** No se probó en el navegador leer como suscriptor ni guardar
+  una nota exclusiva desde Redacción: haría falta una cuenta de prueba en el
+  Supabase real. Lo cubren las pruebas de permisos, no la pantalla.
+
+---
+
 ## 2026-10-22 (29) — Música de verdad: artistas que suben temas y un tocadiscos que suena
 
 ### Qué se pidió

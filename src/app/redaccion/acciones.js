@@ -95,6 +95,11 @@ export async function guardarNota(_estado, formData) {
   let slug;
 
   if (id) {
+    // Al hacerla exclusiva, el texto completo se guarda primero: el trigger
+    // recorta `articulos.cuerpo` al adelanto y no tiene que perderse nada.
+    if (fila.premium && !(await guardarTextoExclusivo(supabase, id, true, cuerpo))) {
+      return { error: "No se pudo guardar. Probá de nuevo." };
+    }
     const { data, error } = await supabase
       .from("articulos")
       .update(fila)
@@ -104,6 +109,8 @@ export async function guardarNota(_estado, formData) {
     if (error) return { error: "No se pudo guardar. Probá de nuevo." };
     if (!data) return { error: "Esta nota no existe o no es tuya." };
     slug = data.slug;
+    // Al dejar de ser exclusiva, el texto completo ya volvió a `articulos`.
+    if (!fila.premium) await guardarTextoExclusivo(supabase, id, false);
   } else {
     // La dirección de la nota sale del título y no cambia después, para no
     // romper links. Si ya existe, se le agrega un sufijo.
@@ -122,6 +129,9 @@ export async function guardarNota(_estado, formData) {
       if (error.code !== "23505") return { error: "No se pudo guardar. Probá de nuevo." };
     }
     if (!articuloId) return { error: "Ya hay una nota con ese título. Cambialo un poco." };
+    if (fila.premium && !(await guardarTextoExclusivo(supabase, articuloId, true, cuerpo))) {
+      return { error: "La nota se creó, pero no su texto exclusivo. Abrila desde Redacción y guardala de nuevo." };
+    }
   }
 
   // --- Artistas con ficha: se reemplaza la lista completa --------------------
@@ -142,6 +152,21 @@ export async function guardarNota(_estado, formData) {
     estado,
     slug,
   };
+}
+
+/**
+ * El texto completo de una nota exclusiva va en `articulos_premium`, que solo
+ * leen los suscriptores (lo decide la base). En `articulos.cuerpo` el trigger
+ * deja solo el adelanto. Si la nota deja de ser exclusiva, se borra de ahí.
+ *
+ * @returns {Promise<boolean>} Si se guardó.
+ */
+async function guardarTextoExclusivo(supabase, articuloId, premium, cuerpo) {
+  const { error } = premium
+    ? await supabase.from("articulos_premium").upsert({ articulo_id: articuloId, cuerpo })
+    : await supabase.from("articulos_premium").delete().eq("articulo_id", articuloId);
+  if (error) console.error("No se pudo guardar el texto exclusivo", articuloId, error);
+  return !error;
 }
 
 export async function borrarNota(formData) {

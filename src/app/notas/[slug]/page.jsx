@@ -1,8 +1,10 @@
 import Link from "next/link";
+import CuerpoPremium from "@/components/CuerpoPremium";
 import FondoPortada from "@/components/FondoPortada";
+import ParrafosNota from "@/components/ParrafosNota";
 import { notFound } from "next/navigation";
 import { getArticulo, getArticulos, getArtistas } from "@/lib/data";
-import { categorias, pagosActivos } from "@/lib/site";
+import { categorias } from "@/lib/site";
 import { formatearFecha } from "@/lib/formato";
 
 // Vuelve a consultar la base como mucho una vez por minuto.
@@ -73,29 +75,13 @@ export default async function NotaPage({ params }) {
           </p>
         </header>
 
-        {/* Mientras no haya pagos, la nota premium se lee completa, pero se
-            avisa y se ofrece el camino para suscribirse. */}
-        {articulo.premium && !pagosActivos && (
-          <aside className="cartel mt-12 px-6 py-5">
-            <p className="font-titular text-lg font-light">
-              Nota exclusiva, abierta por ahora
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">
-              Cuando se activen los pagos va a ser solo para suscriptores.{" "}
-              <Link href="/suscribite" className="text-cian underline underline-offset-4">
-                Mirá los planes →
-              </Link>
-            </p>
-          </aside>
+        {/* En una nota exclusiva, la base solo deja leer el adelanto; el
+            texto completo lo pide CuerpoPremium con la sesión de quien mira. */}
+        {articulo.premium ? (
+          <CuerpoPremium articuloId={articulo.id} adelanto={articulo.cuerpo} />
+        ) : (
+          <ParrafosNota parrafos={articulo.cuerpo} />
         )}
-
-        <div className="mt-12 flex flex-col gap-6 text-lg leading-[1.75] text-marino">
-          {articulo.cuerpo.map((parrafo, i) => (
-            <p key={i} className={i === 0 ? "capitular" : undefined}>
-              {parrafo}
-            </p>
-          ))}
-        </div>
 
         {(artistas.length > 0 || articulo.artistasMencionados.length > 0) && (
           <section className="mt-20 border-t border-white/80 pt-10">

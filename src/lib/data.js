@@ -17,10 +17,12 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
  * campos tiene cada cosa.
  *
  * @typedef {Object} Articulo
+ * @property {number} id
  * @property {string} slug
  * @property {string} titulo
  * @property {string} bajada
- * @property {string[]} cuerpo - Un string por párrafo.
+ * @property {string[]} cuerpo - Un string por párrafo. En las notas exclusivas
+ *   es solo el adelanto: el texto completo está en `articulos_premium`.
  * @property {"musica"} categoria - Hoy hay una sola sección (ver `categorias` en site.js).
  * @property {string} autor - Firma que se muestra.
  * @property {string} fecha - Formato AAAA-MM-DD.
@@ -55,7 +57,7 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
 // La base usa snake_case (minutos_lectura); el código, camelCase.
 
 const COLUMNAS_ARTICULO = `
-  slug, titulo, bajada, cuerpo, categoria, firma, fecha, minutos_lectura,
+  id, slug, titulo, bajada, cuerpo, categoria, firma, fecha, minutos_lectura,
   destacado, premium, portada, portada_url, artistas_mencionados,
   articulo_artistas ( artistas ( slug ) )
 `;
@@ -70,6 +72,7 @@ const COLUMNAS_ARTISTA = "slug, nombre, genero, bio";
 /** @returns {Articulo} */
 function aArticulo(fila) {
   return {
+    id: fila.id,
     slug: fila.slug,
     titulo: fila.titulo,
     bajada: fila.bajada,

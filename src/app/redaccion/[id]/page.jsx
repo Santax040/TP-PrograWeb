@@ -29,6 +29,18 @@ export default async function EditarNotaPage({ params, searchParams }) {
   // Un publicador ve las notas publicadas de otros, pero no las puede editar.
   if (!nota || (!esAdmin && nota.autor_id !== user.id)) notFound();
 
+  // En una nota exclusiva, `articulos.cuerpo` es solo el adelanto: el texto
+  // completo está en `articulos_premium` (el autor y el admin lo pueden leer).
+  let cuerpo = nota.cuerpo;
+  if (nota.premium) {
+    const { data: exclusivo } = await supabase
+      .from("articulos_premium")
+      .select("cuerpo")
+      .eq("articulo_id", nota.id)
+      .maybeSingle();
+    if (exclusivo) cuerpo = exclusivo.cuerpo;
+  }
+
   const { data: artistas } = await supabase.from("artistas").select("slug, nombre").order("nombre");
 
   return (
@@ -45,7 +57,7 @@ export default async function EditarNotaPage({ params, searchParams }) {
       <EditorNota
         nota={{
           ...nota,
-          cuerpo: parrafosATexto(nota.cuerpo),
+          cuerpo: parrafosATexto(cuerpo),
           // Los con ficha y los escritos a mano, todos como nombres.
           artistas: [
             ...nota.articulo_artistas.map((r) => r.artistas.nombre),

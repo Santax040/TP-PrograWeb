@@ -160,8 +160,16 @@ end $$;
 -- ===== Como Dani (usuaria que se hace artista) =====
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
 
+do $$ begin
+  perform public.elegir_ser_artista(true);
+  insert into resultados (prueba, resultado) values ('Dani se pasa a artista sin aceptar la declaración', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani se pasa a artista sin aceptar la declaración', 'OK: rechazado');
+end $$;
+
 insert into resultados (prueba, resultado)
-select 'Dani elige ser artista', case when public.elegir_ser_artista(true) = 'artista' then 'OK' else 'FALLA' end;
+select 'Dani elige ser artista (acepta la declaración)',
+  case when public.elegir_ser_artista(true, true) = 'artista' then 'OK' else 'FALLA' end;
 
 do $$ begin
   insert into public.articulos (slug, titulo, categoria) values ('nota-de-dani', 'Nota de Dani', 'musica');
@@ -203,10 +211,20 @@ select set_config('request.jwt.claims', '{"role":"anon"}', true);
 insert into resultados (prueba, resultado)
 select 'Visitante ve el borrador de Ana', case when count(*) = 0 then 'OK: no lo ve' else 'FALLA' end
 from public.articulos where slug = 'nota-de-ana';
-insert into resultados (prueba, resultado)
-select 'Visitante ve perfiles', count(*)::text || ' (debe ser 0)' from public.perfiles;
-insert into resultados (prueba, resultado)
-select 'Visitante ve propuestas', count(*)::text || ' (debe ser 0)' from public.envios;
+-- Desde "negar por defecto" (2026-10-28) el visitante ni siquiera puede
+-- consultar estas tablas: la base rechaza la consulta, no devuelve 0 filas.
+do $$ begin
+  perform 1 from public.perfiles;
+  insert into resultados (prueba, resultado) values ('Visitante ve perfiles', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante ve perfiles', 'OK: rechazado');
+end $$;
+do $$ begin
+  perform 1 from public.envios;
+  insert into resultados (prueba, resultado) values ('Visitante ve propuestas', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante ve propuestas', 'OK: rechazado');
+end $$;
 
 do $$ begin
   insert into public.envios (tipo, titulo) values ('nota', 'Sin login');
@@ -279,9 +297,12 @@ exception when insufficient_privilege then
 end $$;
 
 -- ===== Música =====
--- Dani vuelve a ser artista, arma su ficha y sube un tema.
+-- Dani vuelve a ser artista (la declaración ya la aceptó antes), arma su
+-- ficha y sube un tema.
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
-select public.elegir_ser_artista(true);
+insert into resultados (prueba, resultado)
+select 'Dani vuelve a ser artista sin repetir la declaración',
+  case when public.elegir_ser_artista(true) = 'artista' then 'OK' else 'FALLA' end;
 
 insert into resultados (prueba, resultado)
 select 'Dani crea su ficha', case when public.guardar_mi_ficha('Dani Ñandú', 'Minimal', 'Hola') = 'dani-nandu' then 'OK: slug dani-nandu' else 'FALLA' end;
@@ -369,6 +390,305 @@ select 'Visitante ve el tema publicado de Dani', case when count(*) = 1 then 'OK
 from public.canciones where slug = 'tema-de-dani';
 insert into resultados (prueba, resultado)
 select 'Visitante ve audios del bucket', count(*)::text || ' (debe ser 0)' from storage.objects where bucket_id = 'musica';
+
+-- ===== Disquería =====
+-- Dani pone precio. No puede inflar las ventas, retirar a mano ni habilitarse
+-- la venta sin conectar Mercado Pago.
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+
+with u as (
+  update public.canciones set precio = 500, ventas = 99, retirada_en = now()
+  where slug = 'tema-de-dani' returning precio, ventas, retirada_en)
+insert into resultados (prueba, resultado)
+select 'Dani pone precio (intenta inflar ventas y retirar a mano)',
+  case when precio = 500 and ventas = 0 and retirada_en is null then 'OK: solo cambia el precio' else 'FALLA' end from u;
+
+do $$ begin
+  update public.canciones set precio = 50 where slug = 'tema-de-dani';
+  insert into resultados (prueba, resultado) values ('Precio de $50 (menos del mínimo)', 'FALLA: lo permitió');
+exception when check_violation then
+  insert into resultados (prueba, resultado) values ('Precio de $50 (menos del mínimo)', 'OK: rechazado');
+end $$;
+
+update public.artistas set puede_vender = true where slug = 'dani-nandu';
+insert into resultados (prueba, resultado)
+select 'Dani se habilita la venta a mano', case when not puede_vender then 'OK: sigue sin poder vender' else 'FALLA' end
+from public.artistas where slug = 'dani-nandu';
+
+do $$ begin
+  perform public.guardar_cuenta_mp('00000000-0000-0000-0000-00000000000d', 1, 'x', 'x', 'x', now());
+  insert into resultados (prueba, resultado) values ('Dani guarda una cuenta de Mercado Pago', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani guarda una cuenta de Mercado Pago', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  perform 1 from privado.cuentas_mp;
+  insert into resultados (prueba, resultado) values ('Dani lee las cuentas de Mercado Pago', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani lee las cuentas de Mercado Pago', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  perform public.acreditar_compra(1, '00000000-0000-0000-0000-00000000000d', 1, 1);
+  insert into resultados (prueba, resultado) values ('Dani acredita una compra', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Dani acredita una compra', 'OK: rechazado');
+end $$;
+
+-- Beto no puede bajar gratis un tema pago ni anotarse compras.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+
+do $$ begin
+  perform public.obtener_gratis((select id from public.canciones where slug = 'tema-de-dani'));
+  insert into resultados (prueba, resultado) values ('Beto baja gratis un tema pago', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto baja gratis un tema pago', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into public.compras (usuario_id, cancion_id, monto)
+  select '00000000-0000-0000-0000-00000000000b', id, 0 from public.canciones where slug = 'tema-de-dani';
+  insert into resultados (prueba, resultado) values ('Beto se anota una compra', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto se anota una compra', 'OK: rechazado');
+end $$;
+
+-- Dani lo pone gratis y Beto lo baja (dos veces: cuenta una).
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+update public.canciones set precio = 0 where slug = 'tema-de-dani';
+
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+select public.obtener_gratis(id) from public.canciones where slug = 'tema-de-dani';
+select public.obtener_gratis(id) from public.canciones where slug = 'tema-de-dani';
+insert into resultados (prueba, resultado)
+select 'Beto baja el tema gratis (dos veces)',
+  case when ventas = 1 then 'OK: una venta' else 'FALLA: ' || ventas end
+from public.canciones where slug = 'tema-de-dani';
+insert into resultados (prueba, resultado)
+select 'Beto ve sus compras', count(*)::text || ' (debe ser 1)' from public.compras;
+
+-- Dani ve cuánto vendió, pero no quién compró.
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Dani ve las compras de Beto', count(*)::text || ' (debe ser 0)' from public.compras;
+insert into resultados (prueba, resultado)
+select 'Dani ve sus ventas', case when sum(cantidad) = 1 then 'OK: 1 venta' else 'FALLA' end from public.mis_ventas();
+
+-- Un tema vendido no se borra: se retira y no vuelve a mostrarse.
+do $$ begin
+  delete from public.canciones where slug = 'tema-de-dani';
+  insert into resultados (prueba, resultado) values ('Dani borra un tema vendido', 'FALLA: lo permitió');
+exception when foreign_key_violation then
+  insert into resultados (prueba, resultado) values ('Dani borra un tema vendido', 'OK: rechazado (se retira)');
+end $$;
+
+select public.retirar_cancion(id) from public.canciones where slug = 'tema-de-dani';
+update public.canciones set publicada = true where slug = 'tema-de-dani';
+insert into resultados (prueba, resultado)
+select 'Dani retira el tema e intenta volver a mostrarlo',
+  case when not publicada and retirada_en is not null then 'OK: sigue retirado' else 'FALLA' end
+from public.canciones where slug = 'tema-de-dani';
+
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Beto conserva el tema retirado', count(*)::text || ' (debe ser 1)' from public.compras;
+
+do $$ begin
+  perform public.retirar_cancion((select cancion_id from public.compras limit 1));
+  insert into resultados (prueba, resultado) values ('Beto retira un tema ajeno', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto retira un tema ajeno', 'OK: rechazado');
+end $$;
+
+-- Un artista de antes de la declaración no sube hasta aceptarla.
+reset role;
+update public.perfiles set derechos_aceptados_en = null where id = '00000000-0000-0000-0000-00000000000d';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+
+do $$ begin
+  insert into storage.objects (bucket_id, name) values ('musica', '00000000-0000-0000-0000-00000000000d/otro.mp3');
+  insert into resultados (prueba, resultado) values ('Artista sin declaración sube audio', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Artista sin declaración sube audio', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into public.canciones (slug, titulo, artista_id, duracion_seg, archivo)
+  select 'sin-declaracion', 'Sin declaración', id, 200, '00000000-0000-0000-0000-00000000000d/otro.mp3'
+  from public.artistas where slug = 'dani-nandu';
+  insert into resultados (prueba, resultado) values ('Artista sin declaración guarda un tema', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Artista sin declaración guarda un tema', 'OK: rechazado');
+end $$;
+
+insert into resultados (prueba, resultado)
+select 'Dani acepta la declaración', case when public.aceptar_derechos() is not null then 'OK' else 'FALLA' end;
+
+-- El servidor (clave secreta) acredita un pago: dos avisos del mismo pago
+-- cuentan una sola venta. Y guarda la cuenta de Mercado Pago de Dani.
+reset role;
+select set_config('request.jwt.claims', '', true);
+update public.canciones set precio = 1000, retirada_en = null, publicada = true where slug = 'tema-de-dani';
+select public.acreditar_compra(777, '00000000-0000-0000-0000-00000000000a', id, 1500) from public.canciones where slug = 'tema-de-dani';
+select public.acreditar_compra(777, '00000000-0000-0000-0000-00000000000a', id, 1500) from public.canciones where slug = 'tema-de-dani';
+insert into resultados (prueba, resultado)
+select 'Servidor acredita el mismo pago dos veces',
+  case when ventas = 2 then 'OK: suma una venta' else 'FALLA: ' || ventas end
+from public.canciones where slug = 'tema-de-dani';
+
+select public.guardar_cuenta_mp('00000000-0000-0000-0000-00000000000d', 123, 'tok', 'ref', 'pub', now() + interval '180 days');
+insert into resultados (prueba, resultado)
+select 'Servidor conecta Mercado Pago de Dani', case when puede_vender then 'OK: puede vender' else 'FALLA' end
+from public.artistas where slug = 'dani-nandu';
+
+do $$ begin
+  perform public.guardar_cuenta_mp('00000000-0000-0000-0000-00000000000b', 124, 'tok', 'ref', 'pub', now());
+  insert into resultados (prueba, resultado) values ('Servidor conecta Mercado Pago de Beto (no es artista)', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Servidor conecta Mercado Pago de Beto (no es artista)', 'OK: rechazado');
+end $$;
+
+-- Dani deja de ser artista: deja de vender y se borra su conexión.
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000d","role":"authenticated"}', true);
+select public.elegir_ser_artista(false);
+reset role;
+insert into resultados (prueba, resultado)
+select 'Dani deja de ser artista: deja de vender',
+  case when not a.puede_vender and not exists (select 1 from privado.cuentas_mp where perfil_id = a.perfil_id)
+    then 'OK' else 'FALLA' end
+from public.artistas a where slug = 'dani-nandu';
+
+-- ===== Notas exclusivas y negar por defecto =====
+-- Una nota exclusiva publicada y una en borrador, de la redacción, con tres
+-- párrafos. El trigger tiene que dejar en `articulos` solo el primero.
+reset role;
+select set_config('request.jwt.claims', '', true);
+insert into public.articulos (slug, titulo, categoria, cuerpo, premium, estado)
+values
+  ('exclusiva-prueba', 'Exclusiva', 'musica', array['uno', 'dos', 'tres'], true, 'publicada'),
+  ('exclusiva-borrador', 'Exclusiva en borrador', 'musica', array['uno', 'dos', 'tres'], true, 'borrador');
+insert into public.articulos_premium (articulo_id, cuerpo)
+select id, array['uno', 'dos', 'tres'] from public.articulos where slug in ('exclusiva-prueba', 'exclusiva-borrador');
+create temp table ids_exclusivas as
+select slug, id from public.articulos where slug in ('exclusiva-prueba', 'exclusiva-borrador');
+grant select on ids_exclusivas to authenticated, anon;
+insert into public.pagos (id, usuario_id, plan, monto)
+values (999001, '00000000-0000-0000-0000-00000000000a', 'mensual', 3500);
+-- Beto arranca sin suscripción.
+update public.perfiles set plan = 'libre', suscripcion_hasta = null where id = '00000000-0000-0000-0000-00000000000b';
+
+insert into resultados (prueba, resultado)
+select 'Exclusiva: en articulos queda solo el adelanto',
+  case when cuerpo = array['uno'] then 'OK' else 'FALLA: ' || array_to_string(cuerpo, '/') end
+from public.articulos where slug = 'exclusiva-prueba';
+
+insert into public.articulos (slug, titulo, categoria, cuerpo, premium, estado)
+values ('exclusiva-corta', 'Exclusiva corta', 'musica', array['unico'], true, 'publicada');
+insert into resultados (prueba, resultado)
+select 'Exclusiva de un párrafo: en articulos no queda nada',
+  case when cardinality(cuerpo) = 0 then 'OK' else 'FALLA' end
+from public.articulos where slug = 'exclusiva-corta';
+
+-- Visitante
+set local role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', true);
+do $$ begin
+  perform 1 from public.articulos_premium;
+  insert into resultados (prueba, resultado) values ('Visitante lee texto exclusivo', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante lee texto exclusivo', 'OK: rechazado');
+end $$;
+insert into resultados (prueba, resultado)
+select 'Visitante lee el cuerpo de la exclusiva en articulos',
+  case when cardinality(cuerpo) = 1 then 'OK: solo el adelanto' else 'FALLA' end
+from public.articulos where slug = 'exclusiva-prueba';
+do $$ begin
+  perform 1 from public.pagos;
+  insert into resultados (prueba, resultado) values ('Visitante consulta pagos', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante consulta pagos', 'OK: rechazado');
+end $$;
+do $$ begin
+  perform 1 from public.compras;
+  insert into resultados (prueba, resultado) values ('Visitante consulta compras', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante consulta compras', 'OK: rechazado');
+end $$;
+do $$ begin
+  perform 1 from public.perfiles;
+  insert into resultados (prueba, resultado) values ('Visitante consulta perfiles', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Visitante consulta perfiles', 'OK: rechazado');
+end $$;
+
+-- Beto, logueado sin suscripción
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Beto (sin suscripción) lee texto exclusivo', count(*)::text || ' (debe ser 0)' from public.articulos_premium;
+insert into resultados (prueba, resultado)
+select 'Beto ve pagos ajenos', count(*)::text || ' (debe ser 0)' from public.pagos;
+
+do $$ begin
+  insert into public.pagos (id, usuario_id, plan, monto)
+  values (999002, '00000000-0000-0000-0000-00000000000b', 'anual', 1);
+  insert into resultados (prueba, resultado) values ('Beto se carga un pago', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto se carga un pago', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into public.compras (usuario_id, cancion_id, monto)
+  select '00000000-0000-0000-0000-00000000000b', id, 0 from public.canciones limit 1;
+  insert into resultados (prueba, resultado) values ('Beto se carga una compra', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto se carga una compra', 'OK: rechazado');
+end $$;
+
+do $$ begin
+  insert into public.articulos_premium (articulo_id, cuerpo)
+  select id, array['hackeado'] from public.articulos where slug = 'exclusiva-prueba'
+  on conflict (articulo_id) do update set cuerpo = excluded.cuerpo;
+  insert into resultados (prueba, resultado) values ('Beto edita el texto exclusivo', 'FALLA: lo permitió');
+exception when insufficient_privilege then
+  insert into resultados (prueba, resultado) values ('Beto edita el texto exclusivo', 'OK: rechazado');
+end $$;
+
+-- Beto con suscripción vigente (la acredita el servidor)
+reset role;
+update public.perfiles set plan = 'mensual', suscripcion_hasta = current_date + 30
+where id = '00000000-0000-0000-0000-00000000000b';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Beto (suscriptor) lee la exclusiva publicada',
+  case when cardinality(p.cuerpo) = 3 then 'OK: completa' else 'FALLA' end
+from public.articulos_premium p join public.articulos a on a.id = p.articulo_id
+where a.slug = 'exclusiva-prueba';
+-- El id sale de ids_exclusivas: Beto no ve el borrador en `articulos`, y
+-- buscarlo por ahí daría 0 aunque la política estuviera mal.
+insert into resultados (prueba, resultado)
+select 'Beto (suscriptor) lee el texto de una exclusiva en borrador', count(*)::text || ' (debe ser 0)'
+from public.articulos_premium p join ids_exclusivas i on i.id = p.articulo_id
+where i.slug = 'exclusiva-borrador';
+
+-- Beto con la suscripción vencida
+reset role;
+update public.perfiles set suscripcion_hasta = current_date - 1
+where id = '00000000-0000-0000-0000-00000000000b';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Beto (suscripción vencida) lee texto exclusivo', count(*)::text || ' (debe ser 0)' from public.articulos_premium;
+
+-- Admin lee el texto exclusivo (para editarlo)
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000c","role":"authenticated"}', true);
+insert into resultados (prueba, resultado)
+select 'Admin lee el texto exclusivo', count(*)::text || ' (al menos 2: las de prueba, más las reales)' from public.articulos_premium;
 
 reset role;
 select prueba, resultado from resultados order by n;

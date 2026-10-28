@@ -182,7 +182,7 @@ export default function EditorNota({ nota, artistas, esAdmin, aviso }) {
             <input type="checkbox" name="premium" defaultChecked={nota.premium} className="mt-1 accent-cobalto" />
             <span>
               Exclusiva para suscriptores
-              <span className="block text-xs text-humo">Por ahora se lee igual: no hay pagos.</span>
+              <span className="block text-xs text-humo">Completa, solo para suscriptores. Los demás leen solo el primer párrafo.</span>
             </span>
           </label>
 
