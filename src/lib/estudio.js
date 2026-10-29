@@ -30,6 +30,14 @@ export const largosFicha = {
   bio: 600,
 };
 
+/**
+ * Declaración de derechos: la aceptan los artistas antes de subir o vender
+ * (Configuración y /estudio). La base guarda la fecha
+ * (`perfiles.derechos_aceptados_en`).
+ */
+export const DECLARACION_DERECHOS =
+  "Declaro que la música que suba es de mi autoría o que tengo los derechos para publicarla y venderla, y autorizo a la revista a mostrarla, reproducirla y venderla en mi nombre.";
+
 /** "03 - Toman - Seguimos (Original Mix).mp3" → "Toman - Seguimos (Original Mix)" */
 export function tituloDesdeArchivo(nombre) {
   return String(nombre ?? "")

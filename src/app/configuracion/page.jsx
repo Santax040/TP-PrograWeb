@@ -35,7 +35,10 @@ export default async function ConfiguracionPage() {
           sus permisos (y la base tampoco se los deja). */}
       {puedeElegirArtista(perfil) && (
         <div className="mt-8">
-          <FormularioArtista esArtista={perfil.rol === "artista"} />
+          <FormularioArtista
+            esArtista={perfil.rol === "artista"}
+            yaAcepto={Boolean(perfil.derechos_aceptados_en)}
+          />
         </div>
       )}
 

@@ -40,15 +40,25 @@ export async function cambiarNombre(_estado, formData) {
 /**
  * Pasa la cuenta de usuario a artista o al revés. Lo hace la función
  * `elegir_ser_artista` de la base, que es la única que puede tocar el rol y
- * solo mueve entre esos dos.
+ * solo mueve entre esos dos. Para pasar a artista hay que aceptar la
+ * declaración de derechos (la primera vez; después queda guardada).
  */
 export async function elegirArtista(_estado, formData) {
   const quiero = formData.get("quiero") === "si";
+  const acepto = formData.get("acepto") === "si";
 
   const supabase = await crearClienteServidor();
-  const { data: rol, error } = await supabase.rpc("elegir_ser_artista", { quiero });
+  const { data: rol, error } = await supabase.rpc("elegir_ser_artista", {
+    quiero,
+    acepto_derechos: acepto,
+  });
 
-  if (error) return { error: "No se pudo cambiar el tipo de cuenta. Probá de nuevo." };
+  if (error) {
+    if (quiero && !acepto && error.code === "42501") {
+      return { error: "Para ser artista tenés que aceptar la declaración." };
+    }
+    return { error: "No se pudo cambiar el tipo de cuenta. Probá de nuevo." };
+  }
 
   revalidatePath("/perfil");
   revalidatePath("/configuracion");

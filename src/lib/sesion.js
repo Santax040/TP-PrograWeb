@@ -17,7 +17,7 @@ export async function obtenerSesion() {
 
   const { data: perfil } = await supabase
     .from("perfiles")
-    .select("nombre, rol, plan, suscripcion_hasta, creado_en, avatar_url")
+    .select("nombre, rol, plan, suscripcion_hasta, creado_en, avatar_url, derechos_aceptados_en")
     .eq("id", user.id)
     .maybeSingle();
 

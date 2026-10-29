@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import FormularioDerechos from "@/components/FormularioDerechos";
 import FormularioFicha from "@/components/FormularioFicha";
 import MisCanciones from "@/components/MisCanciones";
 import SubirCancion from "@/components/SubirCancion";
@@ -24,6 +25,7 @@ export default async function EstudioPage() {
   const { supabase, user, perfil } = await obtenerSesion();
   if (!user) redirect("/login?siguiente=/estudio");
   if (perfil?.rol !== "artista" && perfil?.rol !== "admin") redirect("/configuracion");
+  const aceptoDerechos = perfil.rol === "admin" || Boolean(perfil.derechos_aceptados_en);
 
   const { data: ficha } = await supabase
     .from("artistas")
@@ -38,6 +40,7 @@ export default async function EstudioPage() {
       .from("canciones")
       .select("id, slug, titulo, genero, duracion_seg, portada, publicada")
       .eq("artista_id", ficha.id)
+      .is("retirada_en", null)
       .order("creada_en", { ascending: false });
     canciones = (data ?? []).map((c) => ({
       id: c.id,
@@ -62,6 +65,9 @@ export default async function EstudioPage() {
       </header>
 
       <div className="flex flex-col gap-10">
+        {/* El admin no la necesita (la base lo exime). */}
+        {!aceptoDerechos && <FormularioDerechos />}
+
         {ficha && (
           <section aria-labelledby="mis-temas">
             <h2 id="mis-temas" className="mb-4 rotulo text-sm uppercase text-cobalto">
@@ -71,7 +77,7 @@ export default async function EstudioPage() {
           </section>
         )}
 
-        {ficha && (
+        {ficha && aceptoDerechos && (
           <SubirCancion generoFicha={ficha.genero} lleno={canciones.length >= TEMAS_POR_ARTISTA} />
         )}
 

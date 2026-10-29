@@ -38,6 +38,19 @@ function revalidarPublico(slug) {
   revalidatePath("/estudio");
 }
 
+/** Los artistas de antes de la declaración la aceptan acá antes de subir o vender. */
+export async function aceptarDerechos() {
+  const { supabase, user, perfil } = await obtenerSesion();
+  if (!user) return { error: "Se cerró tu sesión. Entrá de nuevo." };
+  if (!esArtista(perfil)) return { error: "Tu cuenta no es de artista." };
+
+  const { error } = await supabase.rpc("aceptar_derechos");
+  if (error) return { error: "No se pudo guardar. Probá de nuevo." };
+
+  revalidatePath("/estudio");
+  return { ok: "Listo." };
+}
+
 export async function guardarFicha(_estado, formData) {
   const { supabase, user, perfil } = await obtenerSesion();
   if (!user) return { error: "Se cerró tu sesión. Entrá de nuevo." };
@@ -100,10 +113,12 @@ export async function guardarCancion(datos) {
   const { data: enStorage } = await supabase.storage.from("musica").list(user.id, { search: nombre });
   if (!enStorage?.some((o) => o.name === nombre)) return { error: "El audio no terminó de subirse. Probá de nuevo." };
 
+  // Los retirados (borrados pero ya vendidos) no cuentan para el tope.
   const { count } = await supabase
     .from("canciones")
     .select("id", { count: "exact", head: true })
-    .eq("artista_id", ficha.id);
+    .eq("artista_id", ficha.id)
+    .is("retirada_en", null);
   if ((count ?? 0) >= TEMAS_POR_ARTISTA) {
     return { error: `Ya tenés ${TEMAS_POR_ARTISTA} temas. Borrá uno para subir otro.` };
   }
@@ -140,7 +155,11 @@ export async function cambiarVisibilidad(id, publicada) {
   return { ok: publicada ? "El tema se ve de nuevo." : "El tema quedó oculto." };
 }
 
-/** Borra el tema y su archivo. */
+/**
+ * Borra el tema y su archivo. Si ya se vendió, la base no deja borrarlo
+ * (los compradores lo tienen que poder bajar): se retira, queda oculto y el
+ * archivo se conserva.
+ */
 export async function borrarCancion(id) {
   const { supabase, user } = await obtenerSesion();
   if (!user) return { error: "Se cerró tu sesión. Entrá de nuevo." };
@@ -151,6 +170,14 @@ export async function borrarCancion(id) {
     .eq("id", id)
     .select("archivo, artistas ( slug )")
     .maybeSingle();
+
+  // 23503: lo frena la clave de `compras` (on delete restrict).
+  if (error?.code === "23503") {
+    const { error: errorRetiro } = await supabase.rpc("retirar_cancion", { p_cancion_id: id });
+    if (errorRetiro) return { error: "No se pudo borrar. Probá de nuevo." };
+    revalidarPublico();
+    return { ok: "Tema borrado. Quienes lo compraron lo siguen pudiendo bajar." };
+  }
   if (error || !data) return { error: "No se pudo borrar. Probá de nuevo." };
 
   // Si el archivo no se puede borrar, queda huérfano pero nadie lo escucha:
