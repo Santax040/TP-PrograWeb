@@ -20,6 +20,39 @@ Para encontrarlas todas, buscar "⚑".
 
 ---
 
+## 2026-11-03 (31) — Secciones separadas: Notas y Música
+
+### Qué se pidió
+Una sección nueva al lado de la que existía: la nueva se llama **Música** y la
+de antes pasa a llamarse **Notas**. Es el paso previo a cobrar cada tema.
+
+### Qué se hizo
+- **Header:** Notas (`/notas`), Música (`/musica`), Eventos, Suscribete,
+  Entrar. Son cinco opciones; CLAUDE.md actualizado.
+- **`/musica`:** todos los temas, del más nuevo al más viejo, con su artista
+  (`getTodasLasCanciones`, y `conArtista` en `ListaCanciones`). Se regenera al
+  subir, ocultar o borrar un tema.
+- **Arreglo en `Tocadiscos.jsx`:** si sonaba un tema que no está entre los 10
+  de la portada, al volver a la portada la barra se escondía y el tocadiscos no
+  lo mostraba: la música seguía y no había cómo pausarla. Ahora ese tema va
+  primero en la lista. El problema ya existía desde las fichas de artista.
+- **Corrección en la entrada (29):** decía que las teclas multimedia funcionan
+  y daba por hecho que se renueva un link vencido. Nunca se probaron.
+
+### Verificado en `localhost:3000`
+- Menú con los links nuevos; `/musica` con los 15 temas; sin scroll horizontal
+  en 1440px y 375px.
+- Suena desde `/musica` (Bullriding avanzó, la ruta de audio dio 302).
+- Disco Sole, que no está entre los 10: al volver a la portada sigue sonando,
+  primero en la lista, con el brazo abajo y "Levantar la púa".
+
+### ⚑ Para charlar
+- **[a decidir]** Las notas siguen con la etiqueta "Música" en la tarjeta y en
+  `/notas/categoria/musica`, porque es el nombre de su categoría. Ahora puede
+  confundirse con la sección nueva. No se tocó: cambiarlo es otra migración.
+
+---
+
 ## 2026-10-28 (30) — Las notas exclusivas se protegen en la base, no en la página
 
 ### Qué se pidió
@@ -114,9 +147,10 @@ Se trabajó en siete partes, una por vez, con el OK del usuario entre cada una.
 - **Ruta de audio** `/api/canciones/[id]/audio`: redirige (302, `no-store`)
   a un link firmado de 1 hora.
 - **Reproductor global** (`Reproductor.jsx`) en el layout, con barra fija
-  (`BarraReproductor.jsx`) fuera de la portada. Pasa solo al siguiente tema,
-  funciona con las teclas multimedia (Media Session) y, si el link venció
-  con el tema en pausa, pide uno nuevo y sigue desde donde estaba.
+  (`BarraReproductor.jsx`) fuera de la portada. Pasa solo al siguiente tema.
+  Tiene código para las teclas multimedia (Media Session) y para pedir un
+  link nuevo si el anterior venció con el tema en pausa; **ninguna de esas dos
+  cosas se probó**.
 - **Tocadiscos conectado**: el brazo y el giro siguen a la música; "Bajar la
   púa" / "Levantar la púa"; sostener el disco pausa y soltarlo sigue; línea
   de tiempo para adelantar. Se borró `src/lib/descubrimientos.js`.

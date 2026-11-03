@@ -65,12 +65,18 @@ function anguloDesdeCentro(evento, elemento) {
  * que no reproduce nada sería una promesa sin cumplir (DESENCUENTROS.md #1).
  *
  * @param {Object} props
- * @param {import("@/lib/musica").Cancion[]} props.canciones
+ * @param {import("@/lib/musica").Cancion[]} props.canciones - Los últimos temas.
  * @param {import("react").ReactNode} [props.intro] - Lo que va arriba de la lista.
  */
-export default function Tocadiscos({ canciones, intro }) {
+export default function Tocadiscos({ canciones: ultimas, intro }) {
   const reproductor = useReproductor();
   const reducir = useReducirMovimiento();
+
+  // Si suena un tema que no está entre los últimos (se eligió en /musica o en
+  // la ficha de un artista), va primero en la lista. En la portada no hay barra
+  // de abajo: sin esto, la música seguiría y no habría cómo pausarla.
+  const sonandoAfuera = reproductor.actual && !ultimas.some((c) => c.id === reproductor.actual.id);
+  const canciones = sonandoAfuera ? [reproductor.actual, ...ultimas] : ultimas;
 
   // El tema que muestra el plato: el que suena, si es de esta lista; si no,
   // el último que se eligió acá (al principio, el primero).

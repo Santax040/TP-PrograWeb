@@ -120,8 +120,10 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
 ### Layout
 - Contenedor `mx-auto max-w-6xl px-4`; lectura `max-w-3xl`/`max-w-4xl`;
   formularios `max-w-md`.
-- Header sin fondo: logo a la izquierda y solo cuatro opciones a la derecha:
-  **Música, Eventos, Suscribete, Entrar**. No agregar más sin preguntar.
+- Header sin fondo: logo a la izquierda y solo cinco opciones a la derecha:
+  **Notas, Música, Eventos, Suscribete, Entrar**. No agregar más sin preguntar.
+  Notas va a `/notas` y Música a `/musica`, la lista de todos los temas
+  (desde el 2026-11-03; antes "Música" llevaba a las notas).
 - La portada es el nombre grande y, debajo, **Descubrimientos**: un tocadiscos
   (`Tocadiscos.jsx`) que toca los 10 temas más nuevos de la base. Suena de
   verdad: el brazo baja y el disco gira cuando suena; sostener el disco pausa.

@@ -64,6 +64,11 @@ export async function getCancionesDescubrimientos(cantidad = 10) {
   return sinError(await cancionesPublicadas().limit(cantidad)).map(aCancion);
 }
 
+/** Todos los temas, para la sección Música. */
+export async function getTodasLasCanciones() {
+  return sinError(await cancionesPublicadas()).map(aCancion);
+}
+
 export async function getCancionesDeArtista(slug) {
   return sinError(await cancionesPublicadas().eq("artistas.slug", slug)).map(aCancion);
 }

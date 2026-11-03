@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useReproductor } from "@/components/Reproductor";
 
 /**
@@ -11,8 +12,10 @@ import { useReproductor } from "@/components/Reproductor";
  * @param {(cancion: import("@/lib/musica").Cancion) => import("react").ReactNode} [props.extra]
  *   Lo que va al final de cada renglón (los botones de /estudio). Solo desde
  *   componentes de cliente: una función no se puede pasar desde el servidor.
+ * @param {boolean} [props.conArtista] - Nombrar al artista, con link a su ficha.
+ *   En su propia ficha o en /estudio no hace falta.
  */
-export default function ListaCanciones({ canciones, extra }) {
+export default function ListaCanciones({ canciones, extra, conArtista = false }) {
   const { actual, sonando, tocar, pausar } = useReproductor();
   if (canciones.length === 0) return null;
 
@@ -35,6 +38,14 @@ export default function ListaCanciones({ canciones, extra }) {
             </button>
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium leading-snug text-marino">{cancion.tema}</p>
+              {conArtista && (
+                <Link
+                  href={`/artistas/${cancion.artistaSlug}`}
+                  className="block truncate text-sm text-cobalto hover:text-marino"
+                >
+                  {cancion.artista}
+                </Link>
+              )}
               <p className="mt-0.5 flex gap-3 rotulo text-xs uppercase text-humo">
                 <span>{cancion.duracion}</span>
                 <span className="truncate">{cancion.genero}</span>

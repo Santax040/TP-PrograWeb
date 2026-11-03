@@ -31,9 +31,10 @@ async function miFicha(supabase, userId) {
   return data;
 }
 
-/** Lo público que muestra temas: la portada y la ficha del artista. */
+/** Lo público que muestra temas: la portada, la sección Música y la ficha del artista. */
 function revalidarPublico(slug) {
   revalidatePath("/");
+  revalidatePath("/musica");
   if (slug) revalidatePath(`/artistas/${slug}`);
   revalidatePath("/estudio");
 }
