@@ -11,8 +11,8 @@ import { crearClienteNavegador } from "@/lib/supabase/navegador";
  * Parte del header que depende de quién está mirando.
  *
  * Visitante: un botón "Entrar" que despliega iniciar sesión y registrarse.
- * Logueado: su nombre, que despliega perfil, configuración y cerrar sesión
- * (y "Mi música" para artistas).
+ * Logueado: su nombre, que despliega perfil, sus compras, configuración y
+ * cerrar sesión (y "Mi música" para artistas).
  *
  * Es un componente de cliente a propósito. Si el header leyera la sesión en
  * el servidor, todas las páginas pasarían a generarse en cada visita; así
@@ -104,6 +104,7 @@ export default function MenuUsuario() {
         <Opcion href="/colabora">Mandar una nota</Opcion>
       )}
       {(perfil.rol === "artista" || perfil.rol === "admin") && <Opcion href="/estudio">Mi música</Opcion>}
+      <Opcion href="/compras">Mis compras</Opcion>
       <Opcion href="/configuracion">Configuración</Opcion>
       <Opcion onClick={salir}>Cerrar sesión</Opcion>
     </Desplegable>

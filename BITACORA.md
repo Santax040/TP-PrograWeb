@@ -18,6 +18,190 @@ Cada punto lleva su tipo:
 
 Para encontrarlas todas, buscar "⚑".
 
+**Prompts (desde el 2026-11-04).** Cada entrada guarda los mensajes del usuario
+tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
+"Respuesta (resumen)". Las entradas anteriores tienen solo el pedido resumido.
+
+---
+
+## 2026-11-04 (35) — Pago de canciones, parte 4: cobrar, y los prompts tal cual
+
+### Prompts (tal cual)
+> Que hiciste hasta ahora, y que te falta por hacer. Todo esto siempre lo estas guardando como prompts no?
+
+> Perfecto, pero en esencia queria que guardes casi todos los prompts y tus rtas asi de esa manera luego vemos cuales fueron los mejores y los peores, y poder hacer una revision de mis pedidos y tus rtas. Pero bueno entiendo que con lo que hayas sentido que habia que marcar vamos a estar bien. Estaria bueno q en bitacoras hubieses guardado tal cual los prompts pero ya esta, a partir de ahora guardalos tal cual pero bueno. Segui con la parte 4 y yo luego hago lo que tengo que cargar. No podes hacerlo vos?
+
+> Sí, publicá
+
+### Respuesta (resumen)
+- Los prompts no se venían guardando textuales; desde ahora sí (regla en CLAUDE.md
+  y en esta bitácora). Las entradas viejas no se reconstruyen.
+- **No puedo hacer lo del panel:** la cuenta de Mercado Pago es del usuario, puede
+  pedir validar identidad, y las claves secretas las carga a mano.
+- Se programó la parte 4 y se publicaron las cuatro partes juntas. Sin probar
+  contra Mercado Pago: faltan la aplicación y las credenciales.
+
+### Qué se hizo
+- **`/api/canciones/[id]/comprar`:** crea el pago con el token del artista. El
+  monto lo decide el servidor; con "pagá lo que quieras" valida mínimo y máximo.
+  Con monto 0 lo anota gratis. Bloquea tema propio, retirado o ya comprado.
+- **`src/lib/compras.js`:** consulta el pago en la cuenta del artista y lo acredita
+  si está aprobado y coinciden tema, moneda y monto.
+- **`/musica/resultado`:** resultado de la compra, con Descargar si salió bien.
+- **`/api/mercadopago/aviso`:** acredita pagos pendientes aunque el comprador no
+  vuelva. No confía en lo que recibe: solo dispara la consulta a Mercado Pago.
+- **Renovación de tokens** (`configDelVendedor`): a 7 días de vencer. Si ya venció
+  y Mercado Pago lo rechaza, desconecta al artista para que vuelva a conectar.
+
+### Verificado en `localhost:3000`
+Con cuentas de prueba y un token falso, ya borrados:
+- Sin sesión, comprar manda al login.
+- Montos 100 (bajo el mínimo de 300), 0, texto, decimal y 2.000.000: rechazados.
+  El monto válido llega hasta Mercado Pago, que rechaza el token falso.
+- Gratis y mínimo 0 con monto 0: quedan en Mis compras. No se vende, sin Mercado
+  Pago e inexistente: "no disponible". Ya comprado: va a Mis compras.
+- La URL no decide el resultado: `?error=approved` no muestra una compra hecha.
+- Aviso: vacío, mal formado u otro tipo, 200; si falla la consulta, 500 para que
+  Mercado Pago reintente.
+- Token por vencer sin poder renovar: se usa igual. Vencido y rechazado: el artista
+  queda desconectado.
+
+### Sin probar
+- **Un pago real de punta a punta**, ni la preferencia, ni acreditar un pago
+  aprobado, ni el formato real del aviso (la documentación no lo detalla para
+  `notification_url`). Hace falta la aplicación Marketplace.
+- Los dos últimos ajustes de la renovación (no renovar sin credenciales; desconectar
+  solo con 400) se escribieron después de esa prueba.
+
+### ⚑ Para charlar
+- **[atajo]** La renovación solo pasa cuando se usa el token: un artista sin ventas
+  en 180 días tiene que volver a conectar. Se resolvería con una tarea programada.
+- **[atajo]** Si el artista desconecta con un pago pendiente, ese pago no se acredita
+  solo; se lo avisa antes de desconectar. Queda a resolver a mano.
+- **[atajo]** Un reembolso no le quita el tema al comprador. Y si paga dos veces el
+  mismo tema (dos pagos pendientes), el segundo no queda registrado: habría que
+  devolverlo a mano.
+- **[rareza]** "Escribinos" en los mensajes de error no lleva a ningún contacto.
+- **[a decidir]** Revisar, antes de usar cuentas reales, si el sitio tiene que
+  avisar algo más al comprador: términos, devoluciones.
+
+---
+
+## 2026-11-04 (34) — Pago de canciones, parte 3: conectar Mercado Pago
+
+### Qué se pidió
+Que cada artista conecte su cuenta de Mercado Pago para cobrar directo.
+
+### Qué se hizo
+- **Bloque Cobros en /estudio** (`BloqueCobros`): conectar, desconectar y el aviso
+  de cómo salió. Solo con ficha y declaración de derechos aceptada.
+- **Rutas** `/api/mercadopago/conectar` y `/vuelta`, con `state` al azar en una
+  cookie `httpOnly`. La cuenta queda a nombre de quien tiene la sesión.
+- **`src/lib/mercadopago-cuentas.js`**: canjea el código y guarda los tokens en
+  `privado.cuentas_mp`. No usa la clase `OAuth` del SDK porque manda además el
+  token de las suscripciones, que puede ser de otra aplicación.
+- **Variables nuevas** en `.env.example`: `MP_CLIENT_ID`, `MP_CLIENT_SECRET`,
+  `MP_CUENTAS_DE_PRUEBA`.
+- La renovación de tokens queda para la parte 4, que es la primera que los usa.
+
+### Verificado en `localhost:3000`
+Con una cuenta de prueba y una conexión falsa, ya borradas:
+- Sin sesión, las dos rutas mandan al login. Sin credenciales, "todavía no
+  habilitó las conexiones". Con un `state` que no coincide, no se canjea nada.
+- Guardar la conexión habilita la venta; Desconectar borra los tokens y la
+  deshabilita. Un visitante anónimo no puede leer los tokens (42501).
+- Lint y build pasan.
+
+### Sin probar
+- **La conexión real con Mercado Pago.** Hace falta la aplicación Marketplace y
+  una Redirect URL pública: solo se puede probar en el sitio publicado.
+- Si `test_token` funciona como dice la documentación con usuarios de prueba.
+
+### ⚑ Para charlar
+- **[a decidir]** Hay que publicar las partes 3 y 4 juntas: con la 3 sola, un
+  artista conectado vería un botón Comprar que da 404.
+- **[rareza]** Según la documentación, la aplicación tiene que crearse con el
+  modelo Marketplace y la cuenta vendedora necesita "KYC nivel 6". Puede que la
+  aplicación actual, la de las suscripciones, no sirva.
+- **[rareza]** Si un artista desconecta su cuenta con un pago pendiente, no se
+  va a poder consultar ese pago. Hay que resolverlo en la parte 4.
+
+---
+
+## 2026-11-04 (33) — Pago de canciones, parte 2: comprar desde Música
+
+### Qué se pidió
+Seguir con los pagos: que cada tema muestre su precio y qué se puede hacer con él.
+
+### Qué se hizo
+- **`ListaConVenta`**, en `/musica` y en la ficha del artista: Comprar, Bajar
+  gratis o Descargar según el tema y quién mira. Junto al precio dice "La plata
+  va directo a [artista]". Con "pagá lo que quieras" hay un campo para el monto.
+- **Lo que ya tenés se consulta en el navegador**: las páginas siguen estáticas.
+- **Bajar gratis** (`src/app/musica/acciones.js`): sin sesión manda al login; con
+  sesión anota el tema en Mis compras y lo baja.
+- **Un tema pago de un artista sin Mercado Pago no muestra botón ni precio**:
+  todavía no se le puede comprar.
+
+### Verificado en `localhost:3000`
+Con cuentas de prueba, ya borradas:
+- Sin sesión ve precios y botones; "Bajar gratis" lo manda al login.
+- El comprador ve Descargar en lo suyo; lo gratis queda en Mis compras y baja;
+  un tema pago sin comprar da 403.
+- El artista ve Descargar en sus temas.
+- En 375px, sin scroll horizontal. Lint y build pasan.
+
+### Sin probar
+- **El botón Comprar todavía no lleva a ningún lado**: la ruta
+  `/api/canciones/[id]/comprar` es de la parte 4. Hoy no se ve en el sitio,
+  porque ningún artista puede conectar Mercado Pago hasta la parte 3.
+
+### ⚑ Para charlar
+- **[error]** El precio al lado del botón aplastaba el título en celular
+  ("Prueba libre 0" quedaba en una "l"). Se pasó a la línea de abajo.
+- **[atajo]** Para ver botones y precios hubo que publicar temas de prueba en la
+  base real durante unos minutos: el listado solo muestra los publicados.
+
+---
+
+## 2026-11-04 (32) — Pago de canciones, parte 1: precio, descarga y Mis compras
+
+### Qué se pidió
+Cobrar cada tema, de a partes. Se retoma el plan de la Disquería, pero **sin
+pestaña nueva**: se compra desde Música. Esta parte no necesita Mercado Pago.
+
+### Qué se hizo
+- **Precio en /estudio:** al subir y en cada tema ("Cambiar precio"): no se
+  vende, gratis, precio fijo o "pagá lo que quieras" (`CampoPrecio`,
+  `leerPrecio`, `cambiarPrecio`). Cada tema muestra sus ventas y lo recaudado.
+- **Descarga protegida:** `/api/canciones/[id]/descarga`.
+- **`/compras`:** "Mis compras" en el menú del usuario.
+- Sin cambios en la base: la migración de la disquería ya tenía todo.
+
+### Verificado en `localhost:3000`
+Con cuentas de prueba, ya borradas junto con sus temas y archivos (quedan los
+15 temas de siempre):
+- Sin sesión, la descarga y /compras mandan al login. Sin comprar, 403. Quien
+  compró baja el tema, aunque esté retirado; el artista baja el suyo.
+- Precios: fijo, mínimo y gratis se guardan; $50 se rechaza. Subir un tema con
+  $800 funcionó desde el formulario.
+- /estudio en 375px sin scroll horizontal. Lint y build pasan.
+
+### Sin probar
+- El nombre de archivo sin acentos se probó como función, no bajando un tema.
+- Comprar: todavía no hay botón (parte 2) ni cobro (partes 3 y 4).
+
+### ⚑ Para charlar
+- **[rareza]** La clave secreta no puede escribir `canciones`: da "permission
+  denied for schema privado". Parece venir del trigger, que desde la migración
+  de la disquería es "security invoker" y nombra funciones de `privado`, esquema
+  al que `service_role` no tiene acceso. Si es así, `scripts/cargar-musica.mjs`
+  ya no puede cargar temas. `acreditar_compra` no se ve afectada: se probó y anda.
+- **[rareza]** Storage codifica dos veces el nombre de descarga: "común" bajaba
+  como "com%C3%BAn". Por eso el archivo baja sin acentos.
+- **[atajo]** Mientras dura la prueba, un tema de prueba publicado se ve en el
+  sitio real: hay una sola base. Conviene que las próximas los suban ocultos.
+
 ---
 
 ## 2026-11-03 (31) — Secciones separadas: Notas y Música

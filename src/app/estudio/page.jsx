@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import BloqueCobros from "@/components/BloqueCobros";
 import FormularioDerechos from "@/components/FormularioDerechos";
 import FormularioFicha from "@/components/FormularioFicha";
 import MisCanciones from "@/components/MisCanciones";
@@ -21,7 +22,8 @@ export const metadata = {
  * Configuración, donde puede pasarse a artista. Es solo para no mostrar la
  * pantalla a quien no corresponde: lo que protege los datos es la base.
  */
-export default async function EstudioPage() {
+export default async function EstudioPage({ searchParams }) {
+  const { mp } = await searchParams;
   const { supabase, user, perfil } = await obtenerSesion();
   if (!user) redirect("/login?siguiente=/estudio");
   if (perfil?.rol !== "artista" && perfil?.rol !== "admin") redirect("/configuracion");
@@ -29,7 +31,7 @@ export default async function EstudioPage() {
 
   const { data: ficha } = await supabase
     .from("artistas")
-    .select("id, slug, nombre, genero, bio")
+    .select("id, slug, nombre, genero, bio, puede_vender")
     .eq("perfil_id", user.id)
     .maybeSingle();
 
@@ -38,10 +40,12 @@ export default async function EstudioPage() {
     // Con la sesión del artista: la base le muestra también sus temas ocultos.
     const { data } = await supabase
       .from("canciones")
-      .select("id, slug, titulo, genero, duracion_seg, portada, publicada")
+      .select("id, slug, titulo, genero, duracion_seg, portada, publicada, precio, paga_lo_que_quieras")
       .eq("artista_id", ficha.id)
       .is("retirada_en", null)
       .order("creada_en", { ascending: false });
+    const { data: ventas } = await supabase.rpc("mis_ventas");
+    const ventasPorTema = new Map((ventas ?? []).map((v) => [v.cancion_id, v]));
     canciones = (data ?? []).map((c) => ({
       id: c.id,
       slug: c.slug,
@@ -53,6 +57,10 @@ export default async function EstudioPage() {
       genero: c.genero || ficha.genero,
       portada: c.portada,
       publicada: c.publicada,
+      precio: c.precio,
+      pagaLoQueQuieras: c.paga_lo_que_quieras,
+      ventas: Number(ventasPorTema.get(c.id)?.cantidad ?? 0),
+      recaudado: Number(ventasPorTema.get(c.id)?.total ?? 0),
     }));
   }
 
@@ -73,9 +81,11 @@ export default async function EstudioPage() {
             <h2 id="mis-temas" className="mb-4 rotulo text-sm uppercase text-cobalto">
               Tus temas ({canciones.length} de {TEMAS_POR_ARTISTA})
             </h2>
-            <MisCanciones canciones={canciones} />
+            <MisCanciones canciones={canciones} conPrecio={aceptoDerechos} puedeCobrar={ficha.puede_vender} />
           </section>
         )}
+
+        {ficha && aceptoDerechos && <BloqueCobros conectado={ficha.puede_vender} resultado={mp} />}
 
         {ficha && aceptoDerechos && (
           <SubirCancion generoFicha={ficha.genero} lleno={canciones.length >= TEMAS_POR_ARTISTA} />

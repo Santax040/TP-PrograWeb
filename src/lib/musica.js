@@ -24,11 +24,14 @@ import { supabasePublico as db } from "@/lib/supabase/publico";
  * @property {number} duracionSeg - Para la línea de tiempo antes de que cargue el audio.
  * @property {string} genero - El del tema o, si no tiene, el del artista.
  * @property {string} portada - Clases de Tailwind del gradiente de la etiqueta.
+ * @property {number|null} precio - En pesos. Null: no se vende. 0: gratis. Con `pagaLoQueQuieras`, el mínimo.
+ * @property {boolean} pagaLoQueQuieras
+ * @property {boolean} puedeVender - Su artista conectó Mercado Pago.
  */
 
 const COLUMNAS_CANCION = `
-  id, slug, titulo, genero, duracion_seg, portada,
-  artistas!inner ( slug, nombre, genero )
+  id, slug, titulo, genero, duracion_seg, portada, precio, paga_lo_que_quieras,
+  artistas!inner ( slug, nombre, genero, puede_vender )
 `;
 
 /** @returns {Cancion} */
@@ -43,6 +46,9 @@ function aCancion(fila) {
     duracionSeg: fila.duracion_seg,
     genero: fila.genero || fila.artistas.genero,
     portada: fila.portada,
+    precio: fila.precio,
+    pagaLoQueQuieras: fila.paga_lo_que_quieras,
+    puedeVender: fila.artistas.puede_vender,
   };
 }
 

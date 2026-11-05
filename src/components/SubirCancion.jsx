@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { guardarCancion } from "@/app/estudio/acciones";
-import { largosCancion, PESO_MAXIMO, tituloDesdeArchivo, TIPOS_DE_AUDIO } from "@/lib/estudio";
+import CampoPrecio from "@/components/CampoPrecio";
+import { largosCancion, leerPrecio, PESO_MAXIMO, tituloDesdeArchivo, TIPOS_DE_AUDIO } from "@/lib/estudio";
 import { portadas } from "@/lib/redaccion";
 import { crearClienteNavegador } from "@/lib/supabase/navegador";
 
@@ -64,6 +65,7 @@ export default function SubirCancion({ generoFicha, lleno }) {
   const [archivo, setArchivo] = useState(null);
   const [titulo, setTitulo] = useState("");
   const [portada, setPortada] = useState(portadas[4].clases);
+  const [precio, setPrecio] = useState({ modo: "no-se-vende", monto: "" });
   const [progreso, setProgreso] = useState(null); // null = no está subiendo
   const [error, setError] = useState(null);
   const [ok, setOk] = useState(null);
@@ -93,6 +95,11 @@ export default function SubirCancion({ generoFicha, lleno }) {
     const genero = String(new FormData(e.currentTarget).get("genero") ?? "").trim();
     setError(null);
     setOk(null);
+
+    // Antes de subir: un precio mal escrito no tiene que gastar la subida.
+    const precioLeido = leerPrecio(precio.modo, precio.monto);
+    if (precioLeido.error) return setError(precioLeido.error);
+
     setProgreso(0);
 
     let duracion;
@@ -124,7 +131,15 @@ export default function SubirCancion({ generoFicha, lleno }) {
       return setError("No se pudo subir el audio. Probá de nuevo.");
     }
 
-    const resultado = await guardarCancion({ titulo, genero, portada, duracion, archivo: ruta });
+    const resultado = await guardarCancion({
+      titulo,
+      genero,
+      portada,
+      duracion,
+      archivo: ruta,
+      modoPrecio: precio.modo,
+      montoPrecio: precio.monto,
+    });
     setProgreso(null);
     if (resultado.error) {
       await supabase.storage.from("musica").remove([ruta]);
@@ -134,6 +149,7 @@ export default function SubirCancion({ generoFicha, lleno }) {
     setOk(resultado.ok);
     setArchivo(null);
     setTitulo("");
+    setPrecio({ modo: "no-se-vende", monto: "" });
     formulario.current?.reset();
     router.refresh();
   }
@@ -218,6 +234,8 @@ export default function SubirCancion({ generoFicha, lleno }) {
           ))}
         </div>
       </fieldset>
+
+      <CampoPrecio {...precio} alCambiar={setPrecio} deshabilitado={subiendo} />
 
       {subiendo && (
         <div role="status" className="flex flex-col gap-1">

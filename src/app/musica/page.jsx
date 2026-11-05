@@ -1,4 +1,4 @@
-import ListaCanciones from "@/components/ListaCanciones";
+import ListaConVenta from "@/components/ListaConVenta";
 import Titular from "@/components/Titular";
 import { getTodasLasCanciones } from "@/lib/musica";
 
@@ -34,7 +34,7 @@ export default async function MusicaPage() {
           Todavía no hay temas. Volvé pronto.
         </p>
       ) : (
-        <ListaCanciones canciones={canciones} conArtista />
+        <ListaConVenta canciones={canciones} conArtista />
       )}
     </div>
   );

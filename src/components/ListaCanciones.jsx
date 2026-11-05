@@ -12,10 +12,12 @@ import { useReproductor } from "@/components/Reproductor";
  * @param {(cancion: import("@/lib/musica").Cancion) => import("react").ReactNode} [props.extra]
  *   Lo que va al final de cada renglón (los botones de /estudio). Solo desde
  *   componentes de cliente: una función no se puede pasar desde el servidor.
+ * @param {(cancion: import("@/lib/musica").Cancion) => import("react").ReactNode} [props.debajo]
+ *   Lo que va en una línea propia, debajo del renglón. Igual que `extra`.
  * @param {boolean} [props.conArtista] - Nombrar al artista, con link a su ficha.
  *   En su propia ficha o en /estudio no hace falta.
  */
-export default function ListaCanciones({ canciones, extra, conArtista = false }) {
+export default function ListaCanciones({ canciones, extra, debajo, conArtista = false }) {
   const { actual, sonando, tocar, pausar } = useReproductor();
   if (canciones.length === 0) return null;
 
@@ -24,8 +26,9 @@ export default function ListaCanciones({ canciones, extra, conArtista = false })
       {canciones.map((cancion, i) => {
         const esta = actual?.id === cancion.id;
         const suena = esta && sonando;
+        const abajo = debajo?.(cancion);
         return (
-          <li key={cancion.id} className={`flex items-center gap-3 border-b border-white/70 px-2 py-3 ${esta ? "bg-white/60" : ""}`}>
+          <li key={cancion.id} className={`flex flex-wrap items-center gap-3 border-b border-white/70 px-2 py-3 ${esta ? "bg-white/60" : ""}`}>
             <button
               type="button"
               onClick={() => (suena ? pausar() : tocar(canciones, i))}
@@ -52,6 +55,7 @@ export default function ListaCanciones({ canciones, extra, conArtista = false })
               </p>
             </div>
             {extra?.(cancion)}
+            {abajo && <div className="w-full">{abajo}</div>}
           </li>
         );
       })}

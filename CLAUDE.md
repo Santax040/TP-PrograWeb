@@ -1,5 +1,11 @@
 @AGENTS.md
 
+## Bitácora: los prompts van tal cual
+
+Desde el 2026-11-04, cada entrada de BITACORA.md guarda los mensajes del usuario
+**textuales, sin corregir**, y un resumen de la respuesta. El usuario los quiere
+para revisar después qué pedidos y respuestas salieron mejor y peor.
+
 ## Una sola versión: la del tocadiscos
 
 Del 2026-10-07 al 2026-10-14 hubo dos versiones (`main` con el collage y
@@ -50,6 +56,34 @@ firmados que vencen solos. Rige hasta que el usuario decida otro método.
   inventada.
 - `.gitignore` ignora `*.mp3`, `*.m4a`, `*.wav` y otros, como red de
   seguridad.
+
+### Venta de temas (en curso desde el 2026-11-04, BITACORA.md entrada 32)
+El plan viejo de la "Disquería" sigue vigente, salvo que **no hay pestaña
+Disquería: los temas se compran desde Música**. La compra da la descarga; se
+sigue escuchando entero y gratis. Sin comisión: cada artista cobra en su
+Mercado Pago (falta conectarlo).
+- **Precio**: `leerPrecio` (`src/lib/estudio.js`), lo usan el navegador y las
+  Server Actions. Null no se vende, 0 gratis, si no $100–$1.000.000; con "pagá
+  lo que quieras", el precio es el mínimo.
+- **Descarga**: `/api/canciones/[id]/descarga`, para quien lo compró, su artista
+  o el admin. Busca el tema con la clave secreta: lo comprado se conserva aunque
+  el tema esté oculto o retirado, y la base ya no se lo muestra al comprador.
+- **/compras** ("Mis compras" en el menú del usuario).
+- **Comprar**: `ListaConVenta` (en /musica y en la ficha del artista) muestra
+  Comprar, Bajar gratis o Descargar. Lo que tiene quien mira se consulta en el
+  navegador, así esas páginas siguen estáticas. Comprar solo aparece si el
+  artista conectó Mercado Pago (`artistas.puede_vender`).
+- **Conectar Mercado Pago**: bloque Cobros de /estudio (`BloqueCobros`), rutas
+  `/api/mercadopago/conectar` y `/vuelta`, `src/lib/mercadopago-cuentas.js`. Usa
+  `MP_CLIENT_ID` y `MP_CLIENT_SECRET`, de una aplicación con modelo Marketplace.
+  Los tokens solo viven en `privado.cuentas_mp`. Se prueba en el sitio publicado:
+  la Redirect URL tiene que ser pública e igual a la registrada.
+- **Cobrar**: `/api/canciones/[id]/comprar` crea la preferencia con el token del
+  artista; `/musica/resultado` y `/api/mercadopago/aviso` consultan el pago en su
+  cuenta y lo acreditan (`src/lib/compras.js`). Referencia:
+  `compra:<usuario>:<tema>:<monto>`. Las suscripciones siguen aparte
+  (`src/lib/mercadopago.js`, cuenta de la revista).
+- Los temas de la carga inicial no se venden: sus fichas no tienen cuenta.
 
 ## Diseño
 
@@ -115,7 +149,8 @@ muestra chica antes de rehacer el sitio (DESENCUENTROS.md #3).
   con slugs y fechas reales; solo desde 1280px).
 - Música: `Tocadiscos`, `Reproductor`, `BarraReproductor`, `LineaDeTiempo`
   (un `range` nativo), `ListaCanciones` (temas con play, en la ficha del
-  artista y en /estudio), `SubirCancion`, `MisCanciones` y `FormularioFicha`.
+  artista y en /estudio), `SubirCancion`, `MisCanciones`, `CampoPrecio`,
+  `ListaConVenta`, `BloqueCobros` y `FormularioFicha`.
 
 ### Layout
 - Contenedor `mx-auto max-w-6xl px-4`; lectura `max-w-3xl`/`max-w-4xl`;

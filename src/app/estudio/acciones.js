@@ -13,7 +13,8 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { largosCancion, largosFicha, TEMAS_POR_ARTISTA } from "@/lib/estudio";
+import { largosCancion, largosFicha, leerPrecio, TEMAS_POR_ARTISTA } from "@/lib/estudio";
+import { desconectarCuenta } from "@/lib/mercadopago-cuentas";
 import { armarSlug, portadas } from "@/lib/redaccion";
 import { obtenerSesion } from "@/lib/sesion";
 
@@ -82,7 +83,7 @@ export async function guardarFicha(_estado, formData) {
 /**
  * Guarda el tema después de que el navegador subió el archivo.
  *
- * @param {{ titulo: string, genero: string, portada: string, duracion: number, archivo: string }} datos
+ * @param {{ titulo: string, genero: string, portada: string, duracion: number, archivo: string, modoPrecio: string, montoPrecio: string }} datos
  */
 export async function guardarCancion(datos) {
   const { supabase, user, perfil } = await obtenerSesion();
@@ -104,6 +105,9 @@ export async function guardarCancion(datos) {
   if (!portadas.some((p) => p.clases === portada)) return { error: "Elegí un color para la etiqueta." };
   if (!(duracion >= 1 && duracion <= 3600)) return { error: "No se pudo leer la duración del audio." };
 
+  const precio = leerPrecio(datos?.modoPrecio, datos?.montoPrecio);
+  if (precio.error) return { error: precio.error };
+
   // Solo archivos de su carpeta con el nombre que arma el formulario.
   const nombre = archivo.slice(user.id.length + 1);
   if (!archivo.startsWith(`${user.id}/`) || !/^[0-9a-f-]{36}\.(mp3|m4a)$/.test(nombre)) {
@@ -124,7 +128,7 @@ export async function guardarCancion(datos) {
     return { error: `Ya tenés ${TEMAS_POR_ARTISTA} temas. Borrá uno para subir otro.` };
   }
 
-  const fila = { titulo, genero, portada, duracion_seg: duracion, archivo, artista_id: ficha.id };
+  const fila = { titulo, genero, portada, duracion_seg: duracion, archivo, artista_id: ficha.id, ...precio };
 
   // Como las notas: la dirección sale del título y, si ya existe, lleva sufijo.
   const base = `${ficha.slug}-${armarSlug(titulo) || "tema"}`.slice(0, 90);
@@ -154,6 +158,51 @@ export async function cambiarVisibilidad(id, publicada) {
 
   revalidarPublico(data.artistas?.slug);
   return { ok: publicada ? "El tema se ve de nuevo." : "El tema quedó oculto." };
+}
+
+/** Deja de cobrar con Mercado Pago. Lo ya vendido no cambia. */
+export async function desconectarMercadoPago() {
+  const { supabase, user, perfil } = await obtenerSesion();
+  if (!user) return { error: "Se cerró tu sesión. Entrá de nuevo." };
+  if (!esArtista(perfil)) return { error: "Tu cuenta no es de artista." };
+
+  try {
+    await desconectarCuenta(user.id);
+  } catch (error) {
+    console.error("No se pudo desconectar Mercado Pago", error.message);
+    return { error: "No se pudo desconectar. Probá de nuevo." };
+  }
+
+  const ficha = await miFicha(supabase, user.id);
+  revalidarPublico(ficha?.slug);
+  return { ok: "Mercado Pago desconectado." };
+}
+
+/**
+ * Cambia cómo se ofrece un tema. Un cambio no toca lo que ya se vendió. Poner
+ * precio exige la declaración de derechos, que la base solo pide al subir.
+ */
+export async function cambiarPrecio(id, modo, monto) {
+  const { supabase, user, perfil } = await obtenerSesion();
+  if (!user) return { error: "Se cerró tu sesión. Entrá de nuevo." };
+  if (perfil?.rol !== "admin" && !perfil?.derechos_aceptados_en) {
+    return { error: "Primero aceptá la declaración de derechos." };
+  }
+
+  const precio = leerPrecio(modo, monto);
+  if (precio.error) return { error: precio.error };
+
+  const { data, error } = await supabase
+    .from("canciones")
+    .update(precio)
+    .eq("id", id)
+    .is("retirada_en", null)
+    .select("artistas ( slug )")
+    .maybeSingle();
+  if (error || !data) return { error: "No se pudo cambiar el precio. Probá de nuevo." };
+
+  revalidarPublico(data.artistas?.slug);
+  return { ok: "Precio guardado." };
 }
 
 /**

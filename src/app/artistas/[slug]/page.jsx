@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ArticuloCard from "@/components/ArticuloCard";
 import EventoCard from "@/components/EventoCard";
-import ListaCanciones from "@/components/ListaCanciones";
+import ListaConVenta from "@/components/ListaConVenta";
 import TituloSeccion from "@/components/TituloSeccion";
 import {
   getArticulosDeArtista,
@@ -56,7 +56,7 @@ export default async function ArtistaPage({ params }) {
       {temas.length > 0 && (
         <section className="mt-20">
           <TituloSeccion titulo="Escuchá" />
-          <ListaCanciones canciones={temas} />
+          <ListaConVenta canciones={temas} />
         </section>
       )}
 
