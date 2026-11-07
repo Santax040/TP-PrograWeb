@@ -77,6 +77,14 @@ cerrar su sesión. Falta que cargue el Client ID y el Client Secret en Vercel.)
 (Respuesta: se publicó un commit con la bitácora, que dispara un despliegue nuevo
 con las variables cargadas.)
 
+(El sitio siguió diciendo "sin configurar". El usuario mandó una captura de las
+variables de Vercel: están `MP_CUENTAS_DE_PRUEBA`, `MP_CLIENT_ID` y `APP_URL`, y
+falta `MP_CLIENT_SECRET`.)
+
+> Cual era el id entonces
+
+> Fijate ahora
+
 ### Respuesta (resumen)
 Los temas de XNX TRACK no se venden porque son de DJs reales. Se generaron cuatro
 temas sintetizados desde cero, sin samples, que no son de nadie más, y se subieron
