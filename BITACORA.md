@@ -24,6 +24,93 @@ tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
 
 ---
 
+## 2026-11-07 (36) — Cuatro temas a la venta, hechos con código
+
+### Prompts (tal cual)
+> Para otra cosa, estaria bueno que agregues unas pares de canciones para comprar, en la pagina no hay nada
+
+Respuestas al cuestionario: música "Generados por mí (Recomendado)"; artista "Tu
+cuenta (Recomendado)".
+
+> En artificial de mercado pago, tengo checkout pro armo otro proyecto o mismo en ese?
+
+(Respuesta: crear otra aplicación con modelo Marketplace y dejar "Artificial"
+para las suscripciones.)
+
+> Pero osea la idea es que cada usuario pueda conectar su mercado pago, primero hacemos esto o es un paso previo alpedo?
+
+(Respuesta: no es al pedo. La aplicación Marketplace se crea una sola vez, la
+crea la revista, y es justamente lo que hace aparecer el botón "Conectar Mercado
+Pago" para cada artista.)
+
+> Nunca me pregunto tipo de modelo de integracion ni nada
+
+(Respuesta: el panel actual puede no preguntarlo. Lo que importa es que la
+aplicación tenga el campo "Redirect URL", que según la documentación aparece en
+las de modelo Marketplace o con el flujo Authorization code. Si "Artificial" lo
+tiene, se usa esa. Además, Mercado Pago anunció que va a exigir PKCE en OAuth, y
+nuestro código todavía no lo manda.)
+
+> La posta que no entiendo nada, no podes hacerlo vos ahora que estoy logeaod?
+
+> Listo hacelo, una vez terminas de integrarlo cerras instantaneamente todo
+
+> Listo
+
+> listo
+
+(Respuesta: en "Artificial Revista" → Configuración de la aplicación →
+Configuración avanzada quedó guardada la URL de redireccionamiento
+`https://revista-digital-musica.vercel.app/api/mercadopago/conectar/vuelta`, con
+PKCE en "No" y los permisos read, offline access y write. La verificación por
+celular y el "No soy un robot" los hizo el usuario. Se cerró la pestaña sin
+cerrar su sesión. Falta que cargue el Client ID y el Client Secret en Vercel.)
+
+> que debo poner aca?
+
+(Con una captura del formulario "Add Environment Variable" de Vercel.)
+
+> Pero viste la foto que te pase?, dice key y value y notas
+
+> Listo ya cargue todo, y cerre el redeploy. Redeployalo vos
+
+(Respuesta: se publicó un commit con la bitácora, que dispara un despliegue nuevo
+con las variables cargadas.)
+
+### Respuesta (resumen)
+Los temas de XNX TRACK no se venden porque son de DJs reales. Se generaron cuatro
+temas sintetizados desde cero, sin samples, que no son de nadie más, y se subieron
+a la ficha del usuario (Santax).
+
+### Qué se hizo
+| Tema | Género | Duración | Venta |
+|---|---|---|---|
+| Andén Menta | Deep house | 1:23 | $500 |
+| Ventana Cobalto | Minimal | 1:20 | Pagá lo que quieras, desde $300 |
+| Bruma | Downtempo | 1:13 | Gratis |
+| Línea 1440 | Techno | 1:32 | $800 |
+
+- El script que los genera quedó fuera del repo, en el scratchpad: bombo, palmas,
+  platillos, bajo, colchón y arpegio sintetizados, con su estructura
+  (entrada, corte y final) y codificados a MP3 con `@breezystack/lamejs`.
+- Se subieron al bucket con la clave secreta y las filas se insertaron por SQL,
+  porque la clave secreta no puede escribir `canciones` (ver entrada 32).
+
+### Verificado en el sitio publicado
+- Los cuatro aparecen primero en Música. Bruma muestra "Bajar gratis"; los pagos
+  no muestran botón hasta que Santax conecte Mercado Pago.
+- Los cuatro se decodifican completos y tienen sonido en todas sus partes, con los
+  cortes donde corresponde.
+
+### Sin probar
+- **Nadie los escuchó todavía.** Se midió el volumen, no si suenan bien.
+
+### ⚑ Para charlar
+- **[a decidir]** Son demos hechas con código, a nombre de Santax. Si no
+  convencen, se borran o se reemplazan por temas propios.
+
+---
+
 ## 2026-11-04 (35) — Pago de canciones, parte 4: cobrar, y los prompts tal cual
 
 ### Prompts (tal cual)
@@ -32,6 +119,12 @@ tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
 > Perfecto, pero en esencia queria que guardes casi todos los prompts y tus rtas asi de esa manera luego vemos cuales fueron los mejores y los peores, y poder hacer una revision de mis pedidos y tus rtas. Pero bueno entiendo que con lo que hayas sentido que habia que marcar vamos a estar bien. Estaria bueno q en bitacoras hubieses guardado tal cual los prompts pero ya esta, a partir de ahora guardalos tal cual pero bueno. Segui con la parte 4 y yo luego hago lo que tengo que cargar. No podes hacerlo vos?
 
 > Sí, publicá
+
+> Pasame los links asi reviso todop
+
+> Digo los links de mercado pago para armar todo lo que me dijiste para probar lo de la musica. Dame los links y el paso a paso
+
+> Pero yo ya tenia un coso de pago, tengo que generar otro?
 
 ### Respuesta (resumen)
 - Los prompts no se venían guardando textuales; desde ahora sí (regla en CLAUDE.md
