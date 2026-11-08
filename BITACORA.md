@@ -85,6 +85,36 @@ falta `MP_CLIENT_SECRET`.)
 
 > Fijate ahora
 
+(Respuesta: con `MP_CLIENT_SECRET` cargado y un despliegue nuevo, "Conectar
+Mercado Pago" ya manda a `auth.mercadopago.com/authorization` con el
+`client_id` de Artificial Revista y la `redirect_uri` correcta. Se probó con una
+cuenta de artista temporal, ya borrada, sin autorizar nada.)
+
+> Osea con mi cuenta de Santax me aparecen para descargar logicamente, no para pagar. Me recordas como era la cuenta de prueba de comprador?
+
+> De igual manera me meto con otra cuenta, y no aparece la opcion de pagar. Aparece nada mas descargar la gratis, el resto no
+
+(Respuesta: Santax todavía no tenía ninguna conexión guardada en la base.)
+
+> Dos cosas, pasame el link para ver las cuentas de prueba y en cobrador obviamente pongo la cuenta de vendedor
+
+> Hice todo tal cual, me cargaron las opciones de compra pero al momento de pagar me dijo oh algo salio mal
+
+(Diagnóstico: Santax quedó conectado con el vendedor de prueba y un token `TEST-`.
+Una preferencia creada con ese token abre bien la página de pago en modo Sandbox,
+tanto por `init_point` como por `sandbox_init_point`: la sospecha de que había que
+usar la otra dirección era equivocada. El error aparece más adelante, al pagar.
+Plan: probar con "Tarjeta, sin cuenta"; si falla, sacar `MP_CUENTAS_DE_PRUEBA` y
+reconectar, para tener un token como el de las suscripciones, que sí funcionó.)
+
+> Tarjetas de prueba nada
+
+> Oh algo anduvo mal, nuevamente luego de cargar als tarjetas
+
+(Plan B: se sacó `test_token` del canje del código. Con el vendedor de prueba, el
+token pasa a ser `APP_USR-`, como el de las suscripciones. `MP_CUENTAS_DE_PRUEBA`
+ya no se usa. Hay que desconectar y volver a conectar la cuenta.)
+
 ### Respuesta (resumen)
 Los temas de XNX TRACK no se venden porque son de DJs reales. Se generaron cuatro
 temas sintetizados desde cero, sin samples, que no son de nadie más, y se subieron

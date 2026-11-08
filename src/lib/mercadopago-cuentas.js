@@ -106,8 +106,6 @@ export async function conectarCuenta(perfilId, code, origen) {
     grant_type: "authorization_code",
     code,
     redirect_uri: direccionDeVuelta(origen),
-    // Con usuarios de prueba, Mercado Pago tiene que dar credenciales de prueba.
-    ...(process.env.MP_CUENTAS_DE_PRUEBA === "true" ? { test_token: "true" } : {}),
   });
   await guardarTokens(perfilId, tokens);
 }
