@@ -24,6 +24,40 @@ tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
 
 ---
 
+## 2026-11-11 (40) — Presentación: "Prompts interesantes" en lugar de "Los mejores prompts"
+
+### Prompts (tal cual)
+> Pulleate la presentacion asi la vamos modificando
+
+> Que prompts vas a cambiar=
+
+> Pone no mejores prompts, prompts interesantes. Pone esos dos por ahora. El de la musica y el tocadisco
+
+### Respuesta (resumen)
+- Se bajó la presentación (el artefacto de Claude, fuera del repo) y se
+  actualizó `main` local, que estaba 6 commits atrás de GitHub.
+- **Diapositiva 11:** el título pasó de "Los mejores prompts" a "Prompts
+  interesantes" y quedaron dos tarjetas en lugar de tres:
+  - el de la música para probar, textual (entrada 36): cuatro temas hechos con
+    código, a la venta;
+  - el del tocadiscos, como pedido resumido de la entrada (29), del 22/10: que
+    no sea solo de adorno, que suene.
+- Salieron de la diapositiva el de "logear por google" / "no se siente el
+  click" y la corrección del profesor. La corrección del profesor sigue en la
+  diapositiva 9, como fila de la tabla.
+- Se actualizaron las notas del orador de esa diapositiva.
+
+### ⚑ Para charlar
+- **[atajo]** El prompt del tocadiscos no es textual: la bitácora guarda los
+  mensajes tal cual recién desde el 2026-11-04. Va sin comillas.
+- **[atajo]** Se eligió el pedido del 22/10 sin que el usuario dijera cuál de
+  los tres del tocadiscos (7/10, 19/10 o 22/10).
+- **[atajo]** No se revisó cómo se ve la diapositiva en pantalla.
+- **[a decidir]** "Por ahora" son dos prompts: falta definir si se suman más.
+- **[a decidir]** La portada sigue diciendo `[Nombre y apellido]`.
+
+---
+
 ## 2026-11-11 (39) — Footer sin "trabajo práctico"
 
 ### Prompts (tal cual)
