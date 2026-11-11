@@ -24,6 +24,32 @@ tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
 
 ---
 
+## 2026-11-11 (39) — Footer sin "trabajo práctico"
+
+### Prompts (tal cual)
+> Saca la parte de abajo de la pagina que dice que es un trabajo practico
+
+### Respuesta (resumen)
+- En `Footer.jsx` se sacó "Trabajo práctico de Programación Web. Las notas, los
+  eventos y los lugares son ficticios." Queda el nombre, la invitación a mandar
+  una nota y "Buenos Aires 2026".
+- **Se dejó el crédito de la música:** "La música del tocadiscos es de sus
+  artistas, que figuran con su nombre real." Desde la entrada (29), el
+  tocadiscos toca temas enteros de DJs reales, abiertos a cualquiera, y esa
+  línea es lo único del sitio que lo aclara. Se sacó "y está acá solo con fines
+  educativos", que dependía de lo de trabajo práctico.
+- Verificado en `localhost:3000`: el footer no tiene "trabajo práctico" ni
+  "ficticios". `eslint` y `npm run build` sin errores.
+
+### ⚑ Para charlar
+- **[a decidir]** Si se saca también el crédito de la música. Se dejó a
+  propósito y se le preguntó al usuario.
+- **[a decidir]** La página de suscripción todavía dice, abajo: "Precios
+  ficticios. Este sitio es un trabajo práctico: los pagos usan el modo…". No
+  es el footer, así que no se tocó.
+
+---
+
 ## 2026-11-10 (38) — Presentación de la demo técnica
 
 ### Prompts (tal cual)
