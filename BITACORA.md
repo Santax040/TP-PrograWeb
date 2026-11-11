@@ -24,6 +24,95 @@ tal cual, sin corregir, en "Prompts (tal cual)", y un resumen de la respuesta en
 
 ---
 
+## 2026-11-10 (38) — Presentación de la demo técnica
+
+### Prompts (tal cual)
+> Bueno, basicamente ahora lo unico que queda es a partir de todo lo que hicimos en el trabajo practico, armar una presentacion.
+>
+> Fijate que te subi la "grilla" o las pautas para hacer bien la ppt y tambien te comparti una presentacion boceto. Por ahora yo ya revise la presentacion boceto y no me interesa mucho que tomes cosas en cuenta.
+>
+> Asi que hace la presentacion teniendo en cuenta lo que dice la grilla. Otra cosa que quiero que sepas es: conceptos extraños que yo no se, o que nunca sabria no los metas. Se concreto con la informacion.
+
+Respuestas al cuestionario: estilo "Estética de Artificial (Recomendado)";
+integrantes "Solo yo".
+
+> Haceme un recorrido de los mejores prompts, los prompts mas interesantes, los peores prompts, las peores respuestas tuyas
+
+> A ver vamos a hacer una modificacion prompts que quiero q esten el diapo. Para q tengas en mente, no modifiques nada tdv. El del tocadiscos lo quiero, el que creaste musica para probar la quiero
+
+> Pushea todo al giy
+
+### Respuesta (resumen)
+- **Presentación** de 14 diapositivas, fuera del repo (un artefacto de Claude,
+  privado, que se baja como PowerPoint o PDF), con los colores y las fuentes del
+  sitio y notas del orador con tiempos. Sigue la grilla: proyecto y demo,
+  tecnologías, IA, arquitectura, base de datos, de la idea inicial a la final,
+  prompts, revisión, dificultades y pendientes.
+- **Recorrido de prompts** en el chat, sacado de esta bitácora y de
+  DESENCUENTROS.md: mejores, más interesantes, peores y peores respuestas.
+- **Prompts para las diapositivas:** el usuario quiere el del tocadiscos y el de
+  la música generada para probar. No se cambió nada todavía: falta que diga cuál
+  de los tres pedidos del tocadiscos (7/10, 19/10 o 22/10) y en qué diapositiva.
+- **Subida:** se commiteó y se subió a `main` la entrada 37 (login solo con
+  Google y el click que se siente), que estaba sin commitear, junto con esta.
+
+### ⚑ Para charlar
+- **[rareza]** No se pudo leer el boceto en PDF: a esta máquina le falta el
+  programa que convierte las páginas. No se tomó nada de ahí.
+- **[atajo]** No se revisó cómo se ve cada diapositiva en pantalla.
+- **[a decidir]** La portada de la presentación dice `[Nombre y apellido]`.
+- **[atajo]** En las diapositivas, solo tres prompts son textuales; los
+  anteriores al 2026-11-04 son el pedido resumido.
+
+---
+
+## 2026-11-09 (37) — Solo Google para entrar, y que el click se sienta
+
+### Prompts (tal cual)
+> Hola Claudio, ahora vamos a terminar con unos detalles de la pagina web. Simples pero que hacen la diferencia.
+>
+> * Solo quiero que se pueda logear por google
+> * No me gusta que por ejemplo cuando voy a comprar una cancion hago click y no se siente el click, es como que se toca pero el usuario no se da cuenta que toca hasta que lo lleva a la otra pagina
+>
+> Por ahora eso
+
+### Respuesta (resumen)
+**Entrar solo con Google.** `/login` muestra solo el botón de Google. `/registro`
+ya no existe: redirige a `/login` conservando `?siguiente=` (`next.config.mjs`).
+Se borraron `FormularioCuenta`, `Separador`, `src/app/auth/acciones.js` y
+`src/lib/cuenta.js`. En `supabase/config.toml`, `[auth.email] enable_signup`
+pasó a `false`.
+
+**Que el click se sienta.** Dos cosas:
+- En `globals.css` (`@layer base`): los botones muestran la manito (Tailwind 4
+  los deja con la flecha común) y, mientras están apretados, se hunden y se
+  oscurecen; los links de texto se aclaran. Vale para todo el sitio. Lo que se
+  arrastra (el disco, el recorte de fotos) queda afuera.
+- `BotonComprar` (nuevo, lo usa `ListaConVenta`): apenas se aprieta Comprar dice
+  "Yendo a pagar…" y no deja mandar dos veces, durante los segundos que tarda en
+  armarse el pago en Mercado Pago. "Bajar gratis" dice "Un momento…".
+
+Probado en local: `/registro?siguiente=/musica` cae en `/login?siguiente=/musica`,
+sin campos de mail; en /musica el botón Comprar cambia al apretarlo. No se
+commiteó ni se publicó.
+
+### ⚑ Para charlar
+- **[a decidir]** El sitio ya no ofrece mail y contraseña, pero el proyecto de
+  Supabase publicado los sigue aceptando si alguien le habla directo a la API.
+  Para cerrarlo del todo hay que apagar el proveedor Email en el panel de
+  Supabase (Authentication → Sign In / Providers). `config.toml` solo rige en
+  local.
+- **[a decidir]** Hay 14 cuentas: 13 con Google y **1 creada solo con mail**,
+  que ya no puede entrar. Si es de prueba, se puede borrar.
+- **[atajo]** El hundido al apretar no tiene transición: es instantáneo a
+  propósito, pero además evita pisar los `transition-shadow` que ya tienen los
+  botones.
+- **[atajo]** Los links comunes (menú, notas) siguen sin indicador de carga
+  mientras Next trae la página; solo se aclaran al apretarlos. Si hace falta,
+  existe `useLinkStatus`.
+
+---
+
 ## 2026-11-07 (36) — Cuatro temas a la venta, hechos con código
 
 ### Prompts (tal cual)
@@ -114,6 +203,92 @@ reconectar, para tener un token como el de las suscripciones, que sí funcionó.
 (Plan B: se sacó `test_token` del canje del código. Con el vendedor de prueba, el
 token pasa a ser `APP_USR-`, como el de las suscripciones. `MP_CUENTAS_DE_PRUEBA`
 ya no se usa. Hay que desconectar y volver a conectar la cuenta.)
+
+> Claro, pero ya hice eso de conectarme y me conecte con test user no con mi cuenta posta, pero bueno pruebo devuelta
+
+> Error devuelta, tratemos de pagar desde aca asi ves cual es el problema Abrime un navegador
+
+> Ahi esta
+
+(Diagnóstico con la red a la vista: la preferencia está bien, con vendedor y
+comprador de prueba y el monto correcto. Eligiendo "dinero en cuenta", Mercado
+Pago pide verificar identidad (`challenge: reauth`), esa verificación vuelve vacía
+y termina en `service_error`, código FL-229e012a. Falla del lado de Mercado Pago
+con cuentas de prueba, no del sitio. Próximo intento: pagar con tarjeta de prueba
+estando logueado con el comprador.)
+
+> y xq no puedo pagar con dinero en cuenta, que fue algo q hice para la suscripcion?
+
+> Error usando tarjeta tambien
+
+(Diagnóstico, consultando a Mercado Pago: el vendedor 3750697586 figura como
+`test_user` y tiene un solo pago en su historia, la suscripción del 2026-10-14,
+**aprobada con dinero en cuenta** por el comprador 3750924596. El comprador de
+ahora es otro, 3750619720, el que nació con el error `MP_API_DOWN`. Los intentos
+de música no dejaron ningún pago registrado: fallan antes de crearse. Próxima
+prueba: comprar con el comprador 3750924596, cambiando solo eso.)
+
+> Sigue saliendo error
+
+(Tampoco dejó pago registrado: el vendedor sigue con uno solo. En el código, la
+preferencia de la suscripción y la de la compra piden lo mismo; cambia de dónde
+sale el token y que la compra agrega `notification_url`. Prueba de control:
+pagar una suscripción ahora, que no pasa por la aplicación de la cuenta real.)
+
+> La suscripcion salio, permitida
+
+(Confirmado en Mercado Pago: pago 188704597500, aprobado con dinero en cuenta,
+mismo vendedor 3750697586 y mismo comprador 3750924596. Con esas dos cuentas y
+ese medio de pago, el cobro sale con el token de la aplicación del vendedor y
+falla con el token obtenido por OAuth desde la aplicación de la cuenta real. La
+cuenta del sitio 1f612ad3-10cf-49d5-995d-21b9673fcaec quedó suscripta por la
+prueba. Sin descartar del todo: la `notification_url`, que solo manda la compra.)
+
+> Es que son los de prueba, nunca conecte con mi cuenta
+
+> Todo de prueba
+
+> Me trabe, no entendi q tengo que hacer
+
+> Ya entré
+
+> Si, entre con mi cuenta real para que veas los datos de la cuenta de prueba, no querias eso?
+
+> Ya la veo
+
+> Me meto con la cuenta de vendedor?
+
+> Listo
+
+> Guardado
+
+> Listo
+
+> Podes cambiarlo vos, esto de vercel?
+
+> Olvidate, decime que cambio con que y de donde saco la info y lo hago yo
+
+> Me dice que no puedo ver credenciales en un ambiente de prueba...
+
+(Las cuentas de prueba no muestran el Client Secret, así que no se puede usar su
+aplicación para el OAuth. Atajo solo para esta prueba: se guarda como cuenta de
+Santax el Access Token de Pago-Falso, la aplicación del vendedor de prueba, sin
+tocar Vercel.)
+
+> Listo
+
+> Por que se borro?
+
+> Aparte desde la app ya cambiamos la cuenta esa de pago?
+
+> Lo logramos Claudio
+
+(Primera compra de un tema completa: pago 187641647961, Ventana Cobalto, $300,
+aprobado con dinero en cuenta y acreditado en `compras`, id 12. Se hizo con el
+token de Pago-Falso, no por OAuth. Sigue sin probarse un cobro con una cuenta
+conectada por OAuth desde la aplicación real, que solo se puede probar con
+cuentas reales. Antes de vender de verdad, Santax tiene que desconectar y volver
+a conectar: el token de prueba no se renueva.)
 
 ### Respuesta (resumen)
 Los temas de XNX TRACK no se venden porque son de DJs reales. Se generaron cuatro

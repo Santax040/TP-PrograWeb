@@ -58,6 +58,33 @@ body {
   outline-offset: 4px;
 }
 
+/*
+ * Que el click se sienta: todo lo que se aprieta muestra la manito y, mientras
+ * está apretado, se hunde un poco y se oscurece. Sin transición a propósito:
+ * la respuesta tiene que ser inmediata, antes de que cargue lo que sigue.
+ * Lo que se arrastra (el disco, el recorte de fotos) queda afuera.
+ */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+  button:not(:disabled):not(.cursor-grab):active,
+  a.cartel:active,
+  a.tarjeta:active {
+    scale: 0.96;
+    filter: brightness(0.9);
+  }
+  a.tarjeta:active {
+    scale: 0.985;
+  }
+  /* Los links de texto no se hunden: se aclaran. */
+  a:not(.cartel):not(.tarjeta):active {
+    opacity: 0.6;
+  }
+}
+
 @layer components {
   /*
    * Capa de vidrio: blanco translúcido con borde blanco fino y sin esquinas

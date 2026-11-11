@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { obtenerGratis } from "@/app/musica/acciones";
+import BotonComprar from "@/components/BotonComprar";
 import ListaCanciones from "@/components/ListaCanciones";
 import { etiquetaDePrecio, PRECIO_MAXIMO, PRECIO_MINIMO } from "@/lib/estudio";
 import { crearClienteNavegador } from "@/lib/supabase/navegador";
@@ -32,6 +33,8 @@ export default function ListaConVenta({ canciones, conArtista = false }) {
   const [aviso, setAviso] = useState(null);
   const [comprados, setComprados] = useState(() => new Set());
   const [miSlug, setMiSlug] = useState(null);
+  // El tema que se está bajando gratis, para que su botón lo diga.
+  const [bajando, setBajando] = useState(null);
 
   useEffect(() => {
     let vigente = true;
@@ -61,6 +64,7 @@ export default function ListaConVenta({ canciones, conArtista = false }) {
 
   function bajarGratis(cancion) {
     setAviso(null);
+    setBajando(cancion.id);
     empezar(async () => {
       const resultado = await obtenerGratis(cancion.id);
       if (resultado.login) return router.push(`/login?siguiente=${encodeURIComponent(window.location.pathname)}`);
@@ -92,17 +96,13 @@ export default function ListaConVenta({ canciones, conArtista = false }) {
           if (gratis) {
             return (
               <button type="button" disabled={pendiente} onClick={() => bajarGratis(cancion)} className={BOTON}>
-                Bajar gratis
+                {pendiente && bajando === cancion.id ? "Un momento…" : "Bajar gratis"}
               </button>
             );
           }
           if (cobra && !cancion.pagaLoQueQuieras) {
             return (
-              <form action={`/api/canciones/${cancion.id}/comprar`} method="post" className="shrink-0">
-                <button type="submit" className={BOTON}>
-                  Comprar
-                </button>
-              </form>
+              <BotonComprar cancionId={cancion.id} claseBoton={BOTON} />
             );
           }
           return null;
@@ -115,11 +115,7 @@ export default function ListaConVenta({ canciones, conArtista = false }) {
                 {etiquetaDePrecio(cancion.precio, cancion.pagaLoQueQuieras)}
               </p>
               {cancion.pagaLoQueQuieras && (
-                <form
-                  action={`/api/canciones/${cancion.id}/comprar`}
-                  method="post"
-                  className="flex flex-wrap items-center gap-3"
-                >
+                <BotonComprar cancionId={cancion.id} claseBoton={BOTON} className="flex flex-wrap items-center gap-3">
                   <label className="flex items-center gap-2 text-sm text-marino">
                     <span>Pagá $</span>
                     <input
@@ -134,10 +130,7 @@ export default function ListaConVenta({ canciones, conArtista = false }) {
                       className="w-28 border border-white bg-white/70 px-3 py-2 text-marino outline-none transition-shadow focus:shadow-[0_0_0_1px_#1f45d6,0_0_16px_#7ff4ffb3]"
                     />
                   </label>
-                  <button type="submit" className={BOTON}>
-                    Comprar
-                  </button>
-                </form>
+                </BotonComprar>
               )}
               <p className="rotulo text-xs text-humo">La plata va directo a {cancion.artista}.</p>
             </div>

@@ -23,8 +23,8 @@ export default function MenuUsuario() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Se vuelve a consultar al cambiar de página: el login y el registro
-  // terminan redirigiendo, y así el header se entera.
+  // Se vuelve a consultar al cambiar de página: el login termina
+  // redirigiendo, y así el header se entera.
   useEffect(() => {
     const supabase = crearClienteNavegador();
     let vigente = true;

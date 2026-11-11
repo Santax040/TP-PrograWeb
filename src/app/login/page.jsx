@@ -1,12 +1,9 @@
-import Link from "next/link";
 import BotonGoogle from "@/components/BotonGoogle";
-import FormularioCuenta from "@/components/FormularioCuenta";
-import Separador from "@/components/Separador";
 import Titular from "@/components/Titular";
 
 export const metadata = {
   title: "Entrar",
-  description: "Entrá a la revista con Google o con tu mail.",
+  description: "Entrá a la revista con tu cuenta de Google.",
 };
 
 const avisos = {
@@ -15,12 +12,12 @@ const avisos = {
 };
 
 /**
- * Dos formas de entrar: con Google o con mail y contraseña. Quien no tiene
- * cuenta la crea en /registro (o entrando con Google por primera vez).
+ * Se entra solo con Google (desde el 2026-11-09; antes también con mail y
+ * contraseña). La primera vez que alguien entra, la cuenta se crea sola: no
+ * hay registro aparte.
  */
 export default async function LoginPage({ searchParams }) {
   const { aviso, siguiente } = await searchParams;
-  const conSiguiente = siguiente ? `?siguiente=${encodeURIComponent(siguiente)}` : "";
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
@@ -37,24 +34,6 @@ export default async function LoginPage({ searchParams }) {
       )}
 
       <BotonGoogle siguiente={siguiente} />
-
-      <Separador />
-
-      <FormularioCuenta modo="entrar" siguiente={siguiente} />
-
-      <div className="mt-10 flex flex-col gap-3 text-sm leading-relaxed text-marino">
-        <p>
-          ¿No tenés cuenta?{" "}
-          <Link href={`/registro${conSiguiente}`} className="font-semibold text-cobalto underline underline-offset-4">
-            Creá una
-          </Link>
-        </p>
-        <p className="text-humo">
-          ¿Te olvidaste la contraseña? Si tu mail es de Google, entrá con el botón de Google:
-          es la misma cuenta.
-        </p>
-      </div>
     </div>
   );
 }
-

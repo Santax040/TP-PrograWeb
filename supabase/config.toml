@@ -219,8 +219,9 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-# Activado (2026-10-14): se puede crear cuenta con mail y contraseña, además de Google.
-enable_signup = true
+# Desactivado (2026-11-09): se entra solo con Google. Del 2026-10-14 a esa fecha
+# también se podía crear cuenta con mail y contraseña.
+enable_signup = false
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true

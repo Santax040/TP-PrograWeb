@@ -18,6 +18,9 @@ const nextConfig = {
         destination: "/notas/categoria/musica",
         permanent: true,
       },
+      // Ya no hay registro con mail (2026-11-09): se entra solo con Google, y
+      // la cuenta se crea sola la primera vez. Conserva `?siguiente=`.
+      { source: "/registro", destination: "/login", permanent: false },
     ];
   },
 };
